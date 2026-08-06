@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Receipt } from 'lucide-react';
 import { listInvoices } from '../../../services/invoices';
 import { useDebounce } from '../../../hooks/useDebounce';
@@ -11,7 +12,6 @@ import styles from './InvoicesList.module.scss';
 
 const LIMIT = 20;
 
-const STATUS_LABELS = { unpaid: 'Belum Bayar', paid: 'Lunas', cancelled: 'Dibatalkan' };
 const STATUS_VARIANTS = { unpaid: 'warning', paid: 'success', cancelled: 'danger' };
 
 function formatCurrency(value) {
@@ -23,12 +23,19 @@ function formatDateTime(value) {
 }
 
 export default function InvoicesList() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [result, setResult] = useState({ data: [], pagination: { page: 1, limit: LIMIT, total_items: 0, total_pages: 0 } });
   const [isLoading, setIsLoading] = useState(false);
   const debouncedSearch = useDebounce(search, 400);
+
+  const statusLabels = {
+    unpaid: t('invoicesPage.list.statusUnpaid'),
+    paid: t('invoicesPage.list.statusPaid'),
+    cancelled: t('invoicesPage.list.statusCancelled'),
+  };
 
   useEffect(() => {
     setPage(1);
@@ -53,26 +60,26 @@ export default function InvoicesList() {
 
   return (
     <div className={styles.wrapper}>
-      <h1 className={styles.title}>Invoice</h1>
+      <h1 className={styles.title}>{t('invoicesPage.list.title')}</h1>
 
       <div className={styles.searchRow}>
-        <Input placeholder="Cari nama pasien..." value={search} onChange={(e) => setSearch(e.target.value)} />
-        {isLoading && <span className={styles.loadingHint}>Memuat...</span>}
+        <Input placeholder={t('invoicesPage.list.searchPlaceholder')} value={search} onChange={(e) => setSearch(e.target.value)} />
+        {isLoading && <span className={styles.loadingHint}>{t('invoicesPage.list.loading')}</span>}
       </div>
 
       {result.data.length === 0 && !isLoading ? (
-        <EmptyState icon={Receipt} message="Belum ada invoice." />
+        <EmptyState icon={Receipt} message={t('invoicesPage.list.noResults')} />
       ) : (
         <>
           <div className={styles.tableScroll}>
             <table className={styles.table}>
               <thead>
                 <tr>
-                  <th>Pasien</th>
-                  <th>Total</th>
-                  <th>Metode</th>
-                  <th>Status</th>
-                  <th>Tanggal</th>
+                  <th>{t('invoicesPage.list.columnPatient')}</th>
+                  <th>{t('invoicesPage.list.columnTotal')}</th>
+                  <th>{t('invoicesPage.list.columnMethod')}</th>
+                  <th>{t('invoicesPage.list.columnStatus')}</th>
+                  <th>{t('invoicesPage.list.columnDate')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -81,7 +88,7 @@ export default function InvoicesList() {
                     <td>{invoice.patient_name}</td>
                     <td>{formatCurrency(invoice.total_amount)}</td>
                     <td>{invoice.payment_method || '-'}</td>
-                    <td><Badge variant={STATUS_VARIANTS[invoice.status]}>{STATUS_LABELS[invoice.status]}</Badge></td>
+                    <td><Badge variant={STATUS_VARIANTS[invoice.status]}>{statusLabels[invoice.status]}</Badge></td>
                     <td>{formatDateTime(invoice.created_at)}</td>
                   </tr>
                 ))}

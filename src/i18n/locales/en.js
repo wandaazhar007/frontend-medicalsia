@@ -1,7 +1,7 @@
 // English translations. Scope so far: Navbar (Topbar + its dropdowns/modal),
 // Login, Dashboard, PharmacyPage, Patients (list/form/detail), Appointments
-// (list/form), QueuePage, ConsultationPage, CashierPage — see id.js for the
-// full key list/context.
+// (list/form), QueuePage, ConsultationPage, CashierPage, Invoices
+// (list/detail) — see id.js for the full key list/context.
 export default {
   common: {
     cancel: 'Cancel',
@@ -279,5 +279,40 @@ export default {
     pendingRefundTitle: 'Pending Refunds',
     noPendingRefund: 'No pending refunds.',
     markResolved: 'Mark as Resolved',
+  },
+  invoicesPage: {
+    list: {
+      title: 'Invoices',
+      searchPlaceholder: 'Search by patient name...',
+      loading: 'Loading...',
+      noResults: 'No invoices yet.',
+      columnPatient: 'Patient',
+      columnTotal: 'Total',
+      columnMethod: 'Method',
+      columnStatus: 'Status',
+      columnDate: 'Date',
+      statusUnpaid: 'Unpaid',
+      statusPaid: 'Paid',
+      statusCancelled: 'Cancelled',
+    },
+    detail: {
+      printReceipt: 'Print Receipt',
+      patient: 'Patient',
+      status: 'Status',
+      paymentMethod: 'Payment Method',
+      paidDate: 'Paid Date',
+      total: 'Total',
+      shortfall: 'Shortfall',
+      shortfallLess: 'short by',
+      refundCompleted: 'Refund Completed',
+      refundPending: 'Refund Pending',
+      statusUnpaid: 'Unpaid',
+      statusPaid: 'Paid',
+      statusCancelled: 'Cancelled',
+      methodCash: 'Cash',
+      methodDebitCard: 'Debit Card',
+      methodCreditCard: 'Credit Card',
+      methodQris: 'QRIS',
+    },
   },
 };

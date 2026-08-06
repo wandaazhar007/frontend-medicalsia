@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Printer } from 'lucide-react';
 import { getInvoice } from '../../../services/invoices';
 import Card from '../../../components/Card/Card';
@@ -8,9 +9,7 @@ import Badge from '../../../components/Badge/Badge';
 import ReceiptPrint from '../../../components/ReceiptPrint/ReceiptPrint';
 import styles from './InvoiceDetail.module.scss';
 
-const STATUS_LABELS = { unpaid: 'Belum Bayar', paid: 'Lunas', cancelled: 'Dibatalkan' };
 const STATUS_VARIANTS = { unpaid: 'warning', paid: 'success', cancelled: 'danger' };
-const PAYMENT_METHOD_LABELS = { cash: 'Tunai', debit_card: 'Kartu Debit', credit_card: 'Kartu Kredit', qris: 'QRIS' };
 
 function formatCurrency(value) {
   return `Rp${Number(value).toLocaleString('id-ID')}`;
@@ -22,11 +21,24 @@ function formatDateTime(value) {
 }
 
 export default function InvoiceDetail() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const [invoice, setInvoice] = useState(null);
   // A counter, not a boolean — clicking "Cetak Struk" again after the first
   // print must still change this value so the effect below fires again.
   const [printCount, setPrintCount] = useState(0);
+
+  const statusLabels = {
+    unpaid: t('invoicesPage.detail.statusUnpaid'),
+    paid: t('invoicesPage.detail.statusPaid'),
+    cancelled: t('invoicesPage.detail.statusCancelled'),
+  };
+  const paymentMethodLabels = {
+    cash: t('invoicesPage.detail.methodCash'),
+    debit_card: t('invoicesPage.detail.methodDebitCard'),
+    credit_card: t('invoicesPage.detail.methodCreditCard'),
+    qris: t('invoicesPage.detail.methodQris'),
+  };
 
   async function fetchInvoice() {
     const { data } = await getInvoice(id);
@@ -49,11 +61,11 @@ export default function InvoiceDetail() {
   return (
     <div className={styles.wrapper}>
       <div className={styles.header}>
-        <h1 className={styles.title}>Invoice — {invoice.patient_name}</h1>
+        <h1 className={styles.title}>{t('invoicesPage.list.title')} — {invoice.patient_name}</h1>
         {invoice.status === 'paid' && (
           <Button variant="secondary" onClick={() => setPrintCount((c) => c + 1)}>
             <Printer size={16} />
-            Cetak Struk
+            {t('invoicesPage.detail.printReceipt')}
           </Button>
         )}
       </div>
@@ -61,19 +73,19 @@ export default function InvoiceDetail() {
       <Card>
         <div className={styles.infoGrid}>
           <div>
-            <div className={styles.label}>Pasien</div>
+            <div className={styles.label}>{t('invoicesPage.detail.patient')}</div>
             <div>{invoice.patient_name} ({invoice.patient_number})</div>
           </div>
           <div>
-            <div className={styles.label}>Status</div>
-            <div><Badge variant={STATUS_VARIANTS[invoice.status]}>{STATUS_LABELS[invoice.status]}</Badge></div>
+            <div className={styles.label}>{t('invoicesPage.detail.status')}</div>
+            <div><Badge variant={STATUS_VARIANTS[invoice.status]}>{statusLabels[invoice.status]}</Badge></div>
           </div>
           <div>
-            <div className={styles.label}>Metode Pembayaran</div>
-            <div>{PAYMENT_METHOD_LABELS[invoice.payment_method] || '-'}</div>
+            <div className={styles.label}>{t('invoicesPage.detail.paymentMethod')}</div>
+            <div>{paymentMethodLabels[invoice.payment_method] || '-'}</div>
           </div>
           <div>
-            <div className={styles.label}>Tanggal Lunas</div>
+            <div className={styles.label}>{t('invoicesPage.detail.paidDate')}</div>
             <div>{formatDateTime(invoice.paid_at)}</div>
           </div>
         </div>
@@ -86,26 +98,26 @@ export default function InvoiceDetail() {
         ))}
 
         <div className={styles.totalRow}>
-          <span>Total</span>
+          <span>{t('invoicesPage.detail.total')}</span>
           <span>{formatCurrency(invoice.total_amount)}</span>
         </div>
       </Card>
 
       {invoice.shortfalls.length > 0 && (
         <Card>
-          <div className={styles.label}>Shortfall</div>
+          <div className={styles.label}>{t('invoicesPage.detail.shortfall')}</div>
           {invoice.shortfalls.map((shortfall) => (
             <div key={shortfall.id} className={styles.shortfallItem}>
-              <span>{shortfall.medicine_name} — kurang {shortfall.qty_shortfall}x ({formatCurrency(shortfall.refund_amount)})</span>
+              <span>{shortfall.medicine_name} — {t('invoicesPage.detail.shortfallLess')} {shortfall.qty_shortfall}x ({formatCurrency(shortfall.refund_amount)})</span>
               <Badge variant={shortfall.refund_status === 'completed' ? 'success' : 'warning'}>
-                {shortfall.refund_status === 'completed' ? 'Refund Selesai' : 'Refund Tertunda'}
+                {shortfall.refund_status === 'completed' ? t('invoicesPage.detail.refundCompleted') : t('invoicesPage.detail.refundPending')}
               </Badge>
             </div>
           ))}
         </Card>
       )}
 
-      <ReceiptPrint invoice={invoice} active={printActive} />
+      <ReceiptPrint invoice={invoice} active={printCount > 0} />
     </div>
   );
 }

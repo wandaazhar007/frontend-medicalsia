@@ -1,9 +1,9 @@
 // Indonesian strings — the app's default/original language.
 // Scope so far: Navbar (Topbar + its dropdowns/modal), Login, Dashboard,
 // PharmacyPage, Patients (list/form/detail), Appointments (list/form),
-// QueuePage, ConsultationPage, CashierPage. Other pages still have
-// hardcoded Indonesian text and are unaffected by the language toggle
-// until they're migrated in a follow-up pass.
+// QueuePage, ConsultationPage, CashierPage, Invoices (list/detail). Other
+// pages still have hardcoded Indonesian text and are unaffected by the
+// language toggle until they're migrated in a follow-up pass.
 export default {
   common: {
     cancel: 'Batal',
@@ -281,5 +281,40 @@ export default {
     pendingRefundTitle: 'Refund Tertunda',
     noPendingRefund: 'Tidak ada refund tertunda.',
     markResolved: 'Tandai Selesai',
+  },
+  invoicesPage: {
+    list: {
+      title: 'Invoice',
+      searchPlaceholder: 'Cari nama pasien...',
+      loading: 'Memuat...',
+      noResults: 'Belum ada invoice.',
+      columnPatient: 'Pasien',
+      columnTotal: 'Total',
+      columnMethod: 'Metode',
+      columnStatus: 'Status',
+      columnDate: 'Tanggal',
+      statusUnpaid: 'Belum Bayar',
+      statusPaid: 'Lunas',
+      statusCancelled: 'Dibatalkan',
+    },
+    detail: {
+      printReceipt: 'Cetak Struk',
+      patient: 'Pasien',
+      status: 'Status',
+      paymentMethod: 'Metode Pembayaran',
+      paidDate: 'Tanggal Lunas',
+      total: 'Total',
+      shortfall: 'Shortfall',
+      shortfallLess: 'kurang',
+      refundCompleted: 'Refund Selesai',
+      refundPending: 'Refund Tertunda',
+      statusUnpaid: 'Belum Bayar',
+      statusPaid: 'Lunas',
+      statusCancelled: 'Dibatalkan',
+      methodCash: 'Tunai',
+      methodDebitCard: 'Kartu Debit',
+      methodCreditCard: 'Kartu Kredit',
+      methodQris: 'QRIS',
+    },
   },
 };

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { User as UserIcon } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
 import { getMe, updateMe, uploadMyPhoto } from '../../../services/users';
@@ -10,6 +11,7 @@ import styles from './ProfilePage.module.scss';
 const MAX_PHOTO_SIZE = 5 * 1024 * 1024; // 5MB, matches the backend multer limit
 
 export default function ProfilePage() {
+  const { t } = useTranslation();
   const { updateLocalUser } = useAuth();
   const fileInputRef = useRef(null);
 
@@ -32,7 +34,7 @@ export default function ProfilePage() {
         setFullName(data.full_name || '');
         setPhone(data.phone || '');
       } catch {
-        setFormError('Gagal memuat profil.');
+        setFormError(t('profilePage.loadError'));
       }
     }
     fetchProfile();
@@ -41,7 +43,7 @@ export default function ProfilePage() {
   function validate() {
     const errors = {};
     if (!fullName.trim()) {
-      errors.fullName = 'Nama lengkap wajib diisi.';
+      errors.fullName = t('profilePage.fullNameRequired');
     }
     return errors;
   }
@@ -60,9 +62,9 @@ export default function ProfilePage() {
       const { data } = await updateMe({ full_name: fullName, phone: phone || null });
       setProfile(data);
       updateLocalUser({ full_name: data.full_name, phone: data.phone });
-      setFormSuccess('Perubahan tersimpan.');
+      setFormSuccess(t('profilePage.saveSuccess'));
     } catch {
-      setFormError('Gagal menyimpan perubahan.');
+      setFormError(t('profilePage.saveError'));
     } finally {
       setIsSaving(false);
     }
@@ -76,11 +78,11 @@ export default function ProfilePage() {
     setPhotoError('');
 
     if (!file.type.startsWith('image/')) {
-      setPhotoError('File harus berupa gambar.');
+      setPhotoError(t('profilePage.photoTypeError'));
       return;
     }
     if (file.size > MAX_PHOTO_SIZE) {
-      setPhotoError('Ukuran gambar maksimal 5MB.');
+      setPhotoError(t('profilePage.photoSizeError'));
       return;
     }
 
@@ -90,7 +92,7 @@ export default function ProfilePage() {
       setProfile((current) => ({ ...current, photo_url: data.photo_url }));
       updateLocalUser({ photo_url: data.photo_url });
     } catch {
-      setPhotoError('Gagal mengunggah foto.');
+      setPhotoError(t('profilePage.photoUploadError'));
     } finally {
       setIsUploadingPhoto(false);
     }
@@ -98,13 +100,13 @@ export default function ProfilePage() {
 
   return (
     <div className={styles.wrapper}>
-      <h1 className={styles.title}>Profil Saya</h1>
+      <h1 className={styles.title}>{t('profilePage.title')}</h1>
 
       <Card className={styles.card}>
         <div className={styles.photoSection}>
           <div className={styles.avatar}>
             {profile?.photo_url ? (
-              <img src={profile.photo_url} alt="Foto profil" className={styles.avatarImage} />
+              <img src={profile.photo_url} alt={t('profilePage.photoAlt')} className={styles.avatarImage} />
             ) : (
               <UserIcon size={36} className={styles.avatarPlaceholder} />
             )}
@@ -112,7 +114,7 @@ export default function ProfilePage() {
           </div>
           <div className={styles.photoActions}>
             <Button type="button" variant="secondary" onClick={() => fileInputRef.current?.click()} disabled={isUploadingPhoto}>
-              {isUploadingPhoto ? 'Mengunggah...' : 'Ganti Foto'}
+              {isUploadingPhoto ? t('profilePage.uploading') : t('profilePage.changePhoto')}
             </Button>
             <input ref={fileInputRef} type="file" accept="image/*" className={styles.hiddenFileInput} onChange={handlePhotoChange} />
             {photoError && <span className={styles.photoError}>{photoError}</span>}
@@ -125,7 +127,7 @@ export default function ProfilePage() {
 
           <Input
             id="fullName"
-            label="Nama Lengkap"
+            label={t('profilePage.fullNameLabel')}
             type="text"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
@@ -133,7 +135,7 @@ export default function ProfilePage() {
           />
           <Input
             id="phone"
-            label="Telepon"
+            label={t('profilePage.phoneLabel')}
             type="tel"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
@@ -142,7 +144,7 @@ export default function ProfilePage() {
 
           <div className={styles.actions}>
             <Button type="submit" disabled={isSaving}>
-              {isSaving ? 'Menyimpan...' : 'Simpan Perubahan'}
+              {isSaving ? t('profilePage.saving') : t('profilePage.saveChanges')}
             </Button>
           </div>
         </form>

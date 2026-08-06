@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { getUser, inviteUser, updateUser } from '../../../services/users';
 import Card from '../../../components/Card/Card';
 import Input from '../../../components/Input/Input';
@@ -7,19 +8,22 @@ import Select from '../../../components/Select/Select';
 import Button from '../../../components/Button/Button';
 import styles from './UserForm.module.scss';
 
-const ROLE_OPTIONS = [
-  { value: 'owner', label: 'Pemilik' },
-  { value: 'admin', label: 'Admin' },
-  { value: 'doctor', label: 'Dokter' },
-  { value: 'receptionist', label: 'Resepsionis' },
-  { value: 'pharmacy', label: 'Farmasi' },
-  { value: 'cashier', label: 'Kasir' },
+const ROLE_ORDER = [
+  ['owner', 'roleOwner'],
+  ['admin', 'roleAdmin'],
+  ['doctor', 'roleDoctor'],
+  ['receptionist', 'roleReceptionist'],
+  ['pharmacy', 'rolePharmacy'],
+  ['cashier', 'roleCashier'],
 ];
 
 export default function UserForm() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const isEdit = Boolean(id);
   const navigate = useNavigate();
+
+  const roleOptions = ROLE_ORDER.map(([value, key]) => ({ value, label: t(`usersPage.form.${key}`) }));
 
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
@@ -47,7 +51,7 @@ export default function UserForm() {
     setError('');
 
     if (!fullName || (!isEdit && !email)) {
-      setError(isEdit ? 'Nama lengkap wajib diisi.' : 'Nama lengkap dan email wajib diisi.');
+      setError(isEdit ? t('usersPage.form.editRequiredError') : t('usersPage.form.inviteRequiredError'));
       return;
     }
 
@@ -61,7 +65,7 @@ export default function UserForm() {
         setInviteResult(data);
       }
     } catch {
-      setError(isEdit ? 'Gagal menyimpan perubahan.' : 'Gagal mengundang user. Email mungkin sudah terdaftar.');
+      setError(isEdit ? t('usersPage.form.editSaveError') : t('usersPage.form.inviteSaveError'));
     } finally {
       setIsSubmitting(false);
     }
@@ -70,15 +74,15 @@ export default function UserForm() {
   if (inviteResult) {
     return (
       <div className={styles.wrapper}>
-        <h1 className={styles.title}>Undang User</h1>
+        <h1 className={styles.title}>{t('usersPage.form.inviteTitle')}</h1>
         <Card>
           <div className={styles.success}>
             <p>
-              <strong>{inviteResult.user.full_name}</strong> berhasil diundang sebagai {ROLE_OPTIONS.find((r) => r.value === inviteResult.user.role)?.label}.
-              Bagikan tautan berikut supaya mereka bisa membuat password sendiri:
+              <strong>{inviteResult.user.full_name}</strong> {t('usersPage.form.invitedSuccessPart1')} {roleOptions.find((r) => r.value === inviteResult.user.role)?.label}.
+              {' '}{t('usersPage.form.invitedSuccessPart2')}
             </p>
             <div className={styles.inviteLink}>{inviteResult.invite_link}</div>
-            <Button onClick={() => navigate('/dashboard/users')}>Selesai</Button>
+            <Button onClick={() => navigate('/dashboard/users')}>{t('usersPage.form.done')}</Button>
           </div>
         </Card>
       </div>
@@ -87,22 +91,22 @@ export default function UserForm() {
 
   return (
     <div className={styles.wrapper}>
-      <h1 className={styles.title}>{isEdit ? 'Edit User' : 'Undang User'}</h1>
+      <h1 className={styles.title}>{isEdit ? t('usersPage.form.editTitle') : t('usersPage.form.inviteTitle')}</h1>
       <Card>
         <form className={styles.form} onSubmit={handleSubmit}>
           {error && <div className={styles.error}>{error}</div>}
 
-          <Input id="full_name" label="Nama Lengkap" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
+          <Input id="full_name" label={t('usersPage.form.fullNameLabel')} value={fullName} onChange={(e) => setFullName(e.target.value)} required />
 
           <div className={styles.grid}>
             {!isEdit && (
-              <Input id="email" label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+              <Input id="email" label={t('usersPage.form.emailLabel')} type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
             )}
-            <Input id="phone" label="Telepon" value={phone} onChange={(e) => setPhone(e.target.value)} />
+            <Input id="phone" label={t('usersPage.form.phoneLabel')} value={phone} onChange={(e) => setPhone(e.target.value)} />
           </div>
 
-          <Select id="role" label="Role" value={role} onChange={(e) => setRole(e.target.value)}>
-            {ROLE_OPTIONS.map((option) => (
+          <Select id="role" label={t('usersPage.form.roleLabel')} value={role} onChange={(e) => setRole(e.target.value)}>
+            {roleOptions.map((option) => (
               <option key={option.value} value={option.value}>{option.label}</option>
             ))}
           </Select>
@@ -110,15 +114,15 @@ export default function UserForm() {
           {isEdit && (
             <label className={styles.checkboxLabel}>
               <input type="checkbox" checked={isActive} onChange={(e) => setIsActive(e.target.checked)} />
-              Akun aktif (bisa login)
+              {t('usersPage.form.activeCheckbox')}
             </label>
           )}
 
           <div className={styles.actions}>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Menyimpan...' : isEdit ? 'Simpan' : 'Kirim Undangan'}
+              {isSubmitting ? t('usersPage.form.saving') : isEdit ? t('usersPage.form.save') : t('usersPage.form.sendInvite')}
             </Button>
-            <Button type="button" variant="ghost" onClick={() => navigate(-1)}>Batal</Button>
+            <Button type="button" variant="ghost" onClick={() => navigate(-1)}>{t('usersPage.form.cancel')}</Button>
           </div>
         </form>
       </Card>

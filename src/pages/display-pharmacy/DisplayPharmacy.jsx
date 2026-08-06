@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { getPublicPharmacyQueue } from '../../services/publicBooking';
 import LogoIcon from '../../components/LogoIcon/LogoIcon';
 import Wordmark from '../../components/LogoIcon/Wordmark';
@@ -8,7 +9,7 @@ import styles from './DisplayPharmacy.module.scss';
 
 const POLL_INTERVAL_MS = 4000;
 
-const STATUS_LABELS = { sedang_disiapkan: 'Sedang Disiapkan', siap_diambil: 'Siap Diambil' };
+const STATUS_KEYS = { sedang_disiapkan: 'statusPreparing', siap_diambil: 'statusReady' };
 const STATUS_VARIANTS = { sedang_disiapkan: 'warning', siap_diambil: 'success' };
 
 // Same chime pattern as /display (Fase 3) — Web Audio API, no external asset.
@@ -32,6 +33,7 @@ function speakAnnouncement(queueNumber) {
 }
 
 export default function DisplayPharmacy() {
+  const { t } = useTranslation();
   const [entries, setEntries] = useState([]);
   const [flashingQueueNumber, setFlashingQueueNumber] = useState(null);
   const [isSoundEnabled, setIsSoundEnabled] = useState(false);
@@ -79,13 +81,13 @@ export default function DisplayPharmacy() {
       </div>
 
       {entries.length === 0 ? (
-        <p className={styles.empty}>Belum ada resep yang sedang diproses.</p>
+        <p className={styles.empty}>{t('displayPharmacyPage.empty')}</p>
       ) : (
         <table className={styles.table}>
           <thead>
             <tr>
-              <th>No. Antrian</th>
-              <th>Status</th>
+              <th>{t('displayPharmacyPage.columnQueueNumber')}</th>
+              <th>{t('displayPharmacyPage.columnStatus')}</th>
             </tr>
           </thead>
           <tbody>
@@ -93,7 +95,7 @@ export default function DisplayPharmacy() {
               <tr key={entry.queue_number}>
                 <td className={entry.queue_number === flashingQueueNumber ? styles.flash : ''}>{entry.queue_number}</td>
                 <td>
-                  <Badge variant={STATUS_VARIANTS[entry.status]}>{STATUS_LABELS[entry.status]}</Badge>
+                  <Badge variant={STATUS_VARIANTS[entry.status]}>{t(`displayPharmacyPage.${STATUS_KEYS[entry.status]}`)}</Badge>
                 </td>
               </tr>
             ))}
@@ -103,7 +105,7 @@ export default function DisplayPharmacy() {
 
       {!isSoundEnabled && (
         <div className={styles.overlay}>
-          <Button onClick={handleEnableSound}>Aktifkan Suara</Button>
+          <Button onClick={handleEnableSound}>{t('displayPharmacyPage.enableSound')}</Button>
         </div>
       )}
     </div>

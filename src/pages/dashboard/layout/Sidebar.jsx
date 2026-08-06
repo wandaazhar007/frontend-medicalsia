@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { CalendarClock, CalendarPlus, Clock, CreditCard, LayoutDashboard, Pill, Receipt, UserCog, Users } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
 import styles from './Sidebar.module.scss';
@@ -13,57 +14,58 @@ function navLinkClass({ isActive }) {
 // "Jadwal Dokter" isn't named in the design doc's groups but is foundational
 // setup (booking can't work without it), so it rides along in Menu Utama.
 export default function Sidebar() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const canManageUsers = user && ['owner', 'admin'].includes(user.role);
 
   return (
     <aside className={styles.sidebar}>
       <nav className={styles.group}>
-        <span className={styles.groupLabel}>Menu Utama</span>
+        <span className={styles.groupLabel}>{t('sidebar.groupMain')}</span>
         <NavLink to="/dashboard" end className={navLinkClass}>
           <LayoutDashboard size={18} />
-          Dashboard
+          {t('sidebar.dashboard')}
         </NavLink>
         <NavLink to="/dashboard/appointments" className={navLinkClass}>
           <CalendarPlus size={18} />
-          Appointment
+          {t('sidebar.appointment')}
         </NavLink>
         <NavLink to="/dashboard/queue" className={navLinkClass}>
           <Clock size={18} />
-          Antrian
+          {t('sidebar.queue')}
         </NavLink>
         <NavLink to="/dashboard/patients" className={navLinkClass}>
           <Users size={18} />
-          Pasien
+          {t('sidebar.patients')}
         </NavLink>
         <NavLink to="/dashboard/doctor-schedules" className={navLinkClass}>
           <CalendarClock size={18} />
-          Jadwal Dokter
+          {t('sidebar.doctorSchedules')}
         </NavLink>
       </nav>
 
       <nav className={styles.group}>
-        <span className={styles.groupLabel}>Operasional</span>
+        <span className={styles.groupLabel}>{t('sidebar.groupOperations')}</span>
         <NavLink to="/dashboard/cashier" className={navLinkClass}>
           <CreditCard size={18} />
-          Kasir
+          {t('sidebar.cashier')}
         </NavLink>
         <NavLink to="/dashboard/invoices" className={navLinkClass}>
           <Receipt size={18} />
-          Invoice
+          {t('sidebar.invoices')}
         </NavLink>
         <NavLink to="/dashboard/pharmacy" className={navLinkClass}>
           <Pill size={18} />
-          Farmasi
+          {t('sidebar.pharmacy')}
         </NavLink>
       </nav>
 
       {canManageUsers && (
         <nav className={styles.group}>
-          <span className={styles.groupLabel}>Lainnya</span>
+          <span className={styles.groupLabel}>{t('sidebar.groupOther')}</span>
           <NavLink to="/dashboard/users" className={navLinkClass}>
             <UserCog size={18} />
-            User
+            {t('sidebar.users')}
           </NavLink>
         </nav>
       )}

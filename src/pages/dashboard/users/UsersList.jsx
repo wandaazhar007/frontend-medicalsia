@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { UserPlus, Users as UsersIcon } from 'lucide-react';
 import { listUsers, updateUser } from '../../../services/users';
 import { useDebounce } from '../../../hooks/useDebounce';
@@ -12,22 +13,25 @@ import styles from './UsersList.module.scss';
 
 const LIMIT = 20;
 
-const ROLE_LABELS = {
-  owner: 'Pemilik',
-  admin: 'Admin',
-  doctor: 'Dokter',
-  receptionist: 'Resepsionis',
-  pharmacy: 'Farmasi',
-  cashier: 'Kasir',
-};
+const ROLE_ORDER = [
+  ['owner', 'roleOwner'],
+  ['admin', 'roleAdmin'],
+  ['doctor', 'roleDoctor'],
+  ['receptionist', 'roleReceptionist'],
+  ['pharmacy', 'rolePharmacy'],
+  ['cashier', 'roleCashier'],
+];
 
 export default function UsersList() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [result, setResult] = useState({ data: [], pagination: { page: 1, limit: LIMIT, total_items: 0, total_pages: 0 } });
   const [isLoading, setIsLoading] = useState(false);
   const debouncedSearch = useDebounce(search, 400);
+
+  const roleLabels = Object.fromEntries(ROLE_ORDER.map(([value, key]) => [value, t(`usersPage.list.${key}`)]));
 
   useEffect(() => {
     setPage(1);
@@ -61,31 +65,31 @@ export default function UsersList() {
   return (
     <div className={styles.wrapper}>
       <div className={styles.header}>
-        <h1 className={styles.title}>User</h1>
+        <h1 className={styles.title}>{t('usersPage.list.title')}</h1>
         <Button onClick={() => navigate('/dashboard/users/new')}>
           <UserPlus size={16} />
-          Undang User
+          {t('usersPage.list.inviteButton')}
         </Button>
       </div>
 
       <div className={styles.searchRow}>
-        <Input placeholder="Cari nama..." value={search} onChange={(e) => setSearch(e.target.value)} />
-        {isLoading && <span className={styles.loadingHint}>Memuat...</span>}
+        <Input placeholder={t('usersPage.list.searchPlaceholder')} value={search} onChange={(e) => setSearch(e.target.value)} />
+        {isLoading && <span className={styles.loadingHint}>{t('usersPage.list.loading')}</span>}
       </div>
 
       {result.data.length === 0 && !isLoading ? (
-        <EmptyState icon={UsersIcon} message="Belum ada user." />
+        <EmptyState icon={UsersIcon} message={t('usersPage.list.noResults')} />
       ) : (
         <>
           <div className={styles.tableScroll}>
             <table className={styles.table}>
               <thead>
                 <tr>
-                  <th>Nama</th>
-                  <th>Telepon</th>
-                  <th>Role</th>
-                  <th>Status</th>
-                  <th>Aksi</th>
+                  <th>{t('usersPage.list.columnName')}</th>
+                  <th>{t('usersPage.list.columnPhone')}</th>
+                  <th>{t('usersPage.list.columnRole')}</th>
+                  <th>{t('usersPage.list.columnStatus')}</th>
+                  <th>{t('usersPage.list.columnAction')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -93,13 +97,13 @@ export default function UsersList() {
                   <tr key={user.id}>
                     <td>{user.full_name}</td>
                     <td>{user.phone || '-'}</td>
-                    <td><Badge variant="info">{ROLE_LABELS[user.role] || user.role}</Badge></td>
-                    <td><Badge variant={user.is_active ? 'success' : 'danger'}>{user.is_active ? 'Aktif' : 'Nonaktif'}</Badge></td>
+                    <td><Badge variant="info">{roleLabels[user.role] || user.role}</Badge></td>
+                    <td><Badge variant={user.is_active ? 'success' : 'danger'}>{user.is_active ? t('usersPage.list.active') : t('usersPage.list.inactive')}</Badge></td>
                     <td>
                       <div className={styles.rowActions}>
-                        <Button variant="secondary" onClick={() => navigate(`/dashboard/users/${user.id}/edit`)}>Edit</Button>
+                        <Button variant="secondary" onClick={() => navigate(`/dashboard/users/${user.id}/edit`)}>{t('usersPage.list.edit')}</Button>
                         <Button variant={user.is_active ? 'danger' : 'ghost'} onClick={() => handleToggleActive(user)}>
-                          {user.is_active ? 'Nonaktifkan' : 'Aktifkan'}
+                          {user.is_active ? t('usersPage.list.deactivate') : t('usersPage.list.activate')}
                         </Button>
                       </div>
                     </td>

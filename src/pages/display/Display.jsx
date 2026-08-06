@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { getPublicQueue } from '../../services/publicBooking';
 import LogoIcon from '../../components/LogoIcon/LogoIcon';
 import Wordmark from '../../components/LogoIcon/Wordmark';
@@ -29,6 +30,7 @@ function speakAnnouncement(queueNumber) {
 }
 
 export default function Display() {
+  const { t } = useTranslation();
   const [currentNumber, setCurrentNumber] = useState(null);
   const [isFlashing, setIsFlashing] = useState(false);
   const [isSoundEnabled, setIsSoundEnabled] = useState(false);
@@ -80,13 +82,13 @@ export default function Display() {
       </div>
 
       <div className={styles.content}>
-        <span className={styles.label}>Nomor Antrian Sedang Dipanggil</span>
+        <span className={styles.label}>{t('displayPage.label')}</span>
         <span className={`${styles.number} ${isFlashing ? styles.flash : ''}`}>{currentNumber || '-'}</span>
       </div>
 
       {!isSoundEnabled && (
         <div className={styles.overlay}>
-          <Button onClick={handleEnableSound}>Aktifkan Suara</Button>
+          <Button onClick={handleEnableSound}>{t('displayPage.enableSound')}</Button>
         </div>
       )}
     </div>

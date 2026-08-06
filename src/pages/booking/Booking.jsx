@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { CheckCircle } from 'lucide-react';
 import { createPublicBooking, getBookingDoctors } from '../../services/publicBooking';
 import LogoIcon from '../../components/LogoIcon/LogoIcon';
@@ -42,6 +43,7 @@ function buildAvailableSlots(doctor, dateStr) {
 }
 
 export default function Booking() {
+  const { t } = useTranslation();
   const [doctors, setDoctors] = useState([]);
   const [doctorId, setDoctorId] = useState('');
   const [date, setDate] = useState('');
@@ -64,7 +66,7 @@ export default function Booking() {
     setError('');
 
     if (!doctorId || !scheduledAt || !fullName) {
-      setError('Dokter, jadwal, dan nama wajib diisi.');
+      setError(t('bookingPage.requiredError'));
       return;
     }
 
@@ -73,7 +75,7 @@ export default function Booking() {
       await createPublicBooking({ doctor_id: doctorId, scheduled_at: scheduledAt, full_name: fullName, phone });
       setIsBooked(true);
     } catch {
-      setError('Gagal membuat booking. Silakan coba lagi.');
+      setError(t('bookingPage.submitError'));
     } finally {
       setIsSubmitting(false);
     }
@@ -85,8 +87,8 @@ export default function Booking() {
         <Card className={styles.card}>
           <div className={styles.success}>
             <CheckCircle size={48} className={styles.successIcon} />
-            <h1>Booking Berhasil</h1>
-            <p>Silakan datang sesuai jadwal yang dipilih dan lakukan check-in di resepsionis klinik.</p>
+            <h1>{t('bookingPage.successTitle')}</h1>
+            <p>{t('bookingPage.successText')}</p>
           </div>
         </Card>
       </div>
@@ -100,21 +102,21 @@ export default function Booking() {
           <LogoIcon variant="light" size={40} />
           <Wordmark variant="light" />
         </div>
-        <p className={styles.subtitle}>Booking Appointment</p>
+        <p className={styles.subtitle}>{t('bookingPage.subtitle')}</p>
 
         <form className={styles.form} onSubmit={handleSubmit}>
           {error && <div className={styles.error}>{error}</div>}
 
           <Select
             id="doctor_id"
-            label="Pilih Dokter"
+            label={t('bookingPage.selectDoctorLabel')}
             value={doctorId}
             onChange={(e) => {
               setDoctorId(e.target.value);
               setScheduledAt('');
             }}
           >
-            <option value="">Pilih dokter</option>
+            <option value="">{t('bookingPage.selectDoctorPlaceholder')}</option>
             {doctors.map((doctor) => (
               <option key={doctor.id} value={doctor.id}>{doctor.full_name}</option>
             ))}
@@ -123,7 +125,7 @@ export default function Booking() {
           <div className={styles.grid}>
             <Input
               id="date"
-              label="Tanggal"
+              label={t('bookingPage.dateLabel')}
               type="date"
               min={new Date().toISOString().slice(0, 10)}
               value={date}
@@ -135,13 +137,13 @@ export default function Booking() {
             />
             <Select
               id="scheduled_at"
-              label="Jam"
+              label={t('bookingPage.timeLabel')}
               value={scheduledAt}
               onChange={(e) => setScheduledAt(e.target.value)}
               disabled={!date || availableSlots.length === 0}
             >
               <option value="">
-                {date && availableSlots.length === 0 ? 'Tidak ada slot tersedia' : 'Pilih jam'}
+                {date && availableSlots.length === 0 ? t('bookingPage.noSlotsAvailable') : t('bookingPage.selectTimePlaceholder')}
               </option>
               {availableSlots.map((slot) => (
                 <option key={slot.toISOString()} value={slot.toISOString()}>
@@ -151,11 +153,11 @@ export default function Booking() {
             </Select>
           </div>
 
-          <Input id="full_name" label="Nama Lengkap" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
-          <Input id="phone" label="No. HP" value={phone} onChange={(e) => setPhone(e.target.value)} />
+          <Input id="full_name" label={t('bookingPage.fullNameLabel')} value={fullName} onChange={(e) => setFullName(e.target.value)} required />
+          <Input id="phone" label={t('bookingPage.phoneLabel')} value={phone} onChange={(e) => setPhone(e.target.value)} />
 
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? 'Memproses...' : 'Booking Sekarang'}
+            {isSubmitting ? t('bookingPage.processing') : t('bookingPage.submit')}
           </Button>
         </form>
       </Card>

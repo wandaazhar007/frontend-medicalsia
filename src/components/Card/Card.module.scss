@@ -1,9 +1,10 @@
 @use '../../styles/variables' as *;
 
 .card {
-  background: $color-surface;
+  background: var(--color-surface);
   border-radius: $radius-lg;
   box-shadow: $shadow-sm;
-  border: 1px solid $color-border;
+  border: 1px solid var(--color-border);
   padding: $space-5;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
 }

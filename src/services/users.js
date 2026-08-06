@@ -15,3 +15,17 @@ export function updateUser(id, payload) {
 export function inviteUser(payload) {
   return api.post('/auth/invite', payload).then((res) => res.data);
 }
+
+export function getMe() {
+  return api.get('/users/me').then((res) => res.data);
+}
+
+export function updateMe(payload) {
+  return api.patch('/users/me', payload).then((res) => res.data);
+}
+
+export function uploadMyPhoto(file) {
+  const formData = new FormData();
+  formData.append('photo', file);
+  return api.post('/users/me/photo', formData, { headers: { 'Content-Type': 'multipart/form-data' } }).then((res) => res.data);
+}

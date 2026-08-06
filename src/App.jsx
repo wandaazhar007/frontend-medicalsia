@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { PreferencesProvider } from './context/PreferencesContext';
 import ConnectionStatus from './components/ConnectionStatus/ConnectionStatus';
 import Login from './pages/Login/Login';
 import Booking from './pages/booking/Booking';
@@ -21,6 +22,7 @@ import InvoiceDetail from './pages/dashboard/invoices/InvoiceDetail';
 import PharmacyPage from './pages/dashboard/pharmacy/PharmacyPage';
 import UsersList from './pages/dashboard/users/UsersList';
 import UserForm from './pages/dashboard/users/UserForm';
+import ProfilePage from './pages/dashboard/profile/ProfilePage';
 
 // /pages/dashboard/* requires an authenticated session; /pages/booking,
 // /pages/display, and /pages/display-pharmacy must never be wrapped in this guard.
@@ -96,6 +98,7 @@ function AppRoutes() {
             </RequireRole>
           )}
         />
+        <Route path="profile" element={<ProfilePage />} />
       </Route>
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>
@@ -105,9 +108,11 @@ function AppRoutes() {
 export default function App() {
   return (
     <AuthProvider>
-      <ConnectionStatus>
-        <AppRoutes />
-      </ConnectionStatus>
+      <PreferencesProvider>
+        <ConnectionStatus>
+          <AppRoutes />
+        </ConnectionStatus>
+      </PreferencesProvider>
     </AuthProvider>
   );
 }

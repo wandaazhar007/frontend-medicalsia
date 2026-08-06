@@ -46,8 +46,14 @@ export function AuthProvider({ children }) {
     await signOut(auth);
   }
 
+  // Applied after a profile/photo update succeeds, so the Topbar avatar/name
+  // reflect the change immediately without a full /auth/verify round-trip.
+  function updateLocalUser(partial) {
+    setUser((current) => (current ? { ...current, ...partial } : current));
+  }
+
   return (
-    <AuthContext.Provider value={{ firebaseUser, user, loading, login, logout }}>
+    <AuthContext.Provider value={{ firebaseUser, user, loading, login, logout, updateLocalUser }}>
       {children}
     </AuthContext.Provider>
   );

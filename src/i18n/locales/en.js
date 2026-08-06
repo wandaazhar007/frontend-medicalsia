@@ -1,6 +1,6 @@
 // English translations. Scope so far: Navbar (Topbar + its dropdowns/modal),
 // Login, Dashboard, PharmacyPage, Patients (list/form/detail), Appointments
-// (list/form) — see id.js for the full key list/context.
+// (list/form), QueuePage — see id.js for the full key list/context.
 export default {
   common: {
     cancel: 'Cancel',
@@ -210,5 +210,16 @@ export default {
       saving: 'Saving...',
       cancel: 'Cancel',
     },
+  },
+  queuePage: {
+    title: 'Queue',
+    empty: 'No patients checked in today yet.',
+    noDoctor: 'No doctor assigned',
+    waiting: 'Waiting',
+    inConsultation: 'In Consultation',
+    call: 'Call',
+    startConsultation: 'Start Consultation',
+    continueConsultation: 'Continue Consultation',
+    complete: 'Complete',
   },
 };

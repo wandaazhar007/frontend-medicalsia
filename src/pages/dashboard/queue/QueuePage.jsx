@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Stethoscope, Volume2 } from 'lucide-react';
 import { listAppointments, updateAppointmentStatus } from '../../../services/appointments';
 import { createQueueCall } from '../../../services/queueCalls';
@@ -17,6 +18,7 @@ function todayIsoDate() {
 // currently in consultation. Small/short-lived list, no pagination needed
 // (same reasoning as doctor_schedules).
 export default function QueuePage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [appointments, setAppointments] = useState([]);
 
@@ -52,10 +54,10 @@ export default function QueuePage() {
 
   return (
     <div className={styles.wrapper}>
-      <h1 className={styles.title}>Antrian</h1>
+      <h1 className={styles.title}>{t('queuePage.title')}</h1>
 
       {appointments.length === 0 ? (
-        <EmptyState message="Belum ada pasien yang check-in hari ini." />
+        <EmptyState message={t('queuePage.empty')} />
       ) : (
         <div className={styles.list}>
           {appointments.map((appointment) => (
@@ -64,10 +66,10 @@ export default function QueuePage() {
                 <span className={styles.queueNumber}>{appointment.queue_number}</span>
                 <div>
                   <div className={styles.patientName}>{appointment.patient_name}</div>
-                  <div className={styles.doctorName}>{appointment.doctor_name || 'Belum ada dokter'}</div>
+                  <div className={styles.doctorName}>{appointment.doctor_name || t('queuePage.noDoctor')}</div>
                 </div>
                 <Badge variant="warning">
-                  {appointment.status === 'checked_in' ? 'Menunggu' : 'Konsultasi'}
+                  {appointment.status === 'checked_in' ? t('queuePage.waiting') : t('queuePage.inConsultation')}
                 </Badge>
               </div>
               <div className={styles.actions}>
@@ -75,11 +77,11 @@ export default function QueuePage() {
                   <>
                     <Button variant="secondary" onClick={() => handleCall(appointment)}>
                       <Volume2 size={16} />
-                      Panggil
+                      {t('queuePage.call')}
                     </Button>
                     <Button variant="ghost" onClick={() => handleStartConsultation(appointment)}>
                       <Stethoscope size={16} />
-                      Mulai Konsultasi
+                      {t('queuePage.startConsultation')}
                     </Button>
                   </>
                 )}
@@ -87,10 +89,10 @@ export default function QueuePage() {
                   <>
                     <Button variant="secondary" onClick={() => navigate(`/dashboard/consultation/${appointment.id}`)}>
                       <Stethoscope size={16} />
-                      Lanjutkan Konsultasi
+                      {t('queuePage.continueConsultation')}
                     </Button>
                     <Button variant="ghost" onClick={() => handleStatusChange(appointment.id, 'completed')}>
-                      Selesai
+                      {t('queuePage.complete')}
                     </Button>
                   </>
                 )}

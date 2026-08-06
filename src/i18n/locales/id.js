@@ -1,8 +1,8 @@
 // Indonesian strings — the app's default/original language.
 // Scope so far: Navbar (Topbar + its dropdowns/modal), Login, Dashboard,
-// PharmacyPage, Patients (list/form/detail), Appointments (list/form).
-// Other pages still have hardcoded Indonesian text and are unaffected by
-// the language toggle until they're migrated in a follow-up pass.
+// PharmacyPage, Patients (list/form/detail), Appointments (list/form),
+// QueuePage. Other pages still have hardcoded Indonesian text and are
+// unaffected by the language toggle until they're migrated in a follow-up pass.
 export default {
   common: {
     cancel: 'Batal',
@@ -212,5 +212,16 @@ export default {
       saving: 'Menyimpan...',
       cancel: 'Batal',
     },
+  },
+  queuePage: {
+    title: 'Antrian',
+    empty: 'Belum ada pasien yang check-in hari ini.',
+    noDoctor: 'Belum ada dokter',
+    waiting: 'Menunggu',
+    inConsultation: 'Konsultasi',
+    call: 'Panggil',
+    startConsultation: 'Mulai Konsultasi',
+    continueConsultation: 'Lanjutkan Konsultasi',
+    complete: 'Selesai',
   },
 };

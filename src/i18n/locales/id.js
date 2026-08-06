@@ -1,7 +1,7 @@
 // Indonesian strings — the app's default/original language.
-// Scope so far: Navbar (Topbar + its dropdowns/modal), Login, Dashboard.
-// Other pages still have hardcoded Indonesian text and are unaffected by
-// the language toggle until they're migrated in a follow-up pass.
+// Scope so far: Navbar (Topbar + its dropdowns/modal), Login, Dashboard,
+// PharmacyPage. Other pages still have hardcoded Indonesian text and are
+// unaffected by the language toggle until they're migrated in a follow-up pass.
 export default {
   common: {
     cancel: 'Batal',
@@ -88,5 +88,18 @@ export default {
     title: 'Stok Obat Menipis',
     empty: 'Tidak ada obat dengan stok menipis',
     remainingStock: 'Sisa Stok',
+  },
+  pharmacyPage: {
+    title: 'Farmasi',
+    beingPrepared: 'Sedang Disiapkan',
+    noQueue: 'Belum ada resep yang sudah dibayar dan siap disiapkan.',
+    requested: 'Diminta',
+    stock: 'Stok',
+    lowStockBadge: 'Stok Kurang',
+    give: 'Beri:',
+    processButton: 'Proses Resep',
+    readyForPickup: 'Siap Diambil',
+    noReadyForPickup: 'Belum ada resep yang siap diambil.',
+    callButton: 'Panggil',
   },
 };

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Volume2 } from 'lucide-react';
 import { dispensePrescription, getPharmacyQueue } from '../../../services/pharmacy';
 import { getPublicPharmacyQueue } from '../../../services/publicBooking';
@@ -14,6 +15,7 @@ import styles from './PharmacyPage.module.scss';
 // enforced server-side in PharmacyController.getQueue, this filter is just
 // what the API already guarantees, not a client-side gate.
 export default function PharmacyPage() {
+  const { t } = useTranslation();
   const [queue, setQueue] = useState([]);
   const [readyForPickup, setReadyForPickup] = useState([]);
   const [dispensedQtyByItem, setDispensedQtyByItem] = useState({});
@@ -67,12 +69,12 @@ export default function PharmacyPage() {
 
   return (
     <div className={styles.wrapper}>
-      <h1 className={styles.title}>Farmasi</h1>
+      <h1 className={styles.title}>{t('pharmacyPage.title')}</h1>
 
       <div>
-        <div className={styles.sectionTitle}>Sedang Disiapkan</div>
+        <div className={styles.sectionTitle}>{t('pharmacyPage.beingPrepared')}</div>
         {queue.length === 0 ? (
-          <EmptyState message="Belum ada resep yang sudah dibayar dan siap disiapkan." />
+          <EmptyState message={t('pharmacyPage.noQueue')} />
         ) : (
           <div className={styles.list}>
             {queue.map((prescription) => (
@@ -84,11 +86,11 @@ export default function PharmacyPage() {
                 {prescription.items.map((item) => (
                   <div key={item.id} className={styles.itemRow}>
                     <span>
-                      {item.medicine_name} — Diminta {item.quantity}, Stok {item.stock_qty}
-                      {item.stock_qty < item.quantity && <Badge variant="danger">Stok Kurang</Badge>}
+                      {item.medicine_name} — {t('pharmacyPage.requested')} {item.quantity}, {t('pharmacyPage.stock')} {item.stock_qty}
+                      {item.stock_qty < item.quantity && <Badge variant="danger">{t('pharmacyPage.lowStockBadge')}</Badge>}
                     </span>
                     <div className={styles.itemFields}>
-                      <span>Beri:</span>
+                      <span>{t('pharmacyPage.give')}</span>
                       <div className={styles.qtyInput}>
                         <Input
                           type="number"
@@ -101,7 +103,7 @@ export default function PharmacyPage() {
                     </div>
                   </div>
                 ))}
-                <Button onClick={() => handleDispense(prescription)}>Proses Resep</Button>
+                <Button onClick={() => handleDispense(prescription)}>{t('pharmacyPage.processButton')}</Button>
               </Card>
             ))}
           </div>
@@ -109,9 +111,9 @@ export default function PharmacyPage() {
       </div>
 
       <div>
-        <div className={styles.sectionTitle}>Siap Diambil</div>
+        <div className={styles.sectionTitle}>{t('pharmacyPage.readyForPickup')}</div>
         {readyForPickup.length === 0 ? (
-          <EmptyState message="Belum ada resep yang siap diambil." />
+          <EmptyState message={t('pharmacyPage.noReadyForPickup')} />
         ) : (
           <Card>
             {readyForPickup.map((entry) => (
@@ -119,7 +121,7 @@ export default function PharmacyPage() {
                 <span className={styles.queueNumber}>{entry.queue_number}</span>
                 <Button variant="secondary" onClick={() => handleCall(entry.queue_number)}>
                   <Volume2 size={16} />
-                  Panggil
+                  {t('pharmacyPage.callButton')}
                 </Button>
               </div>
             ))}

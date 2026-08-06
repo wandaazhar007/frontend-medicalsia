@@ -1,5 +1,5 @@
 // English translations. Scope so far: Navbar (Topbar + its dropdowns/modal),
-// Login, Dashboard — see id.js for the full key list/context.
+// Login, Dashboard, PharmacyPage — see id.js for the full key list/context.
 export default {
   common: {
     cancel: 'Cancel',
@@ -86,5 +86,18 @@ export default {
     title: 'Low Stock Medicines',
     empty: 'No medicines with low stock',
     remainingStock: 'Remaining Stock',
+  },
+  pharmacyPage: {
+    title: 'Pharmacy',
+    beingPrepared: 'Being Prepared',
+    noQueue: 'No paid prescriptions ready to be prepared yet.',
+    requested: 'Requested',
+    stock: 'Stock',
+    lowStockBadge: 'Low Stock',
+    give: 'Give:',
+    processButton: 'Process Prescription',
+    readyForPickup: 'Ready for Pickup',
+    noReadyForPickup: 'No prescriptions ready for pickup yet.',
+    callButton: 'Call',
   },
 };

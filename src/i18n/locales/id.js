@@ -49,7 +49,7 @@ export default {
     language: 'Bahasa',
   },
   dashboard: {
-    title: 'Dashboard',
+    title: 'Selamat datang, {{name}}',
     staffLogin: 'Staf login',
     clinicProfile: 'Profil Klinik',
     notSet: 'Belum diatur',

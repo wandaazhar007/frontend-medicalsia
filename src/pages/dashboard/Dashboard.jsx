@@ -85,7 +85,7 @@ export default function Dashboard() {
 
   return (
     <div className={styles.wrapper}>
-      <h1 className={styles.title}>{t('dashboard.title')}</h1>
+      <h1 className={styles.title}>{t('dashboard.title', { name: user?.full_name })}</h1>
       <Card>
         <div className={styles.row}>
           <span>{t('dashboard.staffLogin')}</span>

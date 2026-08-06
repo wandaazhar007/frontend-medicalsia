@@ -48,7 +48,7 @@ export default {
     language: 'Language',
   },
   dashboard: {
-    title: 'Dashboard',
+    title: 'Welcome, {{name}}',
     staffLogin: 'Logged in as',
     clinicProfile: 'Clinic Profile',
     notSet: 'Not set',

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import Card from '../../components/Card/Card';
@@ -17,6 +18,7 @@ function isValidEmail(value) {
 }
 
 export default function Login() {
+  const { t } = useTranslation();
   const { login } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState(() => localStorage.getItem(REMEMBERED_EMAIL_KEY) || '');
@@ -35,12 +37,12 @@ export default function Login() {
   function validate() {
     const errors = {};
     if (!email.trim()) {
-      errors.email = 'Email wajib diisi.';
+      errors.email = t('login.emailRequired');
     } else if (!isValidEmail(email)) {
-      errors.email = 'Format email tidak valid.';
+      errors.email = t('login.emailInvalid');
     }
     if (!password) {
-      errors.password = 'Password wajib diisi.';
+      errors.password = t('login.passwordRequired');
     }
     return errors;
   }
@@ -58,7 +60,7 @@ export default function Login() {
       await login(email, password);
       navigate('/dashboard');
     } catch {
-      setFormError('Email atau password salah.');
+      setFormError(t('login.loginFailed'));
     } finally {
       setIsSubmitting(false);
     }
@@ -71,13 +73,13 @@ export default function Login() {
           <LogoIcon variant="light" size={40} />
           <Wordmark variant="light" />
         </div>
-        <p className={styles.subtitle}>The Modern Clinic App for Indonesia</p>
+        <p className={styles.subtitle}>{t('login.subtitle')}</p>
 
         <form className={styles.form} onSubmit={handleSubmit} noValidate>
           {formError && <div className={styles.error}>{formError}</div>}
           <Input
             id="email"
-            label="Email"
+            label={t('login.emailLabel')}
             type="email"
             value={email}
             onChange={handleEmailChange}
@@ -85,7 +87,7 @@ export default function Login() {
           />
           <Input
             id="password"
-            label="Password"
+            label={t('login.passwordLabel')}
             type={isPasswordVisible ? 'text' : 'password'}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -96,7 +98,7 @@ export default function Login() {
                 className={styles.eyeButton}
                 onClick={() => setIsPasswordVisible((visible) => !visible)}
                 tabIndex={-1}
-                aria-label={isPasswordVisible ? 'Sembunyikan password' : 'Tampilkan password'}
+                aria-label={isPasswordVisible ? t('login.hidePassword') : t('login.showPassword')}
               >
                 {isPasswordVisible ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
@@ -104,7 +106,7 @@ export default function Login() {
           />
           <Button type="submit" disabled={isSubmitting}>
             <LogIn size={18} />
-            {isSubmitting ? 'Masuk...' : 'Masuk'}
+            {isSubmitting ? t('login.submitting') : t('login.submit')}
           </Button>
         </form>
       </Card>

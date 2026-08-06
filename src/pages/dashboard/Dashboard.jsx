@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
 import { getOwnerStats, getDoctorStats, getPharmacyStats } from '../../services/dashboard';
@@ -19,6 +20,7 @@ function formatTime(value) {
 }
 
 export default function Dashboard() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [clinic, setClinic] = useState(null);
   const [stats, setStats] = useState(null);
@@ -83,25 +85,25 @@ export default function Dashboard() {
 
   return (
     <div className={styles.wrapper}>
-      <h1 className={styles.title}>Dashboard</h1>
+      <h1 className={styles.title}>{t('dashboard.title')}</h1>
       <Card>
         <div className={styles.row}>
-          <span>Staf login</span>
+          <span>{t('dashboard.staffLogin')}</span>
           <span>{user?.full_name} ({user?.role})</span>
         </div>
         <div className={styles.row}>
-          <span>Profil Klinik</span>
-          <span>{clinic ? clinic.name : 'Belum diatur'}</span>
+          <span>{t('dashboard.clinicProfile')}</span>
+          <span>{clinic ? clinic.name : t('dashboard.notSet')}</span>
         </div>
       </Card>
 
       {canViewStats && stats && (
         <>
-          <h2 className={styles.sectionTitle}>Ringkasan Hari Ini</h2>
+          <h2 className={styles.sectionTitle}>{t('dashboard.todaySummary')}</h2>
           <div className={styles.statsGrid}>
-            <StatCard label="Appointment Hari Ini" value={stats.appointments_today.total} />
-            <StatCard label="Pendapatan Hari Ini" value={formatCurrency(stats.revenue_today)} />
-            <StatCard label="Invoice Belum Lunas" value={stats.invoices_unpaid_count} />
+            <StatCard label={t('dashboard.appointmentsToday')} value={stats.appointments_today.total} />
+            <StatCard label={t('dashboard.revenueToday')} value={formatCurrency(stats.revenue_today)} />
+            <StatCard label={t('dashboard.unpaidInvoices')} value={stats.invoices_unpaid_count} />
           </div>
 
           <div className={styles.chartsGrid}>
@@ -109,10 +111,10 @@ export default function Dashboard() {
             <QueueChart doctorCount={stats.queue_active.doctor_count} pharmacyCount={stats.queue_active.pharmacy_count} />
           </div>
 
-          <h2 className={styles.sectionTitle}>Perlu Perhatian</h2>
+          <h2 className={styles.sectionTitle}>{t('dashboard.needsAttention')}</h2>
           <div className={styles.statsGrid}>
             <StatCard
-              label="Refund Tertunda"
+              label={t('dashboard.pendingRefund')}
               value={stats.refunds_pending.count}
               hint={stats.refunds_pending.count > 0 ? formatCurrency(stats.refunds_pending.total_amount) : undefined}
               variant={stats.refunds_pending.count > 0 ? 'warning' : 'default'}
@@ -122,30 +124,30 @@ export default function Dashboard() {
             <LowStockChart items={stats.medicines_low_stock.items} />
           </div>
 
-          <h2 className={styles.sectionTitle}>Klinik</h2>
+          <h2 className={styles.sectionTitle}>{t('dashboard.clinicSection')}</h2>
           <div className={styles.statsGrid}>
-            <StatCard label="Total Pasien" value={stats.patients_total} />
-            <StatCard label="Staf Aktif" value={stats.staff_active_count} />
+            <StatCard label={t('dashboard.totalPatients')} value={stats.patients_total} />
+            <StatCard label={t('dashboard.activeStaff')} value={stats.staff_active_count} />
           </div>
         </>
       )}
 
       {isDoctor && doctorStats && (
         <>
-          <h2 className={styles.sectionTitle}>Jadwal Hari Ini</h2>
+          <h2 className={styles.sectionTitle}>{t('dashboard.todaySchedule')}</h2>
           <div className={styles.statsGrid}>
-            <StatCard label="Appointment Hari Ini" value={doctorStats.appointments_today.total} />
-            <StatCard label="Menunggu" value={doctorStats.appointments_today.checked_in} />
-            <StatCard label="Sedang Konsultasi" value={doctorStats.appointments_today.in_consultation} />
+            <StatCard label={t('dashboard.appointmentsToday')} value={doctorStats.appointments_today.total} />
+            <StatCard label={t('dashboard.waiting')} value={doctorStats.appointments_today.checked_in} />
+            <StatCard label={t('dashboard.inConsultation')} value={doctorStats.appointments_today.in_consultation} />
           </div>
 
           <div className={styles.chartsGrid}>
             <AppointmentStatusChart appointmentsToday={doctorStats.appointments_today} />
           </div>
 
-          <h2 className={styles.sectionTitle}>Pasien Berikutnya</h2>
+          <h2 className={styles.sectionTitle}>{t('dashboard.nextPatients')}</h2>
           {doctorStats.next_patients.length === 0 ? (
-            <EmptyState message="Belum ada pasien menunggu" />
+            <EmptyState message={t('dashboard.noPatientsWaiting')} />
           ) : (
             <Card>
               {doctorStats.next_patients.map((patient) => (
@@ -161,10 +163,10 @@ export default function Dashboard() {
 
       {isPharmacy && pharmacyStats && (
         <>
-          <h2 className={styles.sectionTitle}>Dispensing</h2>
+          <h2 className={styles.sectionTitle}>{t('dashboard.dispensing')}</h2>
           <div className={styles.statsGrid}>
-            <StatCard label="Antrian Siap Dispense" value={pharmacyStats.queue_count} />
-            <StatCard label="Selesai Hari Ini" value={pharmacyStats.completed_today_count} />
+            <StatCard label={t('dashboard.queueReadyToDispense')} value={pharmacyStats.queue_count} />
+            <StatCard label={t('dashboard.completedToday')} value={pharmacyStats.completed_today_count} />
           </div>
 
           <div className={styles.chartsGrid}>

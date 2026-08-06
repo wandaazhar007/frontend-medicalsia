@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Bar, BarChart, LabelList, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import Card from '../Card/Card';
 import EmptyState from '../EmptyState/EmptyState';
@@ -9,11 +10,13 @@ import styles from './LowStockChart.module.scss';
 const DANGER_HEX = '#DC2626';
 
 export default function LowStockChart({ items }) {
+  const { t } = useTranslation();
+
   if (items.length === 0) {
     return (
       <Card className={styles.wrapper}>
-        <span className={styles.title}>Stok Obat Menipis</span>
-        <EmptyState message="Tidak ada obat dengan stok menipis" />
+        <span className={styles.title}>{t('lowStockChart.title')}</span>
+        <EmptyState message={t('lowStockChart.empty')} />
       </Card>
     );
   }
@@ -31,7 +34,7 @@ export default function LowStockChart({ items }) {
 
   return (
     <Card className={styles.wrapper}>
-      <span className={styles.title}>Stok Obat Menipis</span>
+      <span className={styles.title}>{t('lowStockChart.title')}</span>
       <ResponsiveContainer width="100%" height={Math.max(140, data.length * 32)}>
         <BarChart data={data} layout="vertical" margin={{ top: 4, right: 24, bottom: 4, left: 0 }}>
           <XAxis type="number" allowDecimals={false} tick={{ fontSize: 12, fill: CHART_AXIS }} axisLine={{ stroke: CHART_AXIS }} tickLine={false} />
@@ -43,7 +46,7 @@ export default function LowStockChart({ items }) {
             axisLine={{ stroke: CHART_AXIS }}
             tickLine={false}
           />
-          <Tooltip formatter={(_value, _name, props) => [props.payload.stock_qty, 'Sisa Stok']} cursor={{ fill: 'rgba(0,0,0,0.03)' }} />
+          <Tooltip formatter={(_value, _name, props) => [props.payload.stock_qty, t('lowStockChart.remainingStock')]} cursor={{ fill: 'rgba(0,0,0,0.03)' }} />
           <Bar dataKey="display" radius={[0, 4, 4, 0]} maxBarSize={18} fill={DANGER_HEX}>
             <LabelList dataKey="stock_qty" position="right" style={{ fontSize: 12, fill: '#6B7280' }} />
           </Bar>

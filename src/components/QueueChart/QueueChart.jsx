@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 import Card from '../Card/Card';
 import EmptyState from '../EmptyState/EmptyState';
@@ -32,23 +33,25 @@ function renderCustomizedLabelLine(props) {
 }
 
 export default function QueueChart({ doctorCount, pharmacyCount }) {
+  const { t } = useTranslation();
+
   const data = [
-    { name: 'Antrian Dokter', value: doctorCount, color: CHART_CATEGORICAL[0] },
-    { name: 'Antrian Farmasi', value: pharmacyCount, color: CHART_CATEGORICAL[1] },
+    { name: t('queueChart.doctorQueue'), value: doctorCount, color: CHART_CATEGORICAL[0] },
+    { name: t('queueChart.pharmacyQueue'), value: pharmacyCount, color: CHART_CATEGORICAL[1] },
   ];
 
   if (doctorCount === 0 && pharmacyCount === 0) {
     return (
       <Card className={styles.wrapper}>
-        <span className={styles.title}>Antrian Aktif</span>
-        <EmptyState message="Tidak ada antrian aktif saat ini" />
+        <span className={styles.title}>{t('queueChart.title')}</span>
+        <EmptyState message={t('queueChart.empty')} />
       </Card>
     );
   }
 
   return (
     <Card className={styles.wrapper}>
-      <span className={styles.title}>Antrian Aktif</span>
+      <span className={styles.title}>{t('queueChart.title')}</span>
       <ResponsiveContainer width="100%" height={220}>
         <PieChart margin={{ top: 16, right: 16, bottom: 16, left: 16 }}>
           <Pie
@@ -66,7 +69,7 @@ export default function QueueChart({ doctorCount, pharmacyCount }) {
               <Cell key={entry.name} fill={entry.color} stroke="#fff" strokeWidth={2} />
             ))}
           </Pie>
-          <Tooltip formatter={(value) => [value, 'Jumlah']} />
+          <Tooltip formatter={(value) => [value, t('queueChart.count')]} />
           <Legend verticalAlign="bottom" height={24} />
         </PieChart>
       </ResponsiveContainer>

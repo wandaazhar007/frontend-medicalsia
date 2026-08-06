@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
+import i18n from '../i18n';
 
 const THEME_KEY = 'medicalsia:theme';
 const LANGUAGE_KEY = 'medicalsia:language';
@@ -15,6 +16,7 @@ export function PreferencesProvider({ children }) {
   }, [theme]);
 
   useEffect(() => {
+    i18n.changeLanguage(language);
     localStorage.setItem(LANGUAGE_KEY, language);
   }, [language]);
 

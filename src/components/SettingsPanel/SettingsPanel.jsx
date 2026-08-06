@@ -1,15 +1,17 @@
+import { useTranslation } from 'react-i18next';
 import { usePreferences } from '../../context/PreferencesContext';
 import styles from './SettingsPanel.module.scss';
 
 export default function SettingsPanel() {
+  const { t } = useTranslation();
   const { theme, toggleTheme, language, toggleLanguage } = usePreferences();
 
   return (
     <div className={styles.panel}>
-      <div className={styles.header}>Pengaturan</div>
+      <div className={styles.header}>{t('settingsPanel.title')}</div>
 
       <div className={styles.row}>
-        <span className={styles.label}>Tema</span>
+        <span className={styles.label}>{t('settingsPanel.theme')}</span>
         <button
           type="button"
           className={styles.toggle}
@@ -23,7 +25,7 @@ export default function SettingsPanel() {
       </div>
 
       <div className={styles.row}>
-        <span className={styles.label}>Bahasa</span>
+        <span className={styles.label}>{t('settingsPanel.language')}</span>
         <button
           type="button"
           className={styles.toggle}

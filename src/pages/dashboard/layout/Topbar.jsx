@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Bell, CircleChevronDown, LogOut, Settings, User, X } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
 import LogoIcon from '../../../components/LogoIcon/LogoIcon';
@@ -11,6 +12,7 @@ import Button from '../../../components/Button/Button';
 import styles from './Topbar.module.scss';
 
 export default function Topbar() {
+  const { t } = useTranslation();
   const { user, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
@@ -52,20 +54,20 @@ export default function Topbar() {
       {/* Desktop/tablet-up: icons inline. Below the breakpoint these hide
           entirely in favor of the hamburger button and dropdown. */}
       <div className={styles.actions}>
-        <button type="button" className={styles.iconButton} title="Notifikasi" onClick={toggleNotif}>
+        <button type="button" className={styles.iconButton} title={t('navbar.notifications')} onClick={toggleNotif}>
           <Bell size={18} />
         </button>
-        <Link to="/dashboard/profile" className={styles.iconButton} title="Profil" onClick={closeAllDropdowns}>
+        <Link to="/dashboard/profile" className={styles.iconButton} title={t('navbar.profile')} onClick={closeAllDropdowns}>
           {user?.photo_url ? (
             <img src={user.photo_url} alt="" className={styles.avatarThumb} />
           ) : (
             <User size={18} />
           )}
         </Link>
-        <button type="button" className={styles.iconButton} title="Pengaturan" onClick={toggleSettings}>
+        <button type="button" className={styles.iconButton} title={t('navbar.settings')} onClick={toggleSettings}>
           <Settings size={18} />
         </button>
-        <button type="button" className={styles.iconButton} title="Keluar" onClick={() => setIsLogoutModalOpen(true)}>
+        <button type="button" className={styles.iconButton} title={t('navbar.logout')} onClick={() => setIsLogoutModalOpen(true)}>
           <LogOut size={18} />
         </button>
       </div>
@@ -73,7 +75,7 @@ export default function Topbar() {
       <button
         type="button"
         className={styles.hamburgerButton}
-        title={isMenuOpen ? 'Tutup menu' : 'Buka menu'}
+        title={isMenuOpen ? t('navbar.closeMenu') : t('navbar.openMenu')}
         onClick={() => setIsMenuOpen((open) => !open)}
       >
         {isMenuOpen ? <X size={20} /> : <CircleChevronDown size={20} />}
@@ -85,15 +87,15 @@ export default function Topbar() {
           <div className={styles.mobileMenu}>
             <button type="button" className={styles.mobileMenuItem} onClick={toggleNotif}>
               <Bell size={18} />
-              Notifikasi
+              {t('navbar.notifications')}
             </button>
             <Link to="/dashboard/profile" className={styles.mobileMenuItem} onClick={closeAllDropdowns}>
               <User size={18} />
-              Profil
+              {t('navbar.profile')}
             </Link>
             <button type="button" className={styles.mobileMenuItem} onClick={toggleSettings}>
               <Settings size={18} />
-              Pengaturan
+              {t('navbar.settings')}
             </button>
             <button
               type="button"
@@ -104,7 +106,7 @@ export default function Topbar() {
               }}
             >
               <LogOut size={18} />
-              Keluar
+              {t('navbar.logout')}
             </button>
           </div>
         </>
@@ -128,14 +130,14 @@ export default function Topbar() {
         </>
       )}
 
-      <Modal isOpen={isLogoutModalOpen} onClose={() => setIsLogoutModalOpen(false)} title="Konfirmasi Keluar">
-        <p className={styles.modalText}>Apakah kamu yakin ingin keluar dari akun ini?</p>
+      <Modal isOpen={isLogoutModalOpen} onClose={() => setIsLogoutModalOpen(false)} title={t('navbar.logoutConfirmTitle')}>
+        <p className={styles.modalText}>{t('navbar.logoutConfirmText')}</p>
         <div className={styles.modalActions}>
           <Button type="button" variant="secondary" onClick={() => setIsLogoutModalOpen(false)}>
-            Batal
+            {t('common.cancel')}
           </Button>
           <Button type="button" variant="danger" onClick={confirmLogout}>
-            Keluar
+            {t('navbar.logout')}
           </Button>
         </div>
       </Modal>

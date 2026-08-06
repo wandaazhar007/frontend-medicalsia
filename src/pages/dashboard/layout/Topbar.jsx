@@ -4,20 +4,41 @@ import { Bell, CircleChevronDown, LogOut, Settings, User, X } from 'lucide-react
 import { useAuth } from '../../../context/AuthContext';
 import LogoIcon from '../../../components/LogoIcon/LogoIcon';
 import Wordmark from '../../../components/LogoIcon/Wordmark';
+import NotificationPanel from '../../../components/NotificationPanel/NotificationPanel';
+import SettingsPanel from '../../../components/SettingsPanel/SettingsPanel';
+import Modal from '../../../components/Modal/Modal';
+import Button from '../../../components/Button/Button';
 import styles from './Topbar.module.scss';
 
-// Notification/profile/settings have no destination page yet (later phases) —
-// they're rendered now so the chrome matches the final layout, but only
-// Logout is wired up.
-const MENU_ITEMS = [
-  { key: 'notifications', label: 'Notifikasi (segera hadir)', icon: Bell },
-  { key: 'profile', label: 'Profil (segera hadir)', icon: User },
-  { key: 'settings', label: 'Pengaturan (segera hadir)', icon: Settings },
-];
-
 export default function Topbar() {
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isNotifOpen, setIsNotifOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+
+  function closeAllDropdowns() {
+    setIsMenuOpen(false);
+    setIsNotifOpen(false);
+    setIsSettingsOpen(false);
+  }
+
+  function toggleNotif() {
+    setIsSettingsOpen(false);
+    setIsMenuOpen(false);
+    setIsNotifOpen((open) => !open);
+  }
+
+  function toggleSettings() {
+    setIsNotifOpen(false);
+    setIsMenuOpen(false);
+    setIsSettingsOpen((open) => !open);
+  }
+
+  async function confirmLogout() {
+    setIsLogoutModalOpen(false);
+    await logout();
+  }
 
   return (
     <header className={styles.topbar}>
@@ -31,16 +52,20 @@ export default function Topbar() {
       {/* Desktop/tablet-up: icons inline. Below the breakpoint these hide
           entirely in favor of the hamburger button and dropdown. */}
       <div className={styles.actions}>
-        <button type="button" className={styles.iconButton} title="Notifikasi (segera hadir)">
+        <button type="button" className={styles.iconButton} title="Notifikasi" onClick={toggleNotif}>
           <Bell size={18} />
         </button>
-        <button type="button" className={styles.iconButton} title="Profil (segera hadir)">
-          <User size={18} />
-        </button>
-        <button type="button" className={styles.iconButton} title="Pengaturan (segera hadir)">
+        <Link to="/dashboard/profile" className={styles.iconButton} title="Profil" onClick={closeAllDropdowns}>
+          {user?.photo_url ? (
+            <img src={user.photo_url} alt="" className={styles.avatarThumb} />
+          ) : (
+            <User size={18} />
+          )}
+        </Link>
+        <button type="button" className={styles.iconButton} title="Pengaturan" onClick={toggleSettings}>
           <Settings size={18} />
         </button>
-        <button type="button" className={styles.iconButton} title="Keluar" onClick={logout}>
+        <button type="button" className={styles.iconButton} title="Keluar" onClick={() => setIsLogoutModalOpen(true)}>
           <LogOut size={18} />
         </button>
       </div>
@@ -58,18 +83,24 @@ export default function Topbar() {
         <>
           <div className={styles.backdrop} onClick={() => setIsMenuOpen(false)} />
           <div className={styles.mobileMenu}>
-            {MENU_ITEMS.map(({ key, label, icon: Icon }) => (
-              <button key={key} type="button" className={styles.mobileMenuItem}>
-                <Icon size={18} />
-                {label}
-              </button>
-            ))}
+            <button type="button" className={styles.mobileMenuItem} onClick={toggleNotif}>
+              <Bell size={18} />
+              Notifikasi
+            </button>
+            <Link to="/dashboard/profile" className={styles.mobileMenuItem} onClick={closeAllDropdowns}>
+              <User size={18} />
+              Profil
+            </Link>
+            <button type="button" className={styles.mobileMenuItem} onClick={toggleSettings}>
+              <Settings size={18} />
+              Pengaturan
+            </button>
             <button
               type="button"
               className={styles.mobileMenuItem}
               onClick={() => {
                 setIsMenuOpen(false);
-                logout();
+                setIsLogoutModalOpen(true);
               }}
             >
               <LogOut size={18} />
@@ -78,6 +109,36 @@ export default function Topbar() {
           </div>
         </>
       )}
+
+      {isNotifOpen && (
+        <>
+          <div className={styles.backdrop} onClick={() => setIsNotifOpen(false)} />
+          <div className={styles.dropdown}>
+            <NotificationPanel />
+          </div>
+        </>
+      )}
+
+      {isSettingsOpen && (
+        <>
+          <div className={styles.backdrop} onClick={() => setIsSettingsOpen(false)} />
+          <div className={styles.dropdown}>
+            <SettingsPanel />
+          </div>
+        </>
+      )}
+
+      <Modal isOpen={isLogoutModalOpen} onClose={() => setIsLogoutModalOpen(false)} title="Konfirmasi Keluar">
+        <p className={styles.modalText}>Apakah kamu yakin ingin keluar dari akun ini?</p>
+        <div className={styles.modalActions}>
+          <Button type="button" variant="secondary" onClick={() => setIsLogoutModalOpen(false)}>
+            Batal
+          </Button>
+          <Button type="button" variant="danger" onClick={confirmLogout}>
+            Keluar
+          </Button>
+        </div>
+      </Modal>
     </header>
   );
 }

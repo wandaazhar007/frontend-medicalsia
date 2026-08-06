@@ -13,9 +13,10 @@ html {
 body {
   font-family: $font-family-base;
   font-size: $font-size-base;
-  color: $color-text;
-  background: $color-bg;
+  color: var(--color-text);
+  background: var(--color-bg);
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 button,

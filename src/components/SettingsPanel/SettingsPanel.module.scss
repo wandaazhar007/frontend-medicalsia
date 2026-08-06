@@ -1,0 +1,49 @@
+@use '../../styles/variables' as *;
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  min-width: 26rem;
+  gap: $space-1;
+}
+
+.header {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: var(--color-text);
+  padding: $space-2 $space-3;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $space-2 $space-3;
+}
+
+.label {
+  font-size: $font-size-sm;
+  color: var(--color-text);
+}
+
+.toggle {
+  display: flex;
+  border: 1px solid var(--color-border);
+  border-radius: $radius-md;
+  background: var(--color-bg);
+  padding: 0.2rem;
+  cursor: pointer;
+}
+
+.toggleOption {
+  padding: $space-1 $space-3;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  color: var(--color-text-muted);
+  border-radius: $radius-sm;
+}
+
+.toggleOptionActive {
+  background: $color-primary;
+  color: $color-surface;
+}

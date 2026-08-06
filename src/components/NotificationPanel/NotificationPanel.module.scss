@@ -1,0 +1,62 @@
+@use '../../styles/variables' as *;
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  min-width: 30rem;
+  max-width: 36rem;
+}
+
+.header {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: var(--color-text);
+  padding: $space-2 $space-3;
+}
+
+.empty {
+  font-size: $font-size-sm;
+  color: var(--color-text-muted);
+  padding: $space-4 $space-3;
+  text-align: center;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.item {
+  display: flex;
+  align-items: flex-start;
+  gap: $space-3;
+  padding: $space-2 $space-3;
+  border-radius: $radius-md;
+
+  &:hover {
+    background: var(--color-bg);
+  }
+}
+
+.itemIcon {
+  flex-shrink: 0;
+  margin-top: 0.2rem;
+  color: $color-primary;
+}
+
+.itemBody {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.itemText {
+  font-size: $font-size-sm;
+  color: var(--color-text);
+}
+
+.itemTime {
+  font-size: $font-size-xs;
+  color: var(--color-text-muted);
+}

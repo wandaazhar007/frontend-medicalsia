@@ -1,0 +1,20 @@
+// Runtime-switchable theme tokens (CSS custom properties), separate from the
+// compile-time $color-* SCSS variables in variables.scss. This is a
+// foundation: only the global shell (body, Card, Topbar, BottomNav) consumes
+// these tokens today — individual dashboard pages still use $color-* directly
+// and stay light-only until they're migrated in a follow-up pass.
+:root {
+  --color-bg: #F9FAFB;
+  --color-surface: #FFFFFF;
+  --color-text: #111827;
+  --color-text-muted: #6B7280;
+  --color-border: #E5E7EB;
+}
+
+[data-theme='dark'] {
+  --color-bg: #0F172A;
+  --color-surface: #1E293B;
+  --color-text: #F1F5F9;
+  --color-text-muted: #94A3B8;
+  --color-border: #334155;
+}

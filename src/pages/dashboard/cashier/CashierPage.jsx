@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Printer, Trash2 } from 'lucide-react';
 import { listPatients } from '../../../services/patients';
 import { listPrescriptions } from '../../../services/prescriptions';
@@ -28,6 +29,7 @@ function serviceItemType(name) {
 }
 
 export default function CashierPage() {
+  const { t } = useTranslation();
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [pendingPrescription, setPendingPrescription] = useState(null);
   const [includedItemIds, setIncludedItemIds] = useState(new Set());
@@ -134,7 +136,7 @@ export default function CashierPage() {
   async function handleCreateInvoice() {
     setError('');
     if (allItems.length === 0) {
-      setError('Tambahkan minimal satu item (layanan atau obat) sebelum membuat invoice.');
+      setError(t('cashierPage.addItemsError'));
       return;
     }
 
@@ -152,7 +154,7 @@ export default function CashierPage() {
       });
       setDraftInvoice(data);
     } catch {
-      setError('Gagal membuat invoice.');
+      setError(t('cashierPage.createInvoiceError'));
     } finally {
       setIsSubmitting(false);
     }
@@ -166,7 +168,7 @@ export default function CashierPage() {
       const { data } = await getInvoice(draftInvoice.id);
       setPaidInvoice(data);
     } catch {
-      setError('Gagal menandai invoice lunas.');
+      setError(t('cashierPage.markPaidError'));
     } finally {
       setIsPaying(false);
     }
@@ -191,25 +193,25 @@ export default function CashierPage() {
 
   return (
     <div className={styles.wrapper}>
-      <h1 className={styles.title}>Kasir</h1>
+      <h1 className={styles.title}>{t('cashierPage.title')}</h1>
 
       {!paidInvoice && (
         <Card>
-          <div className={styles.sectionTitle}>Buat Invoice</div>
+          <div className={styles.sectionTitle}>{t('cashierPage.createInvoiceTitle')}</div>
           {error && <div className={styles.error}>{error}</div>}
 
           {!selectedPatient ? (
             <SearchableSelect
-              label="Cari Pasien"
-              placeholder="Cari nama, NIK, atau nomor pasien..."
+              label={t('cashierPage.searchPatientLabel')}
+              placeholder={t('cashierPage.searchPatientPlaceholder')}
               loadOptions={loadPatientOptions}
               onSelect={handleSelectPatient}
-              emptyMessage="Ketik untuk mencari pasien."
+              emptyMessage={t('cashierPage.searchPatientEmpty')}
             />
           ) : (
             <div className={styles.checkboxLabel}>
               <strong>{selectedPatient.full_name} ({selectedPatient.patient_number})</strong>
-              {!draftInvoice && <Button variant="ghost" onClick={() => setSelectedPatient(null)}>Ubah</Button>}
+              {!draftInvoice && <Button variant="ghost" onClick={() => setSelectedPatient(null)}>{t('cashierPage.change')}</Button>}
             </div>
           )}
 
@@ -217,7 +219,7 @@ export default function CashierPage() {
             <>
               {pendingPrescription && pendingPrescription.items.length > 0 && (
                 <div>
-                  <div className={styles.sectionTitle}>Resep Menunggu Pembayaran</div>
+                  <div className={styles.sectionTitle}>{t('cashierPage.pendingPrescriptionTitle')}</div>
                   {pendingPrescription.items.map((item) => (
                     <div key={item.id} className={styles.prescriptionItem}>
                       <label className={styles.checkboxLabel}>
@@ -229,7 +231,7 @@ export default function CashierPage() {
                         />
                         <span className={styles.prescriptionItemInfo}>
                           {item.medicine_name} ({item.quantity}x)
-                          {item.is_out_of_stock && <Badge variant="danger">Stok Habis</Badge>}
+                          {item.is_out_of_stock && <Badge variant="danger">{t('cashierPage.outOfStock')}</Badge>}
                         </span>
                       </label>
                       <span>{formatCurrency(item.price * item.quantity)}</span>
@@ -239,13 +241,13 @@ export default function CashierPage() {
               )}
 
               <div>
-                <div className={styles.sectionTitle}>Biaya Konsultasi / Layanan</div>
+                <div className={styles.sectionTitle}>{t('cashierPage.serviceCostTitle')}</div>
                 {!draftInvoice && (
                   <SearchableSelect
-                    placeholder="Cari layanan..."
+                    placeholder={t('cashierPage.searchServicePlaceholder')}
                     loadOptions={loadServiceOptions}
                     onSelect={handleAddService}
-                    emptyMessage="Ketik untuk mencari layanan."
+                    emptyMessage={t('cashierPage.searchServiceEmpty')}
                   />
                 )}
                 {cart.map((item) => (
@@ -271,25 +273,25 @@ export default function CashierPage() {
               </div>
 
               <div className={styles.totalRow}>
-                <span>Total</span>
+                <span>{t('cashierPage.total')}</span>
                 <span>{formatCurrency(total)}</span>
               </div>
 
               {!draftInvoice ? (
                 <Button onClick={handleCreateInvoice} disabled={isSubmitting}>
-                  {isSubmitting ? 'Menyimpan...' : 'Buat Invoice'}
+                  {isSubmitting ? t('cashierPage.saving') : t('cashierPage.createInvoice')}
                 </Button>
               ) : (
                 <div className={styles.payRow}>
-                  <Select label="Metode Pembayaran" value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)}>
-                    <option value="">Pilih metode</option>
-                    <option value="cash">Tunai</option>
-                    <option value="debit_card">Kartu Debit</option>
-                    <option value="credit_card">Kartu Kredit</option>
-                    <option value="qris">QRIS</option>
+                  <Select label={t('cashierPage.paymentMethodLabel')} value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)}>
+                    <option value="">{t('cashierPage.selectMethod')}</option>
+                    <option value="cash">{t('cashierPage.cash')}</option>
+                    <option value="debit_card">{t('cashierPage.debitCard')}</option>
+                    <option value="credit_card">{t('cashierPage.creditCard')}</option>
+                    <option value="qris">{t('cashierPage.qris')}</option>
                   </Select>
                   <Button onClick={handlePay} disabled={!paymentMethod || isPaying}>
-                    {isPaying ? 'Memproses...' : 'Tandai Lunas'}
+                    {isPaying ? t('cashierPage.processing') : t('cashierPage.markPaid')}
                   </Button>
                 </div>
               )}
@@ -300,13 +302,13 @@ export default function CashierPage() {
 
       {paidInvoice && (
         <Card>
-          <div className={styles.success}>Invoice lunas. Pembayaran tercatat.</div>
+          <div className={styles.success}>{t('cashierPage.paidSuccess')}</div>
           <div className={styles.actions}>
             <Button onClick={() => setPrintCount((c) => c + 1)}>
               <Printer size={16} />
-              Cetak Struk
+              {t('cashierPage.printReceipt')}
             </Button>
-            <Button variant="ghost" onClick={handleReset}>Transaksi Baru</Button>
+            <Button variant="ghost" onClick={handleReset}>{t('cashierPage.newTransaction')}</Button>
           </div>
         </Card>
       )}
@@ -314,16 +316,16 @@ export default function CashierPage() {
       {paidInvoice && <ReceiptPrint invoice={paidInvoice} active={printCount > 0} />}
 
       <Card>
-        <div className={styles.sectionTitle}>Refund Tertunda</div>
+        <div className={styles.sectionTitle}>{t('cashierPage.pendingRefundTitle')}</div>
         {shortfalls.length === 0 ? (
-          <EmptyState message="Tidak ada refund tertunda." />
+          <EmptyState message={t('cashierPage.noPendingRefund')} />
         ) : (
           shortfalls.map((shortfall) => (
             <div key={shortfall.id} className={styles.shortfallItem}>
               <span>
                 {shortfall.patient_name} — {shortfall.medicine_name} ({shortfall.qty_shortfall}x) — {formatCurrency(shortfall.refund_amount)}
               </span>
-              <Button variant="secondary" onClick={() => handleResolveShortfall(shortfall.id)}>Tandai Selesai</Button>
+              <Button variant="secondary" onClick={() => handleResolveShortfall(shortfall.id)}>{t('cashierPage.markResolved')}</Button>
             </div>
           ))
         )}

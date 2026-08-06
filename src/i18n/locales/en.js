@@ -1,7 +1,7 @@
 // English translations. Scope so far: Navbar (Topbar + its dropdowns/modal),
 // Login, Dashboard, PharmacyPage, Patients (list/form/detail), Appointments
-// (list/form), QueuePage, ConsultationPage — see id.js for the full key
-// list/context.
+// (list/form), QueuePage, ConsultationPage, CashierPage — see id.js for the
+// full key list/context.
 export default {
   common: {
     cancel: 'Cancel',
@@ -246,5 +246,38 @@ export default {
     instructionsPlaceholder: 'Instructions (e.g. After meals)',
     savePrescription: 'Save Prescription',
     finishConsultation: 'Finish Consultation',
+  },
+  cashierPage: {
+    title: 'Cashier',
+    createInvoiceTitle: 'Create Invoice',
+    searchPatientLabel: 'Search Patient',
+    searchPatientPlaceholder: 'Search by name, ID number, or patient number...',
+    searchPatientEmpty: 'Type to search for a patient.',
+    change: 'Change',
+    pendingPrescriptionTitle: 'Prescription Awaiting Payment',
+    outOfStock: 'Out of Stock',
+    serviceCostTitle: 'Consultation / Service Fee',
+    searchServicePlaceholder: 'Search service...',
+    searchServiceEmpty: 'Type to search for a service.',
+    total: 'Total',
+    saving: 'Saving...',
+    createInvoice: 'Create Invoice',
+    paymentMethodLabel: 'Payment Method',
+    selectMethod: 'Select method',
+    cash: 'Cash',
+    debitCard: 'Debit Card',
+    creditCard: 'Credit Card',
+    qris: 'QRIS',
+    processing: 'Processing...',
+    markPaid: 'Mark as Paid',
+    addItemsError: 'Add at least one item (service or medicine) before creating the invoice.',
+    createInvoiceError: 'Failed to create invoice.',
+    markPaidError: 'Failed to mark invoice as paid.',
+    paidSuccess: 'Invoice paid. Payment recorded.',
+    printReceipt: 'Print Receipt',
+    newTransaction: 'New Transaction',
+    pendingRefundTitle: 'Pending Refunds',
+    noPendingRefund: 'No pending refunds.',
+    markResolved: 'Mark as Resolved',
   },
 };

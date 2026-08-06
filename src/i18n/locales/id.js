@@ -1,9 +1,9 @@
 // Indonesian strings — the app's default/original language.
 // Scope so far: Navbar (Topbar + its dropdowns/modal), Login, Dashboard,
 // PharmacyPage, Patients (list/form/detail), Appointments (list/form),
-// QueuePage, ConsultationPage. Other pages still have hardcoded Indonesian
-// text and are unaffected by the language toggle until they're migrated
-// in a follow-up pass.
+// QueuePage, ConsultationPage, CashierPage. Other pages still have
+// hardcoded Indonesian text and are unaffected by the language toggle
+// until they're migrated in a follow-up pass.
 export default {
   common: {
     cancel: 'Batal',
@@ -248,5 +248,38 @@ export default {
     instructionsPlaceholder: 'Instruksi (mis. Setelah makan)',
     savePrescription: 'Simpan Resep',
     finishConsultation: 'Selesai Konsultasi',
+  },
+  cashierPage: {
+    title: 'Kasir',
+    createInvoiceTitle: 'Buat Invoice',
+    searchPatientLabel: 'Cari Pasien',
+    searchPatientPlaceholder: 'Cari nama, NIK, atau nomor pasien...',
+    searchPatientEmpty: 'Ketik untuk mencari pasien.',
+    change: 'Ubah',
+    pendingPrescriptionTitle: 'Resep Menunggu Pembayaran',
+    outOfStock: 'Stok Habis',
+    serviceCostTitle: 'Biaya Konsultasi / Layanan',
+    searchServicePlaceholder: 'Cari layanan...',
+    searchServiceEmpty: 'Ketik untuk mencari layanan.',
+    total: 'Total',
+    saving: 'Menyimpan...',
+    createInvoice: 'Buat Invoice',
+    paymentMethodLabel: 'Metode Pembayaran',
+    selectMethod: 'Pilih metode',
+    cash: 'Tunai',
+    debitCard: 'Kartu Debit',
+    creditCard: 'Kartu Kredit',
+    qris: 'QRIS',
+    processing: 'Memproses...',
+    markPaid: 'Tandai Lunas',
+    addItemsError: 'Tambahkan minimal satu item (layanan atau obat) sebelum membuat invoice.',
+    createInvoiceError: 'Gagal membuat invoice.',
+    markPaidError: 'Gagal menandai invoice lunas.',
+    paidSuccess: 'Invoice lunas. Pembayaran tercatat.',
+    printReceipt: 'Cetak Struk',
+    newTransaction: 'Transaksi Baru',
+    pendingRefundTitle: 'Refund Tertunda',
+    noPendingRefund: 'Tidak ada refund tertunda.',
+    markResolved: 'Tandai Selesai',
   },
 };

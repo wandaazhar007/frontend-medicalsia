@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Printer } from 'lucide-react';
 import { getMedicalRecordsForPrint, getPatient } from '../../../services/patients';
 import { useAuth } from '../../../context/AuthContext';
@@ -17,6 +18,7 @@ function formatDate(value) {
 }
 
 export default function PatientDetail() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -74,80 +76,80 @@ export default function PatientDetail() {
       <div className={styles.header}>
         <h1 className={styles.title}>{patient.full_name}</h1>
         <div className={styles.actions}>
-          <Button variant="secondary" onClick={handlePrintCard}>Cetak Kartu</Button>
-          <Button variant="secondary" onClick={() => navigate(`/dashboard/patients/${id}/edit`)}>Edit</Button>
+          <Button variant="secondary" onClick={handlePrintCard}>{t('patients.detail.printCard')}</Button>
+          <Button variant="secondary" onClick={() => navigate(`/dashboard/patients/${id}/edit`)}>{t('patients.detail.edit')}</Button>
         </div>
       </div>
 
       <Card>
         <div className={styles.infoGrid}>
           <div>
-            <div className={styles.label}>No. Pasien</div>
+            <div className={styles.label}>{t('patients.detail.patientNumber')}</div>
             <div>{patient.patient_number}</div>
           </div>
           <div>
-            <div className={styles.label}>NIK</div>
+            <div className={styles.label}>{t('patients.detail.nik')}</div>
             <div>{patient.nik || '-'}</div>
           </div>
           <div>
-            <div className={styles.label}>Tanggal Lahir</div>
+            <div className={styles.label}>{t('patients.detail.dob')}</div>
             <div>{formatDate(patient.dob)}</div>
           </div>
           <div>
-            <div className={styles.label}>Telepon</div>
+            <div className={styles.label}>{t('patients.detail.phone')}</div>
             <div>{patient.phone || '-'}</div>
           </div>
           <div>
-            <div className={styles.label}>Email</div>
+            <div className={styles.label}>{t('patients.detail.email')}</div>
             <div>{patient.email || '-'}</div>
           </div>
           <div>
-            <div className={styles.label}>Alamat</div>
+            <div className={styles.label}>{t('patients.detail.address')}</div>
             <div>{patient.address || '-'}</div>
           </div>
           <div>
-            <div className={styles.label}>Kelurahan / Kecamatan</div>
+            <div className={styles.label}>{t('patients.detail.villageDistrict')}</div>
             <div>{[patient.village, patient.district].filter(Boolean).join(' / ') || '-'}</div>
           </div>
           <div>
-            <div className={styles.label}>Kota / Provinsi</div>
+            <div className={styles.label}>{t('patients.detail.cityProvince')}</div>
             <div>{[patient.city, patient.province].filter(Boolean).join(' / ') || '-'}</div>
           </div>
           <div>
-            <div className={styles.label}>Kode Pos</div>
+            <div className={styles.label}>{t('patients.detail.postalCode')}</div>
             <div>{patient.postal_code || '-'}</div>
           </div>
           <div>
-            <div className={styles.label}>Terdaftar</div>
+            <div className={styles.label}>{t('patients.detail.registered')}</div>
             <div>{formatDate(patient.created_at)}</div>
           </div>
         </div>
-        {patient.allergies && <p className={styles.allergies}>Alergi: {patient.allergies}</p>}
+        {patient.allergies && <p className={styles.allergies}>{t('patients.detail.allergies')}: {patient.allergies}</p>}
       </Card>
 
       <div>
         <div className={styles.recordsHeader}>
-          <h2 className={styles.sectionTitle}>Riwayat Rekam Medis</h2>
+          <h2 className={styles.sectionTitle}>{t('patients.detail.medicalHistory')}</h2>
           <div className={styles.printControls}>
             <Input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} />
             <Input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} />
             <Button variant="secondary" onClick={handlePrintMedicalRecord} disabled={isPreparingPrint}>
               <Printer size={16} />
-              {isPreparingPrint ? 'Menyiapkan...' : 'Cetak Rekam Medis'}
+              {isPreparingPrint ? t('patients.detail.preparingPrint') : t('patients.detail.printMedicalRecord')}
             </Button>
           </div>
         </div>
         {patient.medical_records.length === 0 ? (
-          <EmptyState message="Belum ada riwayat rekam medis untuk pasien ini." />
+          <EmptyState message={t('patients.detail.noRecords')} />
         ) : (
           <Card>
             {patient.medical_records.map((record) => (
               <div key={record.id} className={styles.recordItem}>
                 <span className={styles.recordDate}>
-                  {formatDate(record.created_at)} — {record.doctor_name || 'Dokter tidak diketahui'}
+                  {formatDate(record.created_at)} — {record.doctor_name || t('patients.detail.unknownDoctor')}
                 </span>
-                <span>Keluhan: {record.complaint || '-'}</span>
-                <span>Diagnosis: {record.diagnosis || '-'}</span>
+                <span>{t('patients.detail.complaint')}: {record.complaint || '-'}</span>
+                <span>{t('patients.detail.diagnosis')}: {record.diagnosis || '-'}</span>
               </div>
             ))}
           </Card>

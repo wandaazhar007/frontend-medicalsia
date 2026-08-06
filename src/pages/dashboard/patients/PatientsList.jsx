@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { UserPlus, Users } from 'lucide-react';
 import { listPatients } from '../../../services/patients';
 import { useDebounce } from '../../../hooks/useDebounce';
@@ -17,6 +18,7 @@ function formatDate(value) {
 }
 
 export default function PatientsList() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -49,26 +51,26 @@ export default function PatientsList() {
   return (
     <div className={styles.wrapper}>
       <div className={styles.header}>
-        <h1 className={styles.title}>Pasien</h1>
+        <h1 className={styles.title}>{t('patients.list.title')}</h1>
         <Button onClick={() => navigate('/dashboard/patients/new')}>
           <UserPlus size={16} />
-          Tambah Pasien
+          {t('patients.list.addButton')}
         </Button>
       </div>
 
       <div className={styles.searchRow}>
         <Input
-          placeholder="Cari nama, NIK, atau nomor pasien..."
+          placeholder={t('patients.list.searchPlaceholder')}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        {isLoading && <span className={styles.loadingHint}>Mencari...</span>}
+        {isLoading && <span className={styles.loadingHint}>{t('patients.list.searching')}</span>}
       </div>
 
       {result.data.length === 0 && !isLoading ? (
         <EmptyState
           icon={Users}
-          message={debouncedSearch ? 'Tidak ada pasien yang cocok dengan pencarian.' : 'Belum ada pasien terdaftar.'}
+          message={debouncedSearch ? t('patients.list.noResultsSearch') : t('patients.list.noResults')}
         />
       ) : (
         <>
@@ -76,11 +78,11 @@ export default function PatientsList() {
             <table className={styles.table}>
               <thead>
                 <tr>
-                  <th>No. Pasien</th>
-                  <th>Nama</th>
-                  <th>NIK</th>
-                  <th>Telepon</th>
-                  <th>Tgl Lahir</th>
+                  <th>{t('patients.list.columnNumber')}</th>
+                  <th>{t('patients.list.columnName')}</th>
+                  <th>{t('patients.list.columnNik')}</th>
+                  <th>{t('patients.list.columnPhone')}</th>
+                  <th>{t('patients.list.columnDob')}</th>
                 </tr>
               </thead>
               <tbody>

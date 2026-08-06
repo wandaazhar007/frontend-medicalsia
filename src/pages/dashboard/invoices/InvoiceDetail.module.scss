@@ -1,0 +1,65 @@
+@use '../../../styles/variables' as *;
+
+.wrapper {
+  padding: $space-6;
+  max-width: 56rem;
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+
+  @media (max-width: $breakpoint-tablet) {
+    padding: $space-4;
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: $space-3;
+}
+
+.title {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $color-primary;
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: $space-3;
+  font-size: $font-size-sm;
+}
+
+.label {
+  color: $color-text-muted;
+  font-size: $font-size-xs;
+  text-transform: uppercase;
+}
+
+.itemRow {
+  display: flex;
+  justify-content: space-between;
+  padding: $space-2 0;
+  border-top: 1px solid $color-border;
+  font-size: $font-size-sm;
+}
+
+.totalRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  padding-top: $space-3;
+  border-top: 2px solid $color-border;
+}
+
+.shortfallItem {
+  display: flex;
+  justify-content: space-between;
+  padding: $space-2 0;
+  border-top: 1px solid $color-border;
+  font-size: $font-size-sm;
+}

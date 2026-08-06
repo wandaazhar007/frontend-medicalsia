@@ -1,0 +1,76 @@
+// Primary
+$color-primary: #1E40AF;
+$color-primary-dark: #1E3A8A; // sidebar background, hover state
+$color-primary-hover: #1E3A8A;
+$color-primary-light: #DBEAFE; // badge, subtle background, avatar background
+
+// Accent
+$color-accent: #3B82F6;
+$color-accent-hover: #2563EB;
+
+// Neutral
+$color-bg: #F9FAFB;
+$color-surface: #FFFFFF;
+$color-border: #E5E7EB;
+$color-text: #111827;
+$color-text-muted: #6B7280;
+
+// Semantic (status colors — used consistently across invoices/prescriptions/stock)
+$color-success: #16A34A;
+$color-success-bg: #DCFCE7;
+$color-warning: #D97706;
+$color-warning-bg: #FEF3C7;
+$color-danger: #DC2626;
+$color-danger-bg: #FEE2E2;
+$color-info: #1E40AF;
+$color-info-bg: #DBEAFE;
+
+// Typography
+$font-family-base: 'Inter', sans-serif;
+
+$font-size-xs: 1.2rem;
+$font-size-sm: 1.4rem;
+$font-size-base: 1.6rem;
+$font-size-lg: 1.8rem;
+$font-size-xl: 2.2rem;
+$font-size-2xl: 2.8rem;
+$font-size-3xl: 3.6rem;
+
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+
+// Spacing (8px grid)
+$space-1: 0.4rem;
+$space-2: 0.8rem;
+$space-3: 1.2rem;
+$space-4: 1.6rem;
+$space-5: 2.4rem;
+$space-6: 3.2rem;
+$space-8: 4.8rem;
+
+// Breakpoints — below this, sidebar gives way to bottom nav (06-design-system.md)
+$breakpoint-tablet: 768px;
+
+// Radius & Shadow
+$radius-sm: 0.6rem;
+$radius-md: 0.8rem;
+$radius-lg: 1rem;
+
+$shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+$shadow-md: 0 2px 8px rgba(0, 0, 0, 0.08);
+$shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.1);
+
+// Chart categorical palette — fixed hue order, validated for CVD-safe adjacency
+// (see dataviz skill references/palette.md). Never cycle or reassign per-slot.
+$chart-blue: #2A78D6;
+$chart-orange: #EB6834;
+$chart-aqua: #1BAF7A;
+$chart-yellow: #EDA100;
+$chart-magenta: #E87BA4;
+$chart-green: #008300;
+
+// Chart chrome — recessive grid/axis ink, distinct from UI text tokens above.
+$chart-grid: #E1E0D9;
+$chart-axis: #C3C2B7;

@@ -1,0 +1,41 @@
+@use '../../styles/variables' as *;
+
+.statCard {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+  border-left: 4px solid $color-primary;
+}
+
+.label {
+  font-size: $font-size-sm;
+  color: $color-text-muted;
+  font-weight: $font-weight-medium;
+}
+
+.value {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $color-text;
+}
+
+.hint {
+  font-size: $font-size-xs;
+  color: $color-text-muted;
+}
+
+.warning {
+  border-left-color: $color-warning;
+
+  .value {
+    color: $color-warning;
+  }
+}
+
+.danger {
+  border-left-color: $color-danger;
+
+  .value {
+    color: $color-danger;
+  }
+}

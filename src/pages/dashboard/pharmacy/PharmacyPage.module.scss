@@ -1,0 +1,73 @@
+@use '../../../styles/variables' as *;
+
+.wrapper {
+  padding: $space-6;
+  display: flex;
+  flex-direction: column;
+  gap: $space-5;
+
+  @media (max-width: $breakpoint-tablet) {
+    padding: $space-4;
+  }
+}
+
+.title {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $color-primary;
+}
+
+.sectionTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  margin-bottom: $space-3;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.prescriptionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $space-3;
+}
+
+.patientName {
+  font-weight: $font-weight-medium;
+}
+
+.queueNumber {
+  color: $color-primary;
+  font-weight: $font-weight-bold;
+}
+
+.itemRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-3;
+  padding: $space-2 0;
+  border-top: 1px solid $color-border;
+  font-size: $font-size-sm;
+}
+
+.itemFields {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+}
+
+.qtyInput {
+  width: 6rem;
+}
+
+.callRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $space-3;
+}

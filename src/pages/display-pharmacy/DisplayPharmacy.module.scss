@@ -1,0 +1,74 @@
+@use '../../styles/variables' as *;
+
+.wrapper {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-6;
+  padding: $space-6;
+  background: $color-primary-dark;
+  color: $color-surface;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  align-self: flex-start;
+}
+
+.table {
+  width: 100%;
+  max-width: 60rem;
+  border-collapse: collapse;
+
+  th {
+    font-size: $font-size-lg;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: rgba(255, 255, 255, 0.6);
+    text-align: left;
+    padding: $space-3 $space-4;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+  }
+
+  td {
+    padding: $space-4;
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-bold;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: color 0.2s ease, transform 0.2s ease;
+  }
+}
+
+.flash {
+  color: $color-accent;
+  animation: pulse 0.6s ease-in-out 4;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.empty {
+  font-size: $font-size-xl;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: $space-6;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 10;
+}

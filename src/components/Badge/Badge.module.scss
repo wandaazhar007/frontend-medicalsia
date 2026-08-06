@@ -1,0 +1,32 @@
+@use '../../styles/variables' as *;
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: $space-1 $space-3;
+  border-radius: $radius-sm;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.success {
+  background: $color-success-bg;
+  color: $color-success;
+}
+
+.warning {
+  background: $color-warning-bg;
+  color: $color-warning;
+}
+
+.danger {
+  background: $color-danger-bg;
+  color: $color-danger;
+}
+
+.info {
+  background: $color-info-bg;
+  color: $color-info;
+}

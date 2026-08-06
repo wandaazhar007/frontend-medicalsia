@@ -1,0 +1,64 @@
+@use '../../../styles/variables' as *;
+
+.wrapper {
+  padding: $space-6;
+  max-width: 48rem;
+
+  @media (max-width: $breakpoint-tablet) {
+    padding: $space-4;
+  }
+}
+
+.title {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $color-primary;
+  margin-bottom: $space-4;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: $space-3;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  font-size: $font-size-sm;
+}
+
+.actions {
+  display: flex;
+  gap: $space-2;
+  margin-top: $space-2;
+}
+
+.error {
+  font-size: $font-size-xs;
+  color: $color-danger;
+  background: $color-danger-bg;
+  border-radius: $radius-sm;
+  padding: $space-2 $space-3;
+}
+
+.success {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.inviteLink {
+  font-size: $font-size-xs;
+  word-break: break-all;
+  background: $color-bg;
+  border-radius: $radius-sm;
+  padding: $space-2 $space-3;
+}

@@ -1,0 +1,47 @@
+@use '../../styles/variables' as *;
+
+.wrapper {
+  padding: $space-6;
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  max-width: 120rem;
+
+  @media (max-width: $breakpoint-tablet) {
+    padding: $space-4;
+  }
+}
+
+.title {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $color-primary;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: $space-2;
+  font-size: $font-size-sm;
+  color: $color-text-muted;
+}
+
+.sectionTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text;
+  margin-top: $space-2;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(22rem, 1fr));
+  gap: $space-4;
+}
+
+.chartsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(32rem, 1fr));
+  gap: $space-4;
+}

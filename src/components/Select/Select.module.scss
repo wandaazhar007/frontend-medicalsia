@@ -1,0 +1,27 @@
+@use '../../styles/variables' as *;
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+}
+
+.label {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-text;
+}
+
+.select {
+  border-radius: $radius-md;
+  border: 1.5px solid $color-border;
+  padding: $space-2 $space-3;
+  color: $color-text;
+  background: $color-surface;
+
+  &:focus {
+    outline: none;
+    border-color: $color-accent;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  }
+}

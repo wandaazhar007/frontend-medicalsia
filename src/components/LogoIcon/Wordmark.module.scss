@@ -1,0 +1,18 @@
+@use '../../styles/variables' as *;
+
+.wordmark {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+}
+
+.medical {
+  color: $color-primary;
+}
+
+.medicalOnDark {
+  color: $color-surface;
+}
+
+.sia {
+  color: $color-accent;
+}

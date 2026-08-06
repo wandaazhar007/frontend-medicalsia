@@ -1,0 +1,71 @@
+@use '../../styles/variables' as *;
+
+// Thermal 80mm receipt — see 06-design-system.md "Struk/Invoice Cetak".
+// Only mounted once there's an invoice to show, so it doubles as an
+// on-screen preview before printing (same pattern as PatientCard).
+.receipt {
+  width: 80mm;
+  padding: 4mm;
+  margin: 0 auto;
+  background: $color-surface;
+  border: 1px solid $color-border;
+  font-family: $font-family-base;
+  font-size: $font-size-xs;
+  color: $color-text;
+}
+
+.center {
+  text-align: center;
+}
+
+.clinicName {
+  font-weight: $font-weight-bold;
+  font-size: $font-size-sm;
+}
+
+.divider {
+  border-top: 1px dashed $color-text-muted;
+  margin: 2mm 0;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  gap: $space-2;
+}
+
+.itemRow {
+  margin-bottom: 1mm;
+}
+
+.itemDescription {
+  display: flex;
+  justify-content: space-between;
+}
+
+.itemMeta {
+  color: $color-text-muted;
+}
+
+.totalRow {
+  display: flex;
+  justify-content: space-between;
+  font-weight: $font-weight-bold;
+  font-size: $font-size-sm;
+}
+
+.footer {
+  margin-top: 2mm;
+  text-align: center;
+}
+
+@media print {
+  @page {
+    size: 80mm auto;
+    margin: 0;
+  }
+
+  .receipt {
+    border: none;
+  }
+}

@@ -1,0 +1,53 @@
+@use '../../../styles/variables' as *;
+
+.sidebar {
+  width: 22rem;
+  flex-shrink: 0;
+  min-height: 100vh;
+  background: $color-primary-dark;
+  padding: $space-5 $space-3;
+  display: flex;
+  flex-direction: column;
+  gap: $space-5;
+
+  // Below tablet width, BottomNav takes over as the primary navigation.
+  @media (max-width: $breakpoint-tablet) {
+    display: none;
+  }
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+}
+
+.groupLabel {
+  font-size: $font-size-xs;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.5);
+  padding: 0 $space-3;
+  margin-bottom: $space-1;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  padding: $space-2 $space-3;
+  border-radius: $radius-md;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: rgba(255, 255, 255, 0.75);
+
+  &:hover {
+    background: $color-primary-hover;
+    color: $color-surface;
+  }
+
+  &.active {
+    background: $color-primary-hover;
+    color: $color-surface;
+  }
+}

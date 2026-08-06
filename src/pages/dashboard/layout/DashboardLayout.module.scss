@@ -1,0 +1,23 @@
+@use '../../../styles/variables' as *;
+
+.layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.content {
+  flex: 1;
+
+  // Leaves room so fixed BottomNav never covers the last bit of content.
+  @media (max-width: $breakpoint-tablet) {
+    padding-bottom: 6.4rem;
+  }
+}

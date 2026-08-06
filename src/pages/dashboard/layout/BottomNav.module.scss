@@ -1,0 +1,73 @@
+@use '../../../styles/variables' as *;
+
+.bottomNav {
+  display: none;
+
+  // Mirrors Sidebar's breakpoint — this only appears once Sidebar hides.
+  @media (max-width: $breakpoint-tablet) {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    background: $color-surface;
+    border-top: 1px solid $color-border;
+    padding: $space-1 0;
+  }
+}
+
+.navItem {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-1;
+  padding: $space-1;
+  font-size: $font-size-xs;
+  color: $color-text-muted;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+
+  &.active {
+    color: $color-primary;
+  }
+}
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 99;
+}
+
+.moreSheet {
+  position: absolute;
+  bottom: 100%;
+  right: $space-2;
+  z-index: 101;
+  display: flex;
+  flex-direction: column;
+  min-width: 18rem;
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  box-shadow: $shadow-md;
+  padding: $space-2;
+  margin-bottom: $space-1;
+}
+
+.moreItem {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  padding: $space-2 $space-3;
+  border-radius: $radius-md;
+  font-size: $font-size-sm;
+  color: $color-text;
+
+  &:hover {
+    background: $color-bg;
+    color: $color-primary;
+  }
+}

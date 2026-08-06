@@ -1,0 +1,46 @@
+@use '../../styles/variables' as *;
+
+.wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $color-bg;
+  padding: $space-4;
+}
+
+.card {
+  width: 100%;
+  max-width: 38rem;
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-3;
+}
+
+.subtitle {
+  font-size: $font-size-sm;
+  color: $color-text-muted;
+  margin-top: -#{$space-3};
+  text-align: center;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.error {
+  font-size: $font-size-xs;
+  color: $color-danger;
+  background: $color-danger-bg;
+  border-radius: $radius-sm;
+  padding: $space-2 $space-3;
+}

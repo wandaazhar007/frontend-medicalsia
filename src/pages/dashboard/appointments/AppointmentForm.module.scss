@@ -1,0 +1,37 @@
+@use '../../../styles/variables' as *;
+
+.wrapper {
+  padding: $space-6;
+  max-width: 48rem;
+
+  @media (max-width: $breakpoint-tablet) {
+    padding: $space-4;
+  }
+}
+
+.title {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $color-primary;
+  margin-bottom: $space-4;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.actions {
+  display: flex;
+  gap: $space-2;
+  margin-top: $space-2;
+}
+
+.error {
+  font-size: $font-size-xs;
+  color: $color-danger;
+  background: $color-danger-bg;
+  border-radius: $radius-sm;
+  padding: $space-2 $space-3;
+}

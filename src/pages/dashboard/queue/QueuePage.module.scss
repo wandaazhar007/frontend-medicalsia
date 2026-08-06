@@ -1,0 +1,61 @@
+@use '../../../styles/variables' as *;
+
+.wrapper {
+  padding: $space-6;
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+
+  @media (max-width: $breakpoint-tablet) {
+    padding: $space-4;
+  }
+}
+
+.title {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $color-primary;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: $space-3;
+  padding: $space-4;
+}
+
+.info {
+  display: flex;
+  align-items: center;
+  gap: $space-4;
+}
+
+.queueNumber {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-primary;
+  min-width: 5rem;
+}
+
+.patientName {
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+}
+
+.doctorName {
+  font-size: $font-size-xs;
+  color: $color-text-muted;
+}
+
+.actions {
+  display: flex;
+  gap: $space-2;
+}

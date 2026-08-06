@@ -1,0 +1,73 @@
+@use '../../../styles/variables' as *;
+
+.wrapper {
+  padding: $space-6;
+  max-width: 60rem;
+}
+
+.title {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $color-primary;
+  margin-bottom: $space-4;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  padding-top: $space-4;
+  border-top: 1px solid $color-border;
+
+  &:first-child {
+    padding-top: 0;
+    border-top: none;
+  }
+}
+
+.sectionTitle {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-text-muted;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  gap: $space-3;
+}
+
+.grid3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: $space-3;
+}
+
+.actions {
+  display: flex;
+  gap: $space-2;
+  margin-top: $space-2;
+}
+
+.error {
+  font-size: $font-size-xs;
+  color: $color-danger;
+  background: $color-danger-bg;
+  border-radius: $radius-sm;
+  padding: $space-2 $space-3;
+}
+
+.successPanel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-4;
+}

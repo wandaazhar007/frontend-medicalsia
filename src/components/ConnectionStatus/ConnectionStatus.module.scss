@@ -1,0 +1,40 @@
+@use '../../styles/variables' as *;
+
+.banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-4;
+  padding: $space-3 $space-4;
+  background: $color-danger-bg;
+  color: $color-danger;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  box-shadow: $shadow-md;
+}
+
+.retryButton {
+  border: 1.5px solid $color-danger;
+  background: transparent;
+  color: $color-danger;
+  border-radius: $radius-md;
+  padding: $space-1 $space-3;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+
+  &:hover {
+    background: $color-danger;
+    color: $color-surface;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}

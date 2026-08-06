@@ -1,0 +1,132 @@
+@use '../../../styles/variables' as *;
+
+.wrapper {
+  padding: $space-6;
+  max-width: 64rem;
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+
+  @media (max-width: $breakpoint-tablet) {
+    padding: $space-4;
+  }
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+}
+
+.title {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $color-primary;
+}
+
+.subtitle {
+  font-size: $font-size-sm;
+  color: $color-text-muted;
+}
+
+.allergies {
+  background: $color-warning-bg;
+  color: $color-warning;
+  border-radius: $radius-sm;
+  padding: $space-2 $space-3;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+}
+
+.sectionTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.success {
+  font-size: $font-size-xs;
+  color: $color-success;
+  background: $color-success-bg;
+  border-radius: $radius-sm;
+  padding: $space-2 $space-3;
+}
+
+.error {
+  font-size: $font-size-xs;
+  color: $color-danger;
+  background: $color-danger-bg;
+  border-radius: $radius-sm;
+  padding: $space-2 $space-3;
+}
+
+.medicineSearch {
+  position: relative;
+}
+
+.results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  margin-top: $space-1;
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  box-shadow: $shadow-md;
+  max-height: 24rem;
+  overflow-y: auto;
+}
+
+.resultItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-2;
+  width: 100%;
+  text-align: left;
+  padding: $space-2 $space-3;
+  font-size: $font-size-sm;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+
+  &:hover {
+    background: $color-bg;
+  }
+}
+
+.resultInfo {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+}
+
+.cartItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-3;
+  padding: $space-3;
+  border-top: 1px solid $color-border;
+}
+
+.cartItemName {
+  font-weight: $font-weight-medium;
+}
+
+.cartItemFields {
+  display: flex;
+  gap: $space-2;
+}
+
+.actions {
+  display: flex;
+  gap: $space-2;
+}

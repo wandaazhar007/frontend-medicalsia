@@ -1,0 +1,67 @@
+@use '../../styles/variables' as *;
+
+.wrapper {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $space-6;
+  background: $color-primary-dark;
+  color: $color-surface;
+  overflow: hidden;
+}
+
+.header {
+  position: absolute;
+  top: $space-6;
+  left: $space-6;
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-4;
+}
+
+.label {
+  font-size: $font-size-xl;
+  color: rgba(255, 255, 255, 0.7);
+  letter-spacing: 0.05em;
+}
+
+.number {
+  font-size: 16rem;
+  font-weight: $font-weight-bold;
+  line-height: 1;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.flash {
+  color: $color-accent;
+  animation: pulse 0.6s ease-in-out 4;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 10;
+}

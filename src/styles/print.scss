@@ -1,0 +1,18 @@
+// Shared print isolation for anything meant to print alone — patient cards,
+// receipts (Fase 5), medical record printouts (Fase 4). See 06-design-system.md.
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .print-only,
+  .print-only * {
+    visibility: visible;
+  }
+
+  .print-only {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+}

@@ -1,0 +1,113 @@
+@use '../../../styles/variables' as *;
+
+.wrapper {
+  padding: $space-6;
+  max-width: 64rem;
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+
+  @media (max-width: $breakpoint-tablet) {
+    padding: $space-4;
+  }
+}
+
+.title {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $color-primary;
+}
+
+.sectionTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  margin-bottom: $space-3;
+}
+
+.error {
+  font-size: $font-size-xs;
+  color: $color-danger;
+  background: $color-danger-bg;
+  border-radius: $radius-sm;
+  padding: $space-2 $space-3;
+}
+
+.success {
+  font-size: $font-size-xs;
+  color: $color-success;
+  background: $color-success-bg;
+  border-radius: $radius-sm;
+  padding: $space-2 $space-3;
+}
+
+.prescriptionItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-3;
+  padding: $space-3 0;
+  border-top: 1px solid $color-border;
+}
+
+.prescriptionItemInfo {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  font-size: $font-size-sm;
+}
+
+.addServiceRow {
+  display: flex;
+  align-items: flex-end;
+  gap: $space-2;
+}
+
+.addServiceSearch {
+  flex: 1;
+}
+
+.cartItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $space-2 0;
+  border-top: 1px solid $color-border;
+  font-size: $font-size-sm;
+}
+
+.totalRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  padding-top: $space-3;
+  border-top: 2px solid $color-border;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+}
+
+.payRow {
+  display: flex;
+  align-items: flex-end;
+  gap: $space-2;
+}
+
+.shortfallItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-3;
+  padding: $space-3 0;
+  border-top: 1px solid $color-border;
+  font-size: $font-size-sm;
+}

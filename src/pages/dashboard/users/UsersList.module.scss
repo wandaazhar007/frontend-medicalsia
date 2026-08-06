@@ -1,0 +1,67 @@
+@use '../../../styles/variables' as *;
+
+.wrapper {
+  padding: $space-6;
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+
+  @media (max-width: $breakpoint-tablet) {
+    padding: $space-4;
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: $space-3;
+}
+
+.title {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $color-primary;
+}
+
+.searchRow {
+  max-width: 32rem;
+}
+
+.tableScroll {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  min-width: 50rem;
+  border-collapse: collapse;
+
+  th {
+    background: $color-bg;
+    font-size: $font-size-xs;
+    text-transform: uppercase;
+    color: $color-text-muted;
+    text-align: left;
+    padding: $space-3;
+    white-space: nowrap;
+  }
+
+  td {
+    padding: $space-3;
+    font-size: $font-size-sm;
+    border-top: 1px solid $color-border;
+    white-space: nowrap;
+  }
+}
+
+.rowActions {
+  display: flex;
+  gap: $space-2;
+}
+
+.loadingHint {
+  font-size: $font-size-xs;
+  color: $color-text-muted;
+}

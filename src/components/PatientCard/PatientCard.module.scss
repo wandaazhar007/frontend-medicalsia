@@ -1,0 +1,71 @@
+@use '../../styles/variables' as *;
+
+// Physical ID card size (CR80): 85.6mm x 54mm — see 06-design-system.md.
+.card {
+  width: 85.6mm;
+  height: 54mm;
+  background: $color-surface;
+  border-radius: $radius-md;
+  border: 1px solid $color-border;
+  box-shadow: $shadow-sm;
+  padding: 4mm;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-family: $font-family-base;
+}
+
+.clinicName {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  color: $color-primary;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 1mm;
+}
+
+.fullName {
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: $color-text;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  font-size: $font-size-xs;
+  color: $color-text-muted;
+}
+
+.patientNumber {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: $color-primary;
+  letter-spacing: 0.05em;
+}
+
+.registeredAt {
+  font-size: $font-size-xs;
+  color: $color-text-muted;
+}
+
+.barcode {
+  width: 100%;
+  height: 12mm;
+}
+
+@media print {
+  @page {
+    size: 85.6mm 54mm;
+    margin: 0;
+  }
+
+  .card {
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+  }
+}

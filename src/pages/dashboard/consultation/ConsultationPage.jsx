@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { CheckCircle2, Trash2 } from 'lucide-react';
 import { getAppointment, updateAppointmentStatus } from '../../../services/appointments';
 import { getPatient } from '../../../services/patients';
@@ -14,6 +15,7 @@ import Badge from '../../../components/Badge/Badge';
 import styles from './ConsultationPage.module.scss';
 
 export default function ConsultationPage() {
+  const { t } = useTranslation();
   const { id: appointmentId } = useParams();
   const navigate = useNavigate();
 
@@ -64,7 +66,7 @@ export default function ConsultationPage() {
       });
       setSavedRecord(data);
     } catch {
-      setRecordError('Gagal menyimpan rekam medis. Pastikan akun ini berrole dokter.');
+      setRecordError(t('consultationPage.recordError'));
     } finally {
       setIsSavingRecord(false);
     }
@@ -98,7 +100,7 @@ export default function ConsultationPage() {
       setPrescriptionSaved(true);
       setCart([]);
     } catch {
-      setPrescriptionError('Gagal menyimpan resep.');
+      setPrescriptionError(t('consultationPage.prescriptionError'));
     } finally {
       setIsSavingPrescription(false);
     }
@@ -114,25 +116,25 @@ export default function ConsultationPage() {
   return (
     <div className={styles.wrapper}>
       <div className={styles.header}>
-        <h1 className={styles.title}>Konsultasi — {appointment.patient_name}</h1>
+        <h1 className={styles.title}>{t('consultationPage.title')} — {appointment.patient_name}</h1>
         <span className={styles.subtitle}>
-          No. Antrian {appointment.queue_number || '-'} · {appointment.doctor_name || 'Dokter belum ditentukan'}
+          {t('consultationPage.queueNumber')} {appointment.queue_number || '-'} · {appointment.doctor_name || t('consultationPage.noDoctorAssigned')}
         </span>
-        {patient.allergies && <p className={styles.allergies}>Alergi: {patient.allergies}</p>}
+        {patient.allergies && <p className={styles.allergies}>{t('consultationPage.allergies')}: {patient.allergies}</p>}
       </div>
 
       <Card>
-        <span className={styles.sectionTitle}>Catatan Konsultasi</span>
+        <span className={styles.sectionTitle}>{t('consultationPage.recordSectionTitle')}</span>
         <form className={styles.form} onSubmit={handleSaveRecord}>
           {recordError && <div className={styles.error}>{recordError}</div>}
-          {savedRecord && <div className={styles.success}>Rekam medis tersimpan.</div>}
-          <Input id="complaint" label="Keluhan" value={complaint} onChange={(e) => setComplaint(e.target.value)} disabled={Boolean(savedRecord)} />
-          <Input id="diagnosis" label="Diagnosis" value={diagnosis} onChange={(e) => setDiagnosis(e.target.value)} disabled={Boolean(savedRecord)} />
-          <Input id="notes" label="Catatan" value={notes} onChange={(e) => setNotes(e.target.value)} disabled={Boolean(savedRecord)} />
+          {savedRecord && <div className={styles.success}>{t('consultationPage.recordSaved')}</div>}
+          <Input id="complaint" label={t('consultationPage.complaintLabel')} value={complaint} onChange={(e) => setComplaint(e.target.value)} disabled={Boolean(savedRecord)} />
+          <Input id="diagnosis" label={t('consultationPage.diagnosisLabel')} value={diagnosis} onChange={(e) => setDiagnosis(e.target.value)} disabled={Boolean(savedRecord)} />
+          <Input id="notes" label={t('consultationPage.notesLabel')} value={notes} onChange={(e) => setNotes(e.target.value)} disabled={Boolean(savedRecord)} />
           {!savedRecord && (
             <div className={styles.actions}>
               <Button type="submit" disabled={isSavingRecord}>
-                {isSavingRecord ? 'Menyimpan...' : 'Simpan Rekam Medis'}
+                {isSavingRecord ? t('consultationPage.saving') : t('consultationPage.saveRecord')}
               </Button>
             </div>
           )}
@@ -141,15 +143,15 @@ export default function ConsultationPage() {
 
       {savedRecord && (
         <Card>
-          <span className={styles.sectionTitle}>Resep</span>
+          <span className={styles.sectionTitle}>{t('consultationPage.prescriptionSectionTitle')}</span>
           {prescriptionError && <div className={styles.error}>{prescriptionError}</div>}
           {prescriptionSaved ? (
-            <div className={styles.success}>Resep tersimpan.</div>
+            <div className={styles.success}>{t('consultationPage.prescriptionSaved')}</div>
           ) : (
             <>
               <div className={styles.medicineSearch}>
                 <Input
-                  placeholder="Cari nama obat..."
+                  placeholder={t('consultationPage.medicineSearchPlaceholder')}
                   value={medicineSearch}
                   onChange={(e) => setMedicineSearch(e.target.value)}
                 />
@@ -159,7 +161,7 @@ export default function ConsultationPage() {
                       <button key={medicine.id} type="button" className={styles.resultItem} onClick={() => addToCart(medicine)}>
                         <span className={styles.resultInfo}>
                           {medicine.name} ({medicine.unit})
-                          {medicine.stock_qty <= 0 && <Badge variant="danger">Stok Habis</Badge>}
+                          {medicine.stock_qty <= 0 && <Badge variant="danger">{t('consultationPage.outOfStock')}</Badge>}
                         </span>
                       </button>
                     ))}
@@ -171,23 +173,23 @@ export default function ConsultationPage() {
                 <div key={item.medicine_id} className={styles.cartItem}>
                   <div>
                     <div className={styles.cartItemName}>
-                      {item.name} {item.stock_qty <= 0 && <Badge variant="danger">Stok Habis</Badge>}
+                      {item.name} {item.stock_qty <= 0 && <Badge variant="danger">{t('consultationPage.outOfStock')}</Badge>}
                     </div>
                     <div className={styles.cartItemFields}>
                       <Input
-                        placeholder="Dosis (mis. 3x sehari)"
+                        placeholder={t('consultationPage.dosagePlaceholder')}
                         value={item.dosage}
                         onChange={(e) => updateCartItem(item.medicine_id, 'dosage', e.target.value)}
                       />
                       <Input
                         type="number"
                         min="1"
-                        placeholder="Qty"
+                        placeholder={t('consultationPage.qtyPlaceholder')}
                         value={item.quantity}
                         onChange={(e) => updateCartItem(item.medicine_id, 'quantity', parseInt(e.target.value, 10) || 1)}
                       />
                       <Input
-                        placeholder="Instruksi (mis. Setelah makan)"
+                        placeholder={t('consultationPage.instructionsPlaceholder')}
                         value={item.instructions}
                         onChange={(e) => updateCartItem(item.medicine_id, 'instructions', e.target.value)}
                       />
@@ -202,7 +204,7 @@ export default function ConsultationPage() {
               {cart.length > 0 && (
                 <div className={styles.actions}>
                   <Button onClick={handleSavePrescription} disabled={isSavingPrescription}>
-                    {isSavingPrescription ? 'Menyimpan...' : 'Simpan Resep'}
+                    {isSavingPrescription ? t('consultationPage.saving') : t('consultationPage.savePrescription')}
                   </Button>
                 </div>
               )}
@@ -214,7 +216,7 @@ export default function ConsultationPage() {
       <div className={styles.actions}>
         <Button variant="secondary" onClick={handleFinish}>
           <CheckCircle2 size={16} />
-          Selesai Konsultasi
+          {t('consultationPage.finishConsultation')}
         </Button>
       </div>
     </div>

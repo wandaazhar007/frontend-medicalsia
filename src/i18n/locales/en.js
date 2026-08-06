@@ -1,6 +1,7 @@
 // English translations. Scope so far: Navbar (Topbar + its dropdowns/modal),
 // Login, Dashboard, PharmacyPage, Patients (list/form/detail), Appointments
-// (list/form), QueuePage — see id.js for the full key list/context.
+// (list/form), QueuePage, ConsultationPage — see id.js for the full key
+// list/context.
 export default {
   common: {
     cancel: 'Cancel',
@@ -221,5 +222,29 @@ export default {
     startConsultation: 'Start Consultation',
     continueConsultation: 'Continue Consultation',
     complete: 'Complete',
+  },
+  consultationPage: {
+    title: 'Consultation',
+    queueNumber: 'Queue No.',
+    noDoctorAssigned: 'Doctor not assigned',
+    allergies: 'Allergies',
+    recordSectionTitle: 'Consultation Notes',
+    recordSaved: 'Medical record saved.',
+    complaintLabel: 'Complaint',
+    diagnosisLabel: 'Diagnosis',
+    notesLabel: 'Notes',
+    saving: 'Saving...',
+    saveRecord: 'Save Medical Record',
+    recordError: 'Failed to save medical record. Make sure this account has the doctor role.',
+    prescriptionSectionTitle: 'Prescription',
+    prescriptionSaved: 'Prescription saved.',
+    prescriptionError: 'Failed to save prescription.',
+    medicineSearchPlaceholder: 'Search medicine name...',
+    outOfStock: 'Out of Stock',
+    dosagePlaceholder: 'Dosage (e.g. 3x daily)',
+    qtyPlaceholder: 'Qty',
+    instructionsPlaceholder: 'Instructions (e.g. After meals)',
+    savePrescription: 'Save Prescription',
+    finishConsultation: 'Finish Consultation',
   },
 };

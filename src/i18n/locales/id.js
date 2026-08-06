@@ -1,8 +1,9 @@
 // Indonesian strings — the app's default/original language.
 // Scope so far: Navbar (Topbar + its dropdowns/modal), Login, Dashboard,
 // PharmacyPage, Patients (list/form/detail), Appointments (list/form),
-// QueuePage. Other pages still have hardcoded Indonesian text and are
-// unaffected by the language toggle until they're migrated in a follow-up pass.
+// QueuePage, ConsultationPage. Other pages still have hardcoded Indonesian
+// text and are unaffected by the language toggle until they're migrated
+// in a follow-up pass.
 export default {
   common: {
     cancel: 'Batal',
@@ -223,5 +224,29 @@ export default {
     startConsultation: 'Mulai Konsultasi',
     continueConsultation: 'Lanjutkan Konsultasi',
     complete: 'Selesai',
+  },
+  consultationPage: {
+    title: 'Konsultasi',
+    queueNumber: 'No. Antrian',
+    noDoctorAssigned: 'Dokter belum ditentukan',
+    allergies: 'Alergi',
+    recordSectionTitle: 'Catatan Konsultasi',
+    recordSaved: 'Rekam medis tersimpan.',
+    complaintLabel: 'Keluhan',
+    diagnosisLabel: 'Diagnosis',
+    notesLabel: 'Catatan',
+    saving: 'Menyimpan...',
+    saveRecord: 'Simpan Rekam Medis',
+    recordError: 'Gagal menyimpan rekam medis. Pastikan akun ini berrole dokter.',
+    prescriptionSectionTitle: 'Resep',
+    prescriptionSaved: 'Resep tersimpan.',
+    prescriptionError: 'Gagal menyimpan resep.',
+    medicineSearchPlaceholder: 'Cari nama obat...',
+    outOfStock: 'Stok Habis',
+    dosagePlaceholder: 'Dosis (mis. 3x sehari)',
+    qtyPlaceholder: 'Qty',
+    instructionsPlaceholder: 'Instruksi (mis. Setelah makan)',
+    savePrescription: 'Simpan Resep',
+    finishConsultation: 'Selesai Konsultasi',
   },
 };

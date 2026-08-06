@@ -12,7 +12,13 @@
   color: $color-text;
 }
 
+.inputWrapper {
+  position: relative;
+  display: flex;
+}
+
 .input {
+  width: 100%;
   border-radius: $radius-md;
   border: 1.5px solid $color-border;
   padding: $space-2 $space-3;
@@ -28,4 +34,31 @@
   &::placeholder {
     color: $color-text-muted;
   }
+}
+
+.hasSuffix {
+  padding-right: $space-8;
+}
+
+.inputError {
+  border-color: $color-danger;
+
+  &:focus {
+    border-color: $color-danger;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+  }
+}
+
+.suffix {
+  position: absolute;
+  right: $space-2;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+}
+
+.errorText {
+  font-size: $font-size-xs;
+  color: $color-danger;
 }

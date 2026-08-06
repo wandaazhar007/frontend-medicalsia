@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Eye, EyeOff, LogIn } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import Card from '../../components/Card/Card';
 import Input from '../../components/Input/Input';
@@ -8,23 +9,56 @@ import LogoIcon from '../../components/LogoIcon/LogoIcon';
 import Wordmark from '../../components/LogoIcon/Wordmark';
 import styles from './Login.module.scss';
 
+// Persists only the email across visits — never the password.
+const REMEMBERED_EMAIL_KEY = 'medicalsia:login-email';
+
+function isValidEmail(value) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+
 export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(() => localStorage.getItem(REMEMBERED_EMAIL_KEY) || '');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState({});
+  const [formError, setFormError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  function handleEmailChange(e) {
+    const value = e.target.value;
+    setEmail(value);
+    localStorage.setItem(REMEMBERED_EMAIL_KEY, value);
+  }
+
+  function validate() {
+    const errors = {};
+    if (!email.trim()) {
+      errors.email = 'Email wajib diisi.';
+    } else if (!isValidEmail(email)) {
+      errors.email = 'Format email tidak valid.';
+    }
+    if (!password) {
+      errors.password = 'Password wajib diisi.';
+    }
+    return errors;
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setError('');
+    setFormError('');
+
+    const errors = validate();
+    setFieldErrors(errors);
+    if (Object.keys(errors).length > 0) return;
+
     setIsSubmitting(true);
     try {
       await login(email, password);
       navigate('/dashboard');
     } catch {
-      setError('Email atau password salah.');
+      setFormError('Email atau password salah.');
     } finally {
       setIsSubmitting(false);
     }
@@ -39,25 +73,37 @@ export default function Login() {
         </div>
         <p className={styles.subtitle}>The Modern Clinic App for Indonesia</p>
 
-        <form className={styles.form} onSubmit={handleSubmit}>
-          {error && <div className={styles.error}>{error}</div>}
+        <form className={styles.form} onSubmit={handleSubmit} noValidate>
+          {formError && <div className={styles.error}>{formError}</div>}
           <Input
             id="email"
             label="Email"
             type="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
+            onChange={handleEmailChange}
+            error={fieldErrors.email}
           />
           <Input
             id="password"
             label="Password"
-            type="password"
+            type={isPasswordVisible ? 'text' : 'password'}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            required
+            error={fieldErrors.password}
+            suffix={
+              <button
+                type="button"
+                className={styles.eyeButton}
+                onClick={() => setIsPasswordVisible((visible) => !visible)}
+                tabIndex={-1}
+                aria-label={isPasswordVisible ? 'Sembunyikan password' : 'Tampilkan password'}
+              >
+                {isPasswordVisible ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            }
           />
           <Button type="submit" disabled={isSubmitting}>
+            <LogIn size={18} />
             {isSubmitting ? 'Masuk...' : 'Masuk'}
           </Button>
         </form>

@@ -1,6 +1,6 @@
 import styles from './Input.module.scss';
 
-export default function Input({ label, id, ...rest }) {
+export default function Input({ label, id, error, suffix, className = '', ...rest }) {
   return (
     <div className={styles.field}>
       {label && (
@@ -8,7 +8,16 @@ export default function Input({ label, id, ...rest }) {
           {label}
         </label>
       )}
-      <input id={id} className={styles.input} {...rest} />
+      <div className={styles.inputWrapper}>
+        <input
+          id={id}
+          className={`${styles.input} ${error ? styles.inputError : ''} ${suffix ? styles.hasSuffix : ''} ${className}`}
+          aria-invalid={error ? 'true' : undefined}
+          {...rest}
+        />
+        {suffix && <div className={styles.suffix}>{suffix}</div>}
+      </div>
+      {error && <span className={styles.errorText}>{error}</span>}
     </div>
   );
 }

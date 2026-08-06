@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Save } from 'lucide-react';
 import { createAppointment } from '../../../services/appointments';
 import { listPatients } from '../../../services/patients';
@@ -19,6 +20,7 @@ function nowLocalDatetime() {
 }
 
 export default function AppointmentForm() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const [selectedPatient, setSelectedPatient] = useState(null);
@@ -54,11 +56,11 @@ export default function AppointmentForm() {
     setError('');
 
     if (!selectedPatient) {
-      setError('Pilih pasien terlebih dahulu.');
+      setError(t('appointments.form.selectPatientRequired'));
       return;
     }
     if (!scheduledAt) {
-      setError('Tanggal dan jam appointment wajib diisi.');
+      setError(t('appointments.form.dateRequired'));
       return;
     }
 
@@ -71,7 +73,7 @@ export default function AppointmentForm() {
       });
       navigate('/dashboard/appointments');
     } catch {
-      setError('Gagal membuat appointment.');
+      setError(t('appointments.form.createError'));
     } finally {
       setIsSubmitting(false);
     }
@@ -79,34 +81,34 @@ export default function AppointmentForm() {
 
   return (
     <div className={styles.wrapper}>
-      <h1 className={styles.title}>Booking Manual</h1>
+      <h1 className={styles.title}>{t('appointments.form.title')}</h1>
       <Card>
         <form className={styles.form} onSubmit={handleSubmit}>
           {error && <div className={styles.error}>{error}</div>}
 
           <SearchableSelect
             id="patient"
-            label="Cari Pasien"
-            placeholder="Cari nama, NIK, atau nomor pasien..."
+            label={t('appointments.form.searchPatientLabel')}
+            placeholder={t('appointments.form.searchPatientPlaceholder')}
             value={selectedPatient ? { label: `${selectedPatient.full_name} (${selectedPatient.patient_number})` } : null}
             onSelect={(option) => setSelectedPatient(option.raw)}
             loadOptions={loadPatientOptions}
-            emptyMessage="Ketik untuk mencari pasien."
+            emptyMessage={t('appointments.form.searchPatientEmpty')}
           />
 
           <SearchableSelect
             id="doctor"
-            label="Dokter"
-            placeholder="Cari dokter..."
+            label={t('appointments.form.doctorLabel')}
+            placeholder={t('appointments.form.doctorPlaceholder')}
             value={selectedDoctor ? { label: selectedDoctor.full_name } : null}
             onSelect={(option) => setSelectedDoctor({ id: option.id, full_name: option.label })}
             loadOptions={loadDoctorOptions}
-            emptyMessage="Belum ada dokter aktif."
+            emptyMessage={t('appointments.form.doctorEmpty')}
           />
 
           <Input
             id="scheduled_at"
-            label="Tanggal & Jam"
+            label={t('appointments.form.dateTimeLabel')}
             type="datetime-local"
             min={nowLocalDatetime()}
             value={scheduledAt}
@@ -116,9 +118,9 @@ export default function AppointmentForm() {
           <div className={styles.actions}>
             <Button type="submit" disabled={isSubmitting}>
               <Save size={16} />
-              {isSubmitting ? 'Menyimpan...' : 'Simpan'}
+              {isSubmitting ? t('appointments.form.saving') : t('appointments.form.save')}
             </Button>
-            <Button type="button" variant="ghost" onClick={() => navigate(-1)}>Batal</Button>
+            <Button type="button" variant="ghost" onClick={() => navigate(-1)}>{t('appointments.form.cancel')}</Button>
           </div>
         </form>
       </Card>

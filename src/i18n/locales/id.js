@@ -1,8 +1,8 @@
 // Indonesian strings — the app's default/original language.
 // Scope so far: Navbar (Topbar + its dropdowns/modal), Login, Dashboard,
-// PharmacyPage, Patients (list/form/detail). Other pages still have
-// hardcoded Indonesian text and are unaffected by the language toggle
-// until they're migrated in a follow-up pass.
+// PharmacyPage, Patients (list/form/detail), Appointments (list/form).
+// Other pages still have hardcoded Indonesian text and are unaffected by
+// the language toggle until they're migrated in a follow-up pass.
 export default {
   common: {
     cancel: 'Batal',
@@ -166,6 +166,51 @@ export default {
       unknownDoctor: 'Dokter tidak diketahui',
       complaint: 'Keluhan',
       diagnosis: 'Diagnosis',
+    },
+  },
+  appointments: {
+    list: {
+      title: 'Appointment',
+      manualBooking: 'Booking Manual',
+      searchPlaceholder: 'Cari nama pasien...',
+      allDoctors: 'Semua Dokter',
+      allStatus: 'Semua Status',
+      loading: 'Memuat...',
+      noResults: 'Belum ada appointment yang cocok.',
+      columnPatient: 'Pasien',
+      columnDoctor: 'Dokter',
+      columnTime: 'Waktu',
+      columnQueueNumber: 'No. Antrian',
+      columnStatus: 'Status',
+      columnAction: 'Aksi',
+      checkIn: 'Check-in',
+      noShow: 'Tidak Datang',
+      cancel: 'Batal',
+      startConsultation: 'Mulai Konsultasi',
+      continueConsultation: 'Lanjutkan Konsultasi',
+      complete: 'Selesai',
+      statusBooked: 'Dipesan',
+      statusCheckedIn: 'Check-in',
+      statusInConsultation: 'Konsultasi',
+      statusCompleted: 'Selesai',
+      statusCancelled: 'Dibatalkan',
+      statusNoShow: 'Tidak Datang',
+    },
+    form: {
+      title: 'Booking Manual',
+      selectPatientRequired: 'Pilih pasien terlebih dahulu.',
+      dateRequired: 'Tanggal dan jam appointment wajib diisi.',
+      createError: 'Gagal membuat appointment.',
+      searchPatientLabel: 'Cari Pasien',
+      searchPatientPlaceholder: 'Cari nama, NIK, atau nomor pasien...',
+      searchPatientEmpty: 'Ketik untuk mencari pasien.',
+      doctorLabel: 'Dokter',
+      doctorPlaceholder: 'Cari dokter...',
+      doctorEmpty: 'Belum ada dokter aktif.',
+      dateTimeLabel: 'Tanggal & Jam',
+      save: 'Simpan',
+      saving: 'Menyimpan...',
+      cancel: 'Batal',
     },
   },
 };

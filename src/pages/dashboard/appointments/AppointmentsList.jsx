@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { CalendarPlus } from 'lucide-react';
 import { listAppointments, updateAppointmentStatus } from '../../../services/appointments';
 import { getBookingDoctors } from '../../../services/publicBooking';
@@ -14,14 +15,15 @@ import styles from './AppointmentsList.module.scss';
 
 const LIMIT = 20;
 
-const STATUS_LABELS = {
-  booked: 'Dipesan',
-  checked_in: 'Check-in',
-  in_consultation: 'Konsultasi',
-  completed: 'Selesai',
-  cancelled: 'Dibatalkan',
-  no_show: 'Tidak Datang',
-};
+// appointments.status enum (02-data-model.md) -> i18n key suffix in appointments.list.*
+const STATUS_ORDER = [
+  ['booked', 'statusBooked'],
+  ['checked_in', 'statusCheckedIn'],
+  ['in_consultation', 'statusInConsultation'],
+  ['completed', 'statusCompleted'],
+  ['cancelled', 'statusCancelled'],
+  ['no_show', 'statusNoShow'],
+];
 
 const STATUS_VARIANTS = {
   booked: 'info',
@@ -37,6 +39,7 @@ function formatDateTime(value) {
 }
 
 export default function AppointmentsList() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [date, setDate] = useState('');
@@ -47,6 +50,8 @@ export default function AppointmentsList() {
   const [result, setResult] = useState({ data: [], pagination: { page: 1, limit: LIMIT, total_items: 0, total_pages: 0 } });
   const [isLoading, setIsLoading] = useState(false);
   const debouncedSearch = useDebounce(search, 400);
+
+  const statusLabels = Object.fromEntries(STATUS_ORDER.map(([value, key]) => [value, t(`appointments.list.${key}`)]));
 
   useEffect(() => {
     // Public booking-doctors endpoint, not GET /users (owner/admin-only —
@@ -89,45 +94,45 @@ export default function AppointmentsList() {
   return (
     <div className={styles.wrapper}>
       <div className={styles.header}>
-        <h1 className={styles.title}>Appointment</h1>
+        <h1 className={styles.title}>{t('appointments.list.title')}</h1>
         <Button onClick={() => navigate('/dashboard/appointments/new')}>
           <CalendarPlus size={16} />
-          Booking Manual
+          {t('appointments.list.manualBooking')}
         </Button>
       </div>
 
       <div className={styles.filters}>
-        <Input placeholder="Cari nama pasien..." value={search} onChange={(e) => setSearch(e.target.value)} />
+        <Input placeholder={t('appointments.list.searchPlaceholder')} value={search} onChange={(e) => setSearch(e.target.value)} />
         <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
         <Select value={doctorId} onChange={(e) => setDoctorId(e.target.value)}>
-          <option value="">Semua Dokter</option>
+          <option value="">{t('appointments.list.allDoctors')}</option>
           {doctors.map((doctor) => (
             <option key={doctor.id} value={doctor.id}>{doctor.full_name}</option>
           ))}
         </Select>
         <Select value={status} onChange={(e) => setStatus(e.target.value)}>
-          <option value="">Semua Status</option>
-          {Object.entries(STATUS_LABELS).map(([value, label]) => (
-            <option key={value} value={value}>{label}</option>
+          <option value="">{t('appointments.list.allStatus')}</option>
+          {STATUS_ORDER.map(([value]) => (
+            <option key={value} value={value}>{statusLabels[value]}</option>
           ))}
         </Select>
       </div>
-      {isLoading && <span className={styles.loadingHint}>Memuat...</span>}
+      {isLoading && <span className={styles.loadingHint}>{t('appointments.list.loading')}</span>}
 
       {result.data.length === 0 && !isLoading ? (
-        <EmptyState message="Belum ada appointment yang cocok." />
+        <EmptyState message={t('appointments.list.noResults')} />
       ) : (
         <>
           <div className={styles.tableScroll}>
             <table className={styles.table}>
               <thead>
                 <tr>
-                  <th>Pasien</th>
-                  <th>Dokter</th>
-                  <th>Waktu</th>
-                  <th>No. Antrian</th>
-                  <th>Status</th>
-                  <th>Aksi</th>
+                  <th>{t('appointments.list.columnPatient')}</th>
+                  <th>{t('appointments.list.columnDoctor')}</th>
+                  <th>{t('appointments.list.columnTime')}</th>
+                  <th>{t('appointments.list.columnQueueNumber')}</th>
+                  <th>{t('appointments.list.columnStatus')}</th>
+                  <th>{t('appointments.list.columnAction')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -137,25 +142,25 @@ export default function AppointmentsList() {
                     <td>{appointment.doctor_name || '-'}</td>
                     <td>{formatDateTime(appointment.scheduled_at)}</td>
                     <td>{appointment.queue_number || '-'}</td>
-                    <td><Badge variant={STATUS_VARIANTS[appointment.status]}>{STATUS_LABELS[appointment.status]}</Badge></td>
+                    <td><Badge variant={STATUS_VARIANTS[appointment.status]}>{statusLabels[appointment.status]}</Badge></td>
                     <td>
                       <div className={styles.rowActions}>
                         {appointment.status === 'booked' && (
                           <>
-                            <Button variant="secondary" onClick={() => handleStatusChange(appointment.id, 'checked_in')}>Check-in</Button>
-                            <Button variant="ghost" onClick={() => handleStatusChange(appointment.id, 'no_show')}>Tidak Datang</Button>
-                            <Button variant="danger" onClick={() => handleStatusChange(appointment.id, 'cancelled')}>Batal</Button>
+                            <Button variant="secondary" onClick={() => handleStatusChange(appointment.id, 'checked_in')}>{t('appointments.list.checkIn')}</Button>
+                            <Button variant="ghost" onClick={() => handleStatusChange(appointment.id, 'no_show')}>{t('appointments.list.noShow')}</Button>
+                            <Button variant="danger" onClick={() => handleStatusChange(appointment.id, 'cancelled')}>{t('appointments.list.cancel')}</Button>
                           </>
                         )}
                         {appointment.status === 'checked_in' && (
-                          <Button variant="secondary" onClick={() => handleStartConsultation(appointment)}>Mulai Konsultasi</Button>
+                          <Button variant="secondary" onClick={() => handleStartConsultation(appointment)}>{t('appointments.list.startConsultation')}</Button>
                         )}
                         {appointment.status === 'in_consultation' && (
                           <>
                             <Button variant="secondary" onClick={() => navigate(`/dashboard/consultation/${appointment.id}`)}>
-                              Lanjutkan Konsultasi
+                              {t('appointments.list.continueConsultation')}
                             </Button>
-                            <Button variant="ghost" onClick={() => handleStatusChange(appointment.id, 'completed')}>Selesai</Button>
+                            <Button variant="ghost" onClick={() => handleStatusChange(appointment.id, 'completed')}>{t('appointments.list.complete')}</Button>
                           </>
                         )}
                       </div>

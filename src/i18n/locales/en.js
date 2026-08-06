@@ -1,6 +1,6 @@
 // English translations. Scope so far: Navbar (Topbar + its dropdowns/modal),
-// Login, Dashboard, PharmacyPage, Patients (list/form/detail) — see id.js
-// for the full key list/context.
+// Login, Dashboard, PharmacyPage, Patients (list/form/detail), Appointments
+// (list/form) — see id.js for the full key list/context.
 export default {
   common: {
     cancel: 'Cancel',
@@ -164,6 +164,51 @@ export default {
       unknownDoctor: 'Unknown doctor',
       complaint: 'Complaint',
       diagnosis: 'Diagnosis',
+    },
+  },
+  appointments: {
+    list: {
+      title: 'Appointments',
+      manualBooking: 'Manual Booking',
+      searchPlaceholder: 'Search by patient name...',
+      allDoctors: 'All Doctors',
+      allStatus: 'All Statuses',
+      loading: 'Loading...',
+      noResults: 'No matching appointments yet.',
+      columnPatient: 'Patient',
+      columnDoctor: 'Doctor',
+      columnTime: 'Time',
+      columnQueueNumber: 'Queue No.',
+      columnStatus: 'Status',
+      columnAction: 'Action',
+      checkIn: 'Check In',
+      noShow: 'No Show',
+      cancel: 'Cancel',
+      startConsultation: 'Start Consultation',
+      continueConsultation: 'Continue Consultation',
+      complete: 'Complete',
+      statusBooked: 'Booked',
+      statusCheckedIn: 'Checked In',
+      statusInConsultation: 'In Consultation',
+      statusCompleted: 'Completed',
+      statusCancelled: 'Cancelled',
+      statusNoShow: 'No Show',
+    },
+    form: {
+      title: 'Manual Booking',
+      selectPatientRequired: 'Please select a patient first.',
+      dateRequired: 'Appointment date and time are required.',
+      createError: 'Failed to create appointment.',
+      searchPatientLabel: 'Search Patient',
+      searchPatientPlaceholder: 'Search by name, ID number, or patient number...',
+      searchPatientEmpty: 'Type to search for a patient.',
+      doctorLabel: 'Doctor',
+      doctorPlaceholder: 'Search doctor...',
+      doctorEmpty: 'No active doctors yet.',
+      dateTimeLabel: 'Date & Time',
+      save: 'Save',
+      saving: 'Saving...',
+      cancel: 'Cancel',
     },
   },
 };

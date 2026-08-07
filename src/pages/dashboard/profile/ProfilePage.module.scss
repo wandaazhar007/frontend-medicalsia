@@ -76,7 +76,7 @@
 
 .photoError {
   font-size: $font-size-xs;
-  color: $color-danger;
+  color: var(--color-danger);
 }
 
 .form {
@@ -87,16 +87,16 @@
 
 .formError {
   font-size: $font-size-xs;
-  color: $color-danger;
-  background: $color-danger-bg;
+  color: var(--color-danger);
+  background: var(--color-danger-bg);
   border-radius: $radius-sm;
   padding: $space-2 $space-3;
 }
 
 .formSuccess {
   font-size: $font-size-xs;
-  color: $color-success;
-  background: $color-success-bg;
+  color: var(--color-success);
+  background: var(--color-success-bg);
   border-radius: $radius-sm;
   padding: $space-2 $space-3;
 }

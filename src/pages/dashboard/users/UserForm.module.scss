@@ -43,8 +43,8 @@
 
 .error {
   font-size: $font-size-xs;
-  color: $color-danger;
-  background: $color-danger-bg;
+  color: var(--color-danger);
+  background: var(--color-danger-bg);
   border-radius: $radius-sm;
   padding: $space-2 $space-3;
 }
@@ -58,7 +58,7 @@
 .inviteLink {
   font-size: $font-size-xs;
   word-break: break-all;
-  background: $color-bg;
+  background: var(--color-bg);
   border-radius: $radius-sm;
   padding: $space-2 $space-3;
 }

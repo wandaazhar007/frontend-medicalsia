@@ -9,15 +9,15 @@
 .label {
   font-size: $font-size-sm;
   font-weight: $font-weight-medium;
-  color: $color-text;
+  color: var(--color-text);
 }
 
 .select {
   border-radius: $radius-md;
-  border: 1.5px solid $color-border;
+  border: 1.5px solid var(--color-border);
   padding: $space-2 $space-3;
-  color: $color-text;
-  background: $color-surface;
+  color: var(--color-text);
+  background: var(--color-surface);
 
   &:focus {
     outline: none;

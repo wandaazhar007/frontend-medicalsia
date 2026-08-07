@@ -34,7 +34,7 @@
 }
 
 .label {
-  color: $color-text-muted;
+  color: var(--color-text-muted);
   font-size: $font-size-xs;
   text-transform: uppercase;
 }
@@ -43,7 +43,7 @@
   display: flex;
   justify-content: space-between;
   padding: $space-2 0;
-  border-top: 1px solid $color-border;
+  border-top: 1px solid var(--color-border);
   font-size: $font-size-sm;
 }
 
@@ -53,13 +53,13 @@
   font-size: $font-size-lg;
   font-weight: $font-weight-bold;
   padding-top: $space-3;
-  border-top: 2px solid $color-border;
+  border-top: 2px solid var(--color-border);
 }
 
 .shortfallItem {
   display: flex;
   justify-content: space-between;
   padding: $space-2 0;
-  border-top: 1px solid $color-border;
+  border-top: 1px solid var(--color-border);
   font-size: $font-size-sm;
 }

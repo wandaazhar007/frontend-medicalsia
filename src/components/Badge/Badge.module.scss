@@ -12,21 +12,21 @@
 }
 
 .success {
-  background: $color-success-bg;
-  color: $color-success;
+  background: var(--color-success-bg);
+  color: var(--color-success);
 }
 
 .warning {
-  background: $color-warning-bg;
-  color: $color-warning;
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
 }
 
 .danger {
-  background: $color-danger-bg;
-  color: $color-danger;
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
 }
 
 .info {
-  background: $color-info-bg;
-  color: $color-info;
+  background: var(--color-info-bg);
+  color: var(--color-info);
 }

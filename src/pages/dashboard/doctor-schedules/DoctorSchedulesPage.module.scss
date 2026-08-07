@@ -52,10 +52,10 @@
   border-collapse: collapse;
 
   th {
-    background: $color-bg;
+    background: var(--color-bg);
     font-size: $font-size-xs;
     text-transform: uppercase;
-    color: $color-text-muted;
+    color: var(--color-text-muted);
     text-align: left;
     padding: $space-3;
     white-space: nowrap;
@@ -64,15 +64,15 @@
   td {
     padding: $space-3;
     font-size: $font-size-sm;
-    border-top: 1px solid $color-border;
+    border-top: 1px solid var(--color-border);
     white-space: nowrap;
   }
 }
 
 .error {
   font-size: $font-size-xs;
-  color: $color-danger;
-  background: $color-danger-bg;
+  color: var(--color-danger);
+  background: var(--color-danger-bg);
   border-radius: $radius-sm;
   padding: $space-2 $space-3;
 }

@@ -49,9 +49,9 @@
 
 .ghost {
   background: transparent;
-  color: $color-text-muted;
+  color: var(--color-text-muted);
 
   &:hover:not(:disabled) {
-    background: $color-bg;
+    background: var(--color-bg);
   }
 }

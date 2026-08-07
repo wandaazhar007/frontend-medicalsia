@@ -52,7 +52,7 @@
 
 .doctorName {
   font-size: $font-size-xs;
-  color: $color-text-muted;
+  color: var(--color-text-muted);
 }
 
 .actions {

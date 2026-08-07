@@ -24,13 +24,13 @@
   flex-wrap: wrap;
   gap: $space-2;
   font-size: $font-size-sm;
-  color: $color-text-muted;
+  color: var(--color-text-muted);
 }
 
 .sectionTitle {
   font-size: $font-size-lg;
   font-weight: $font-weight-semibold;
-  color: $color-text;
+  color: var(--color-text);
   margin-top: $space-2;
 }
 

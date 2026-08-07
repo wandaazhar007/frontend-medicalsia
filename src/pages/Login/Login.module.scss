@@ -5,7 +5,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: $color-bg;
+  background: var(--color-bg);
   padding: $space-4;
 }
 
@@ -26,7 +26,7 @@
 
 .subtitle {
   font-size: $font-size-sm;
-  color: $color-text-muted;
+  color: var(--color-text-muted);
   margin-top: -#{$space-3};
   text-align: center;
 }
@@ -39,8 +39,8 @@
 
 .error {
   font-size: $font-size-xs;
-  color: $color-danger;
-  background: $color-danger-bg;
+  color: var(--color-danger);
+  background: var(--color-danger-bg);
   border-radius: $radius-sm;
   padding: $space-2 $space-3;
 }
@@ -52,10 +52,10 @@
   background: none;
   border: none;
   padding: 0 $space-2;
-  color: $color-text-muted;
+  color: var(--color-text-muted);
   cursor: pointer;
 
   &:hover {
-    color: $color-text;
+    color: var(--color-text);
   }
 }

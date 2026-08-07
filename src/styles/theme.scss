@@ -1,20 +1,42 @@
 // Runtime-switchable theme tokens (CSS custom properties), separate from the
-// compile-time $color-* SCSS variables in variables.scss. This is a
-// foundation: only the global shell (body, Card, Topbar, BottomNav) consumes
-// these tokens today — individual dashboard pages still use $color-* directly
-// and stay light-only until they're migrated in a follow-up pass.
+// compile-time $color-* SCSS variables in variables.scss. Covers the entire
+// authenticated staff shell (dashboard pages + shared components) plus Login.
+// Public/patient-facing screens (Booking, Display, DisplayPharmacy) and
+// print-only components (PatientCard, MedicalRecordPrint, ReceiptPrint) stay
+// light-only by design — see CLAUDE.md progress notes.
 :root {
   --color-bg: #F9FAFB;
   --color-surface: #FFFFFF;
   --color-text: #111827;
   --color-text-muted: #6B7280;
   --color-border: #E5E7EB;
+
+  --color-success: #16A34A;
+  --color-success-bg: #DCFCE7;
+  --color-warning: #D97706;
+  --color-warning-bg: #FEF3C7;
+  --color-danger: #DC2626;
+  --color-danger-bg: #FEE2E2;
+  --color-info: #1E40AF;
+  --color-info-bg: #DBEAFE;
 }
 
+// Dark palette: soft charcoal/slate instead of high-contrast navy-black, with
+// desaturated semantic tints so status colors don't glare against the
+// darker surface.
 [data-theme='dark'] {
-  --color-bg: #0F172A;
-  --color-surface: #1E293B;
-  --color-text: #F1F5F9;
-  --color-text-muted: #94A3B8;
-  --color-border: #334155;
+  --color-bg: #1C1F26;
+  --color-surface: #262A33;
+  --color-text: #E4E6EB;
+  --color-text-muted: #9AA1AC;
+  --color-border: #383D48;
+
+  --color-success: #6FCF97;
+  --color-success-bg: #263429;
+  --color-warning: #E8B563;
+  --color-warning-bg: #362D1F;
+  --color-danger: #E58B8B;
+  --color-danger-bg: #3A2626;
+  --color-info: #7FA8E8;
+  --color-info-bg: #232C3B;
 }

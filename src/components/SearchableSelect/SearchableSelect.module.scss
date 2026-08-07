@@ -11,8 +11,8 @@
   right: 0;
   z-index: 10;
   margin-top: $space-1;
-  background: $color-surface;
-  border: 1px solid $color-border;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: $radius-md;
   box-shadow: $shadow-md;
   max-height: 24rem;
@@ -30,12 +30,12 @@
   cursor: pointer;
 
   &:hover {
-    background: $color-bg;
+    background: var(--color-bg);
   }
 }
 
 .empty {
   padding: $space-2 $space-3;
   font-size: $font-size-sm;
-  color: $color-text-muted;
+  color: var(--color-text-muted);
 }

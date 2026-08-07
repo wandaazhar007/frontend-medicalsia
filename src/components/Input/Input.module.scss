@@ -9,7 +9,7 @@
 .label {
   font-size: $font-size-sm;
   font-weight: $font-weight-medium;
-  color: $color-text;
+  color: var(--color-text);
 }
 
 .inputWrapper {
@@ -20,10 +20,10 @@
 .input {
   width: 100%;
   border-radius: $radius-md;
-  border: 1.5px solid $color-border;
+  border: 1.5px solid var(--color-border);
   padding: $space-2 $space-3;
-  color: $color-text;
-  background: $color-surface;
+  color: var(--color-text);
+  background: var(--color-surface);
 
   &:focus {
     outline: none;
@@ -32,7 +32,7 @@
   }
 
   &::placeholder {
-    color: $color-text-muted;
+    color: var(--color-text-muted);
   }
 }
 
@@ -41,10 +41,10 @@
 }
 
 .inputError {
-  border-color: $color-danger;
+  border-color: var(--color-danger);
 
   &:focus {
-    border-color: $color-danger;
+    border-color: var(--color-danger);
     box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
   }
 }
@@ -60,5 +60,5 @@
 
 .errorText {
   font-size: $font-size-xs;
-  color: $color-danger;
+  color: var(--color-danger);
 }

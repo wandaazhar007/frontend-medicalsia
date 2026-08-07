@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { CalendarClock, CalendarPlus, Clock, CreditCard, LayoutDashboard, Menu, Pill, Receipt, UserCog, Users, X } from 'lucide-react';
+import { CalendarClock, CalendarPlus, Clock, CreditCard, LayoutDashboard, Menu, Pill, PillBottle, Receipt, UserCog, Users, X } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
 import styles from './BottomNav.module.scss';
 
@@ -17,6 +17,7 @@ export default function BottomNav() {
   const { t } = useTranslation();
   const { user } = useAuth();
   const canManageUsers = user && ['owner', 'admin'].includes(user.role);
+  const canManageMedicines = user && ['owner', 'admin', 'pharmacy'].includes(user.role);
   const [isMoreOpen, setIsMoreOpen] = useState(false);
 
   return (
@@ -45,6 +46,12 @@ export default function BottomNav() {
               <Pill size={18} />
               {t('sidebar.pharmacy')}
             </NavLink>
+            {canManageMedicines && (
+              <NavLink to="/dashboard/medicines" className={styles.moreItem} onClick={() => setIsMoreOpen(false)}>
+                <PillBottle size={18} />
+                {t('sidebar.medicines')}
+              </NavLink>
+            )}
             {canManageUsers && (
               <NavLink to="/dashboard/users" className={styles.moreItem} onClick={() => setIsMoreOpen(false)}>
                 <UserCog size={18} />

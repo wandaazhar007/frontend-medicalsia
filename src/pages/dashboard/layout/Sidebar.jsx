@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { CalendarClock, CalendarPlus, Clock, CreditCard, LayoutDashboard, Pill, Receipt, UserCog, Users } from 'lucide-react';
+import { CalendarClock, CalendarPlus, Clock, CreditCard, LayoutDashboard, Pill, PillBottle, Receipt, UserCog, Users } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
 import styles from './Sidebar.module.scss';
 
@@ -17,6 +17,7 @@ export default function Sidebar() {
   const { t } = useTranslation();
   const { user } = useAuth();
   const canManageUsers = user && ['owner', 'admin'].includes(user.role);
+  const canManageMedicines = user && ['owner', 'admin', 'pharmacy'].includes(user.role);
 
   return (
     <aside className={styles.sidebar}>
@@ -58,6 +59,12 @@ export default function Sidebar() {
           <Pill size={18} />
           {t('sidebar.pharmacy')}
         </NavLink>
+        {canManageMedicines && (
+          <NavLink to="/dashboard/medicines" className={navLinkClass}>
+            <PillBottle size={18} />
+            {t('sidebar.medicines')}
+          </NavLink>
+        )}
       </nav>
 
       {canManageUsers && (

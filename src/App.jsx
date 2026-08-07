@@ -20,6 +20,8 @@ import CashierPage from './pages/dashboard/cashier/CashierPage';
 import InvoicesList from './pages/dashboard/invoices/InvoicesList';
 import InvoiceDetail from './pages/dashboard/invoices/InvoiceDetail';
 import PharmacyPage from './pages/dashboard/pharmacy/PharmacyPage';
+import MedicinesList from './pages/dashboard/medicines/MedicinesList';
+import MedicineForm from './pages/dashboard/medicines/MedicineForm';
 import UsersList from './pages/dashboard/users/UsersList';
 import UserForm from './pages/dashboard/users/UserForm';
 import ProfilePage from './pages/dashboard/profile/ProfilePage';
@@ -74,6 +76,30 @@ function AppRoutes() {
         <Route path="invoices" element={<InvoicesList />} />
         <Route path="invoices/:id" element={<InvoiceDetail />} />
         <Route path="pharmacy" element={<PharmacyPage />} />
+        <Route
+          path="medicines"
+          element={(
+            <RequireRole roles={['owner', 'admin', 'pharmacy']}>
+              <MedicinesList />
+            </RequireRole>
+          )}
+        />
+        <Route
+          path="medicines/new"
+          element={(
+            <RequireRole roles={['owner', 'admin', 'pharmacy']}>
+              <MedicineForm />
+            </RequireRole>
+          )}
+        />
+        <Route
+          path="medicines/:id/edit"
+          element={(
+            <RequireRole roles={['owner', 'admin', 'pharmacy']}>
+              <MedicineForm />
+            </RequireRole>
+          )}
+        />
         <Route
           path="users"
           element={(

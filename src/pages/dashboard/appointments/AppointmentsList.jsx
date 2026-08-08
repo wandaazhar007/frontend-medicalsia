@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { CalendarPlus } from 'lucide-react';
+import { Ban, CalendarPlus, CheckCircle2, PlayCircle, Stethoscope, UserCheck, UserX } from 'lucide-react';
+import { useAuth } from '../../../context/AuthContext';
 import { listAppointments, updateAppointmentStatus } from '../../../services/appointments';
 import { getBookingDoctors } from '../../../services/publicBooking';
 import { useDebounce } from '../../../hooks/useDebounce';
@@ -11,9 +12,21 @@ import Button from '../../../components/Button/Button';
 import Badge from '../../../components/Badge/Badge';
 import Pagination from '../../../components/Pagination/Pagination';
 import EmptyState from '../../../components/EmptyState/EmptyState';
+import TableSkeleton from '../../../components/TableSkeleton/TableSkeleton';
+import Modal from '../../../components/Modal/Modal';
+import AppointmentForm from './AppointmentForm';
 import styles from './AppointmentsList.module.scss';
 
 const LIMIT = 20;
+
+const SKELETON_COLUMNS = [
+  { width: '75%' },
+  { width: '60%' },
+  { width: '65%' },
+  { width: '35%' },
+  { width: '45%', variant: 'badge' },
+  { width: '70%' },
+];
 
 // appointments.status enum (02-data-model.md) -> i18n key suffix in appointments.list.*
 const STATUS_ORDER = [
@@ -34,21 +47,32 @@ const STATUS_VARIANTS = {
   no_show: 'danger',
 };
 
+// Fixed DD-MM-YYYY + 24h format, independent of locale/i18n language toggle.
 function formatDateTime(value) {
-  return new Date(value).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' });
+  const d = new Date(value);
+  const day = String(d.getDate()).padStart(2, '0');
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const year = d.getFullYear();
+  const hours = String(d.getHours()).padStart(2, '0');
+  const minutes = String(d.getMinutes()).padStart(2, '0');
+  return `${day}-${month}-${year} ${hours}:${minutes}`;
 }
 
 export default function AppointmentsList() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [search, setSearch] = useState('');
   const [date, setDate] = useState('');
-  const [doctorId, setDoctorId] = useState('');
+  // A doctor's default view is their own appointments, not "All Doctors" —
+  // they can still switch the filter manually afterwards.
+  const [doctorId, setDoctorId] = useState(() => (user?.role === 'doctor' ? user.id : ''));
   const [status, setStatus] = useState('');
   const [page, setPage] = useState(1);
   const [doctors, setDoctors] = useState([]);
   const [result, setResult] = useState({ data: [], pagination: { page: 1, limit: LIMIT, total_items: 0, total_pages: 0 } });
   const [isLoading, setIsLoading] = useState(false);
+  const [isBookingOpen, setIsBookingOpen] = useState(false);
   const debouncedSearch = useDebounce(search, 400);
 
   const statusLabels = Object.fromEntries(STATUS_ORDER.map(([value, key]) => [value, t(`appointments.list.${key}`)]));
@@ -95,7 +119,7 @@ export default function AppointmentsList() {
     <div className={styles.wrapper}>
       <div className={styles.header}>
         <h1 className={styles.title}>{t('appointments.list.title')}</h1>
-        <Button onClick={() => navigate('/dashboard/appointments/new')}>
+        <Button onClick={() => setIsBookingOpen(true)}>
           <CalendarPlus size={16} />
           {t('appointments.list.manualBooking')}
         </Button>
@@ -117,26 +141,26 @@ export default function AppointmentsList() {
           ))}
         </Select>
       </div>
-      {isLoading && <span className={styles.loadingHint}>{t('appointments.list.loading')}</span>}
-
-      {result.data.length === 0 && !isLoading ? (
+      {!isLoading && result.data.length === 0 ? (
         <EmptyState message={t('appointments.list.noResults')} />
       ) : (
-        <>
-          <div className={styles.tableScroll}>
-            <table className={styles.table}>
-              <thead>
-                <tr>
-                  <th>{t('appointments.list.columnPatient')}</th>
-                  <th>{t('appointments.list.columnDoctor')}</th>
-                  <th>{t('appointments.list.columnTime')}</th>
-                  <th>{t('appointments.list.columnQueueNumber')}</th>
-                  <th>{t('appointments.list.columnStatus')}</th>
-                  <th>{t('appointments.list.columnAction')}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {result.data.map((appointment) => (
+        <div className={styles.tableScroll}>
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th>{t('appointments.list.columnPatient')}</th>
+                <th>{t('appointments.list.columnDoctor')}</th>
+                <th>{t('appointments.list.columnTime')}</th>
+                <th>{t('appointments.list.columnQueueNumber')}</th>
+                <th>{t('appointments.list.columnStatus')}</th>
+                <th>{t('appointments.list.columnAction')}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {isLoading ? (
+                <TableSkeleton rows={8} columns={SKELETON_COLUMNS} />
+              ) : (
+                result.data.map((appointment) => (
                   <tr key={appointment.id}>
                     <td>{appointment.patient_name}</td>
                     <td>{appointment.doctor_name || '-'}</td>
@@ -147,38 +171,67 @@ export default function AppointmentsList() {
                       <div className={styles.rowActions}>
                         {appointment.status === 'booked' && (
                           <>
-                            <Button variant="secondary" onClick={() => handleStatusChange(appointment.id, 'checked_in')}>{t('appointments.list.checkIn')}</Button>
-                            <Button variant="ghost" onClick={() => handleStatusChange(appointment.id, 'no_show')}>{t('appointments.list.noShow')}</Button>
-                            <Button variant="danger" onClick={() => handleStatusChange(appointment.id, 'cancelled')}>{t('appointments.list.cancel')}</Button>
+                            <Button variant="secondary" onClick={() => handleStatusChange(appointment.id, 'checked_in')}>
+                              <UserCheck size={16} />
+                              {t('appointments.list.checkIn')}
+                            </Button>
+                            <Button variant="secondary" onClick={() => handleStatusChange(appointment.id, 'no_show')}>
+                              <UserX size={16} />
+                              {t('appointments.list.noShow')}
+                            </Button>
+                            <Button variant="danger" onClick={() => handleStatusChange(appointment.id, 'cancelled')}>
+                              <Ban size={16} />
+                              {t('appointments.list.cancel')}
+                            </Button>
                           </>
                         )}
                         {appointment.status === 'checked_in' && (
-                          <Button variant="secondary" onClick={() => handleStartConsultation(appointment)}>{t('appointments.list.startConsultation')}</Button>
+                          <Button variant="secondary" onClick={() => handleStartConsultation(appointment)}>
+                            <Stethoscope size={16} />
+                            {t('appointments.list.startConsultation')}
+                          </Button>
                         )}
                         {appointment.status === 'in_consultation' && (
                           <>
                             <Button variant="secondary" onClick={() => navigate(`/dashboard/consultation/${appointment.id}`)}>
+                              <PlayCircle size={16} />
                               {t('appointments.list.continueConsultation')}
                             </Button>
-                            <Button variant="ghost" onClick={() => handleStatusChange(appointment.id, 'completed')}>{t('appointments.list.complete')}</Button>
+                            <Button variant="secondary" onClick={() => handleStatusChange(appointment.id, 'completed')}>
+                              <CheckCircle2 size={16} />
+                              {t('appointments.list.complete')}
+                            </Button>
                           </>
                         )}
                       </div>
                     </td>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <Pagination
-            page={result.pagination.page}
-            limit={result.pagination.limit}
-            totalItems={result.pagination.total_items}
-            totalPages={result.pagination.total_pages}
-            onPageChange={setPage}
-          />
-        </>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       )}
+
+      {!isLoading && result.data.length > 0 && (
+        <Pagination
+          page={result.pagination.page}
+          limit={result.pagination.limit}
+          totalItems={result.pagination.total_items}
+          totalPages={result.pagination.total_pages}
+          onPageChange={setPage}
+        />
+      )}
+
+      <Modal isOpen={isBookingOpen} onClose={() => setIsBookingOpen(false)} title={t('appointments.form.title')}>
+        <AppointmentForm
+          onSuccess={() => {
+            setIsBookingOpen(false);
+            fetchAppointments();
+          }}
+          onCancel={() => setIsBookingOpen(false)}
+        />
+      </Modal>
     </div>
   );
 }

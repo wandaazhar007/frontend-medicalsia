@@ -1,33 +1,43 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Save } from 'lucide-react';
+import { Save, X } from 'lucide-react';
 import { createAppointment } from '../../../services/appointments';
 import { listPatients } from '../../../services/patients';
 import { getBookingDoctors } from '../../../services/publicBooking';
-import Card from '../../../components/Card/Card';
 import Input from '../../../components/Input/Input';
 import SearchableSelect from '../../../components/SearchableSelect/SearchableSelect';
 import Button from '../../../components/Button/Button';
+import Tooltip from '../../../components/Tooltip/Tooltip';
 import styles from './AppointmentForm.module.scss';
 
-// "YYYY-MM-DDTHH:mm" in local time, for the datetime-local input's `min` —
+// "YYYY-MM-DD" / "HH:mm" in local time, for the date/time inputs' `min` —
 // disables picking a past date, and past times on today's date.
-function nowLocalDatetime() {
+function todayLocalDate() {
   const now = new Date();
   const tzOffsetMs = now.getTimezoneOffset() * 60000;
-  return new Date(now - tzOffsetMs).toISOString().slice(0, 16);
+  return new Date(now - tzOffsetMs).toISOString().slice(0, 10);
 }
 
-export default function AppointmentForm() {
+function nowLocalTime() {
+  const now = new Date();
+  const tzOffsetMs = now.getTimezoneOffset() * 60000;
+  return new Date(now - tzOffsetMs).toISOString().slice(11, 16);
+}
+
+export default function AppointmentForm({ onSuccess, onCancel }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [doctors, setDoctors] = useState([]);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
-  const [scheduledAt, setScheduledAt] = useState('');
-  const [error, setError] = useState('');
+  const [date, setDate] = useState('');
+  const [time, setTime] = useState('');
+  const [patientError, setPatientError] = useState('');
+  const [dateError, setDateError] = useState('');
+  const [timeError, setTimeError] = useState('');
+  const [submitError, setSubmitError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -51,79 +61,141 @@ export default function AppointmentForm() {
     [doctors]
   );
 
+  function handleSelectPatient(option) {
+    setSelectedPatient(option ? option.raw : null);
+    setPatientError('');
+  }
+
+  function handleDateChange(e) {
+    setDate(e.target.value);
+    setDateError('');
+  }
+
+  function handleTimeChange(e) {
+    setTime(e.target.value);
+    setTimeError('');
+  }
+
+  function validate() {
+    let isValid = true;
+    if (!selectedPatient) {
+      setPatientError(t('appointments.form.selectPatientRequired'));
+      isValid = false;
+    }
+    if (!date) {
+      setDateError(t('appointments.form.dateRequired'));
+      isValid = false;
+    }
+    if (!time) {
+      setTimeError(t('appointments.form.timeRequired'));
+      isValid = false;
+    }
+    return isValid;
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
-    setError('');
+    setSubmitError('');
+    setPatientError('');
+    setDateError('');
+    setTimeError('');
 
-    if (!selectedPatient) {
-      setError(t('appointments.form.selectPatientRequired'));
-      return;
-    }
-    if (!scheduledAt) {
-      setError(t('appointments.form.dateRequired'));
-      return;
-    }
+    if (!validate()) return;
 
     setIsSubmitting(true);
     try {
       await createAppointment({
         patient_id: selectedPatient.id,
         doctor_id: selectedDoctor?.id || null,
-        scheduled_at: new Date(scheduledAt).toISOString(),
+        scheduled_at: new Date(`${date}T${time}`).toISOString(),
       });
-      navigate('/dashboard/appointments');
+      onSuccess();
     } catch {
-      setError(t('appointments.form.createError'));
+      setSubmitError(t('appointments.form.createError'));
     } finally {
       setIsSubmitting(false);
     }
   }
 
   return (
-    <div className={styles.wrapper}>
-      <h1 className={styles.title}>{t('appointments.form.title')}</h1>
-      <Card>
-        <form className={styles.form} onSubmit={handleSubmit}>
-          {error && <div className={styles.error}>{error}</div>}
+    <form className={styles.form} onSubmit={handleSubmit}>
+      {submitError && <div className={styles.error}>{submitError}</div>}
 
-          <SearchableSelect
-            id="patient"
-            label={t('appointments.form.searchPatientLabel')}
-            placeholder={t('appointments.form.searchPatientPlaceholder')}
-            value={selectedPatient ? { label: `${selectedPatient.full_name} (${selectedPatient.patient_number})` } : null}
-            onSelect={(option) => setSelectedPatient(option.raw)}
-            loadOptions={loadPatientOptions}
-            emptyMessage={t('appointments.form.searchPatientEmpty')}
-          />
+      <SearchableSelect
+        id="patient"
+        label={(
+          <span className={styles.labelWithTooltip}>
+            {t('appointments.form.searchPatientLabel')}
+            <Tooltip content={t('appointments.form.searchPatientTooltip')} ariaLabel={t('appointments.form.searchPatientTooltipLabel')} />
+          </span>
+        )}
+        placeholder={t('appointments.form.searchPatientPlaceholder')}
+        value={selectedPatient ? { label: `${selectedPatient.full_name} (${selectedPatient.patient_number})` } : null}
+        onSelect={handleSelectPatient}
+        loadOptions={loadPatientOptions}
+        emptyMessage={t('appointments.form.searchPatientEmpty')}
+        searchingMessage={t('common.searching')}
+        onAddNew={() => navigate('/dashboard/patients/new')}
+        addNewLabel={t('appointments.form.addNewPatient')}
+        error={patientError}
+      />
 
-          <SearchableSelect
-            id="doctor"
-            label={t('appointments.form.doctorLabel')}
-            placeholder={t('appointments.form.doctorPlaceholder')}
-            value={selectedDoctor ? { label: selectedDoctor.full_name } : null}
-            onSelect={(option) => setSelectedDoctor({ id: option.id, full_name: option.label })}
-            loadOptions={loadDoctorOptions}
-            emptyMessage={t('appointments.form.doctorEmpty')}
-          />
+      <SearchableSelect
+        id="doctor"
+        label={t('appointments.form.doctorLabel')}
+        placeholder={t('appointments.form.doctorPlaceholder')}
+        value={selectedDoctor ? { label: selectedDoctor.full_name } : null}
+        onSelect={(option) => setSelectedDoctor(option ? { id: option.id, full_name: option.label } : null)}
+        loadOptions={loadDoctorOptions}
+        emptyMessage={t('appointments.form.doctorEmpty')}
+        searchingMessage={t('common.searching')}
+      />
 
-          <Input
-            id="scheduled_at"
-            label={t('appointments.form.dateTimeLabel')}
-            type="datetime-local"
-            min={nowLocalDatetime()}
-            value={scheduledAt}
-            onChange={(e) => setScheduledAt(e.target.value)}
-          />
+      <div className={styles.dateTimeRow}>
+        <Input
+          id="scheduled_date"
+          label={t('appointments.form.dateLabel')}
+          type="date"
+          min={todayLocalDate()}
+          value={date}
+          onChange={handleDateChange}
+          error={dateError}
+        />
+        <Input
+          id="scheduled_time"
+          label={(
+            <span className={styles.labelWithTooltip}>
+              {t('appointments.form.timeLabel')}
+              <Tooltip
+                content={(
+                  <>
+                    {t('appointments.form.timeFormatTooltip')}{' '}
+                    <span className={styles.tooltipExample}>{t('appointments.form.timeFormatTooltipExample')}</span>
+                  </>
+                )}
+                ariaLabel={t('appointments.form.timeFormatTooltipLabel')}
+              />
+            </span>
+          )}
+          type="time"
+          lang="id-ID"
+          min={date === todayLocalDate() ? nowLocalTime() : undefined}
+          value={time}
+          onChange={handleTimeChange}
+          error={timeError}
+        />
+      </div>
 
-          <div className={styles.actions}>
-            <Button type="submit" disabled={isSubmitting}>
-              <Save size={16} />
-              {isSubmitting ? t('appointments.form.saving') : t('appointments.form.save')}
-            </Button>
-            <Button type="button" variant="ghost" onClick={() => navigate(-1)}>{t('appointments.form.cancel')}</Button>
-          </div>
-        </form>
-      </Card>
-    </div>
+      <div className={styles.actions}>
+        <Button type="submit" disabled={isSubmitting}>
+          <Save size={16} />
+          {isSubmitting ? t('appointments.form.saving') : t('appointments.form.save')}
+        </Button>
+        <Button type="button" variant="secondary" onClick={onCancel}>
+          <X size={16} />
+          {t('appointments.form.cancel')}
+        </Button>
+      </div>
+    </form>
   );
 }

@@ -8,6 +8,7 @@
 export default {
   common: {
     cancel: 'Cancel',
+    searching: 'Searching...',
   },
   login: {
     subtitle: 'The Modern Clinic App for Indonesia',
@@ -177,7 +178,6 @@ export default {
       searchPlaceholder: 'Search by patient name...',
       allDoctors: 'All Doctors',
       allStatus: 'All Statuses',
-      loading: 'Loading...',
       noResults: 'No matching appointments yet.',
       columnPatient: 'Patient',
       columnDoctor: 'Doctor',
@@ -201,15 +201,23 @@ export default {
     form: {
       title: 'Manual Booking',
       selectPatientRequired: 'Please select a patient first.',
-      dateRequired: 'Appointment date and time are required.',
+      dateRequired: 'Date is required.',
+      timeRequired: 'Time is required.',
       createError: 'Failed to create appointment.',
       searchPatientLabel: 'Search Patient',
+      searchPatientTooltip: 'If the patient\'s name doesn\'t appear in the search results, they may not be registered yet. Add them as a new patient using the "+ Add new patient" link that appears below this field.',
+      searchPatientTooltipLabel: 'Search patient info',
       searchPatientPlaceholder: 'Search by name, ID number, or patient number...',
       searchPatientEmpty: 'Type to search for a patient.',
+      addNewPatient: '+ Add new patient',
       doctorLabel: 'Doctor',
       doctorPlaceholder: 'Search doctor...',
       doctorEmpty: 'No active doctors yet.',
-      dateTimeLabel: 'Date & Time',
+      dateLabel: 'Date',
+      timeLabel: 'Time',
+      timeFormatTooltip: 'This field uses the 12-hour format (AM/PM). AM (Ante Meridiem) covers midnight through just before noon (12:00 AM – 11:59 AM), and PM (Post Meridiem) covers noon through just before midnight (12:00 PM – 11:59 PM).',
+      timeFormatTooltipExample: 'Example: 9:00 AM = 9 in the morning, 9:00 PM = 9 in the evening.',
+      timeFormatTooltipLabel: 'Time format info',
       save: 'Save',
       saving: 'Saving...',
       cancel: 'Cancel',
@@ -469,6 +477,11 @@ export default {
     statusPreparing: 'Being Prepared',
     statusReady: 'Ready for Pickup',
     enableSound: 'Enable Sound',
+  },
+  pagination: {
+    summary: 'Showing {{start}}–{{end}} of {{total}}',
+    previous: 'Previous',
+    next: 'Next',
   },
   sidebar: {
     groupMain: 'Main Menu',

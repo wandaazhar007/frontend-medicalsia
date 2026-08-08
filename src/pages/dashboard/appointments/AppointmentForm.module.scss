@@ -1,25 +1,30 @@
 @use '../../../styles/variables' as *;
 
-.wrapper {
-  padding: $space-6;
-  max-width: 48rem;
-
-  @media (max-width: $breakpoint-tablet) {
-    padding: $space-4;
-  }
-}
-
-.title {
-  font-size: $font-size-2xl;
-  font-weight: $font-weight-bold;
-  color: $color-primary;
-  margin-bottom: $space-4;
-}
-
 .form {
   display: flex;
   flex-direction: column;
   gap: $space-3;
+}
+
+.dateTimeRow {
+  display: flex;
+  gap: $space-3;
+
+  > * {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.labelWithTooltip {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-1;
+}
+
+.tooltipExample {
+  color: var(--color-danger);
+  font-weight: $font-weight-medium;
 }
 
 .actions {

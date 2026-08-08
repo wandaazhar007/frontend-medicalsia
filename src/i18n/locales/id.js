@@ -9,6 +9,7 @@
 export default {
   common: {
     cancel: 'Batal',
+    searching: 'Mencari...',
   },
   login: {
     subtitle: 'The Modern Clinic App for Indonesia',
@@ -178,7 +179,6 @@ export default {
       searchPlaceholder: 'Cari nama pasien...',
       allDoctors: 'Semua Dokter',
       allStatus: 'Semua Status',
-      loading: 'Memuat...',
       noResults: 'Belum ada appointment yang cocok.',
       columnPatient: 'Pasien',
       columnDoctor: 'Dokter',
@@ -202,15 +202,23 @@ export default {
     form: {
       title: 'Booking Manual',
       selectPatientRequired: 'Pilih pasien terlebih dahulu.',
-      dateRequired: 'Tanggal dan jam appointment wajib diisi.',
+      dateRequired: 'Tanggal wajib diisi.',
+      timeRequired: 'Jam wajib diisi.',
       createError: 'Gagal membuat appointment.',
       searchPatientLabel: 'Cari Pasien',
+      searchPatientTooltip: 'Jika nama pasien tidak muncul di hasil pencarian, kemungkinan pasien belum terdaftar. Silakan tambahkan sebagai pasien baru lewat link "+ Tambah pasien baru" yang muncul di bawah kolom ini.',
+      searchPatientTooltipLabel: 'Info pencarian pasien',
       searchPatientPlaceholder: 'Cari nama, NIK, atau nomor pasien...',
       searchPatientEmpty: 'Ketik untuk mencari pasien.',
+      addNewPatient: '+ Tambah pasien baru',
       doctorLabel: 'Dokter',
       doctorPlaceholder: 'Cari dokter...',
       doctorEmpty: 'Belum ada dokter aktif.',
-      dateTimeLabel: 'Tanggal & Jam',
+      dateLabel: 'Tanggal',
+      timeLabel: 'Jam',
+      timeFormatTooltip: 'Jam ini menggunakan format 12 jam (AM/PM). AM (Ante Meridiem) untuk waktu dari tengah malam sampai sebelum siang (12:00 tengah malam – 11:59 pagi), dan PM (Post Meridiem) untuk waktu dari siang sampai sebelum tengah malam (12:00 siang – 11:59 malam).',
+      timeFormatTooltipExample: 'Contoh: 09:00 AM = jam 9 pagi, 09:00 PM = jam 9 malam.',
+      timeFormatTooltipLabel: 'Info format jam',
       save: 'Simpan',
       saving: 'Menyimpan...',
       cancel: 'Batal',
@@ -470,6 +478,11 @@ export default {
     statusPreparing: 'Sedang Disiapkan',
     statusReady: 'Siap Diambil',
     enableSound: 'Aktifkan Suara',
+  },
+  pagination: {
+    summary: 'Menampilkan {{start}}–{{end}} dari {{total}}',
+    previous: 'Sebelumnya',
+    next: 'Selanjutnya',
   },
   sidebar: {
     groupMain: 'Menu Utama',

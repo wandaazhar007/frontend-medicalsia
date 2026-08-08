@@ -13,7 +13,6 @@ import PatientForm from './pages/dashboard/patients/PatientForm';
 import PatientDetail from './pages/dashboard/patients/PatientDetail';
 import DoctorSchedulesPage from './pages/dashboard/doctor-schedules/DoctorSchedulesPage';
 import AppointmentsList from './pages/dashboard/appointments/AppointmentsList';
-import AppointmentForm from './pages/dashboard/appointments/AppointmentForm';
 import QueuePage from './pages/dashboard/queue/QueuePage';
 import ConsultationPage from './pages/dashboard/consultation/ConsultationPage';
 import CashierPage from './pages/dashboard/cashier/CashierPage';
@@ -68,7 +67,6 @@ function AppRoutes() {
         <Route path="patients/:id" element={<PatientDetail />} />
         <Route path="patients/:id/edit" element={<PatientForm />} />
         <Route path="appointments" element={<AppointmentsList />} />
-        <Route path="appointments/new" element={<AppointmentForm />} />
         <Route path="queue" element={<QueuePage />} />
         <Route path="consultation/:id" element={<ConsultationPage />} />
         <Route path="doctor-schedules" element={<DoctorSchedulesPage />} />

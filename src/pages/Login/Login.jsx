@@ -70,7 +70,7 @@ export default function Login() {
     <div className={styles.wrapper}>
       <Card className={styles.card}>
         <div className={styles.brand}>
-          <LogoIcon variant="light" size={40} />
+          <LogoIcon variant="light" size={36} />
           <Wordmark variant="light" />
         </div>
         <p className={styles.subtitle}>{t('login.subtitle')}</p>
@@ -100,12 +100,12 @@ export default function Login() {
                 tabIndex={-1}
                 aria-label={isPasswordVisible ? t('login.hidePassword') : t('login.showPassword')}
               >
-                {isPasswordVisible ? <EyeOff size={18} /> : <Eye size={18} />}
+                {isPasswordVisible ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             }
           />
           <Button type="submit" disabled={isSubmitting}>
-            <LogIn size={18} />
+            <LogIn size={16} />
             {isSubmitting ? t('login.submitting') : t('login.submit')}
           </Button>
         </form>

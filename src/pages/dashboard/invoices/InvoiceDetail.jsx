@@ -64,7 +64,7 @@ export default function InvoiceDetail() {
         <h1 className={styles.title}>{t('invoicesPage.list.title')} — {invoice.patient_name}</h1>
         {invoice.status === 'paid' && (
           <Button variant="secondary" onClick={() => setPrintCount((c) => c + 1)}>
-            <Printer size={16} />
+            <Printer size={14} />
             {t('invoicesPage.detail.printReceipt')}
           </Button>
         )}

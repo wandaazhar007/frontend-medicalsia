@@ -31,7 +31,7 @@ export default function Tooltip({ content, ariaLabel = 'Info' }) {
   return (
     <span className={styles.wrapper} ref={wrapperRef}>
       <button type="button" className={styles.trigger} onClick={() => setIsOpen((open) => !open)} aria-label={ariaLabel}>
-        <CircleAlert size={14} />
+        <CircleAlert size={13} />
       </button>
       {isOpen && <div className={styles.bubble}>{content}</div>}
     </span>

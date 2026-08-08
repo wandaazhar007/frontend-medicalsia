@@ -5,7 +5,7 @@ import styles from './Modal.module.scss';
 // Generic confirm/dialog shell — dark blurred backdrop, closes on backdrop
 // click or Escape. Reused across the app wherever a blocking modal is needed
 // (logout confirmation today, more to come).
-export default function Modal({ isOpen, onClose, title, children }) {
+export default function Modal({ isOpen, onClose, title, titleClassName, children }) {
   useEffect(() => {
     if (!isOpen) return undefined;
 
@@ -21,7 +21,7 @@ export default function Modal({ isOpen, onClose, title, children }) {
   return (
     <div className={styles.backdrop} onClick={onClose}>
       <Card className={styles.modal} onClick={(e) => e.stopPropagation()}>
-        {title && <h2 className={styles.title}>{title}</h2>}
+        {title && <h2 className={`${styles.title} ${titleClassName || ''}`}>{title}</h2>}
         {children}
       </Card>
     </div>

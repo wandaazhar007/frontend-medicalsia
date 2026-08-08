@@ -53,7 +53,7 @@ export default function PatientsList() {
       <div className={styles.header}>
         <h1 className={styles.title}>{t('patients.list.title')}</h1>
         <Button onClick={() => navigate('/dashboard/patients/new')}>
-          <UserPlus size={16} />
+          <UserPlus size={14} />
           {t('patients.list.addButton')}
         </Button>
       </div>

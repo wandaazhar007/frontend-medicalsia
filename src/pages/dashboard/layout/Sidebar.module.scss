@@ -32,6 +32,7 @@
 }
 
 .navItem {
+  position: relative;
   display: flex;
   align-items: center;
   gap: $space-3;
@@ -42,12 +43,44 @@
   color: rgba(255, 255, 255, 0.75);
 
   &:hover {
-    background: $color-primary-hover;
+    background: rgba(255, 255, 255, 0.08);
     color: $color-surface;
   }
 
   &.active {
-    background: $color-primary-hover;
-    color: $color-surface;
+    // Flush against the sidebar's right edge (cancels .sidebar's own
+    // horizontal padding) so the notch below can sit exactly at the
+    // boundary with the content area.
+    margin-right: -$space-3;
+    padding-right: $space-3;
+    // Same token as the content area's own background (body, reset.scss) —
+    // white in light mode, near-black in dark mode — so the item visually
+    // "is" the content panel poking into the sidebar, not just a highlight.
+    background: var(--color-bg);
+    color: var(--color-text);
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+
+    // Concave corners that visually "flow" into the content area's
+    // background (var(--color-bg) — same token body uses, so it tracks
+    // light/dark theme automatically).
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      width: $radius-sm;
+      height: $radius-sm;
+    }
+
+    &::before {
+      top: -$radius-sm;
+      background: radial-gradient(circle at 0 0, transparent $radius-sm, var(--color-bg) $radius-sm);
+    }
+
+    &::after {
+      bottom: -$radius-sm;
+      background: radial-gradient(circle at 0 100%, transparent $radius-sm, var(--color-bg) $radius-sm);
+    }
   }
 }

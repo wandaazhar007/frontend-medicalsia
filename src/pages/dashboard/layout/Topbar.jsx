@@ -45,7 +45,7 @@ export default function Topbar() {
   return (
     <header className={styles.topbar}>
       <Link to="/dashboard" className={styles.brand}>
-        <LogoIcon variant="light" size={32} />
+        <LogoIcon variant="light" size={29} />
         <span className={styles.wordmark}>
           <Wordmark variant="light" />
         </span>
@@ -55,20 +55,20 @@ export default function Topbar() {
           entirely in favor of the hamburger button and dropdown. */}
       <div className={styles.actions}>
         <button type="button" className={styles.iconButton} title={t('navbar.notifications')} onClick={toggleNotif}>
-          <Bell size={18} />
+          <Bell size={16} />
         </button>
         <Link to="/dashboard/profile" className={styles.iconButton} title={t('navbar.profile')} onClick={closeAllDropdowns}>
           {user?.photo_url ? (
             <img src={user.photo_url} alt="" className={styles.avatarThumb} />
           ) : (
-            <User size={18} />
+            <User size={16} />
           )}
         </Link>
         <button type="button" className={styles.iconButton} title={t('navbar.settings')} onClick={toggleSettings}>
-          <Settings size={18} />
+          <Settings size={16} />
         </button>
         <button type="button" className={styles.iconButton} title={t('navbar.logout')} onClick={() => setIsLogoutModalOpen(true)}>
-          <LogOut size={18} />
+          <LogOut size={16} />
         </button>
       </div>
 
@@ -78,7 +78,7 @@ export default function Topbar() {
         title={isMenuOpen ? t('navbar.closeMenu') : t('navbar.openMenu')}
         onClick={() => setIsMenuOpen((open) => !open)}
       >
-        {isMenuOpen ? <X size={20} /> : <CircleChevronDown size={20} />}
+        {isMenuOpen ? <X size={18} /> : <CircleChevronDown size={18} />}
       </button>
 
       {isMenuOpen && (
@@ -86,15 +86,15 @@ export default function Topbar() {
           <div className={styles.backdrop} onClick={() => setIsMenuOpen(false)} />
           <div className={styles.mobileMenu}>
             <button type="button" className={styles.mobileMenuItem} onClick={toggleNotif}>
-              <Bell size={18} />
+              <Bell size={16} />
               {t('navbar.notifications')}
             </button>
             <Link to="/dashboard/profile" className={styles.mobileMenuItem} onClick={closeAllDropdowns}>
-              <User size={18} />
+              <User size={16} />
               {t('navbar.profile')}
             </Link>
             <button type="button" className={styles.mobileMenuItem} onClick={toggleSettings}>
-              <Settings size={18} />
+              <Settings size={16} />
               {t('navbar.settings')}
             </button>
             <button
@@ -105,7 +105,7 @@ export default function Topbar() {
                 setIsLogoutModalOpen(true);
               }}
             >
-              <LogOut size={18} />
+              <LogOut size={16} />
               {t('navbar.logout')}
             </button>
           </div>

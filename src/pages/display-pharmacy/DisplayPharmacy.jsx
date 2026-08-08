@@ -76,7 +76,7 @@ export default function DisplayPharmacy() {
   return (
     <div className={styles.wrapper}>
       <div className={styles.header}>
-        <LogoIcon variant="dark" size={36} />
+        <LogoIcon variant="dark" size={32} />
         <Wordmark variant="dark" />
       </div>
 

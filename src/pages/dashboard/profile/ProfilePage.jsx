@@ -108,7 +108,7 @@ export default function ProfilePage() {
             {profile?.photo_url ? (
               <img src={profile.photo_url} alt={t('profilePage.photoAlt')} className={styles.avatarImage} />
             ) : (
-              <UserIcon size={36} className={styles.avatarPlaceholder} />
+              <UserIcon size={32} className={styles.avatarPlaceholder} />
             )}
             {isUploadingPhoto && <div className={styles.avatarOverlay}>...</div>}
           </div>

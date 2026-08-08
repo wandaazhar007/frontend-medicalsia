@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import { Ban, CalendarPlus, CheckCircle2, PlayCircle, Stethoscope, UserCheck, UserX } from 'lucide-react';
+import { Trans, useTranslation } from 'react-i18next';
+import { Ban, CalendarPlus, CheckCircle2, PlayCircle, Stethoscope, Trash2, UserCheck, UserX, X } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
-import { listAppointments, updateAppointmentStatus } from '../../../services/appointments';
+import { listAppointments, updateAppointmentStatus, deleteAppointment } from '../../../services/appointments';
 import { getBookingDoctors } from '../../../services/publicBooking';
 import { useDebounce } from '../../../hooks/useDebounce';
 import Input from '../../../components/Input/Input';
@@ -47,6 +47,13 @@ const STATUS_VARIANTS = {
   no_show: 'danger',
 };
 
+function getTodayDateInputValue() {
+  const d = new Date();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${d.getFullYear()}-${month}-${day}`;
+}
+
 // Fixed DD-MM-YYYY + 24h format, independent of locale/i18n language toggle.
 function formatDateTime(value) {
   const d = new Date(value);
@@ -63,7 +70,7 @@ export default function AppointmentsList() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [search, setSearch] = useState('');
-  const [date, setDate] = useState('');
+  const [date, setDate] = useState(getTodayDateInputValue);
   // A doctor's default view is their own appointments, not "All Doctors" —
   // they can still switch the filter manually afterwards.
   const [doctorId, setDoctorId] = useState(() => (user?.role === 'doctor' ? user.id : ''));
@@ -73,6 +80,9 @@ export default function AppointmentsList() {
   const [result, setResult] = useState({ data: [], pagination: { page: 1, limit: LIMIT, total_items: 0, total_pages: 0 } });
   const [isLoading, setIsLoading] = useState(false);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleteError, setDeleteError] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
   const debouncedSearch = useDebounce(search, 400);
 
   const statusLabels = Object.fromEntries(STATUS_ORDER.map(([value, key]) => [value, t(`appointments.list.${key}`)]));
@@ -115,12 +125,31 @@ export default function AppointmentsList() {
     navigate(`/dashboard/consultation/${appointment.id}`);
   }
 
+  function openDeleteModal(appointment) {
+    setDeleteError('');
+    setDeleteTarget(appointment);
+  }
+
+  async function confirmDelete() {
+    setDeleteError('');
+    setIsDeleting(true);
+    try {
+      await deleteAppointment(deleteTarget.id);
+      setDeleteTarget(null);
+      fetchAppointments();
+    } catch {
+      setDeleteError(t('appointments.list.deleteError'));
+    } finally {
+      setIsDeleting(false);
+    }
+  }
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.header}>
         <h1 className={styles.title}>{t('appointments.list.title')}</h1>
         <Button onClick={() => setIsBookingOpen(true)}>
-          <CalendarPlus size={16} />
+          <CalendarPlus size={14} />
           {t('appointments.list.manualBooking')}
         </Button>
       </div>
@@ -172,36 +201,47 @@ export default function AppointmentsList() {
                         {appointment.status === 'booked' && (
                           <>
                             <Button variant="secondary" onClick={() => handleStatusChange(appointment.id, 'checked_in')}>
-                              <UserCheck size={16} />
+                              <UserCheck size={14} />
                               {t('appointments.list.checkIn')}
                             </Button>
                             <Button variant="secondary" onClick={() => handleStatusChange(appointment.id, 'no_show')}>
-                              <UserX size={16} />
+                              <UserX size={14} />
                               {t('appointments.list.noShow')}
                             </Button>
                             <Button variant="danger" onClick={() => handleStatusChange(appointment.id, 'cancelled')}>
-                              <Ban size={16} />
+                              <Ban size={14} />
                               {t('appointments.list.cancel')}
                             </Button>
                           </>
                         )}
                         {appointment.status === 'checked_in' && (
                           <Button variant="secondary" onClick={() => handleStartConsultation(appointment)}>
-                            <Stethoscope size={16} />
+                            <Stethoscope size={14} />
                             {t('appointments.list.startConsultation')}
                           </Button>
                         )}
                         {appointment.status === 'in_consultation' && (
                           <>
                             <Button variant="secondary" onClick={() => navigate(`/dashboard/consultation/${appointment.id}`)}>
-                              <PlayCircle size={16} />
+                              <PlayCircle size={14} />
                               {t('appointments.list.continueConsultation')}
                             </Button>
                             <Button variant="secondary" onClick={() => handleStatusChange(appointment.id, 'completed')}>
-                              <CheckCircle2 size={16} />
+                              <CheckCircle2 size={14} />
                               {t('appointments.list.complete')}
                             </Button>
                           </>
+                        )}
+                        {appointment.status === 'booked' && (
+                          <button
+                            type="button"
+                            className={styles.deleteButton}
+                            title={t('appointments.list.delete')}
+                            aria-label={t('appointments.list.delete')}
+                            onClick={() => openDeleteModal(appointment)}
+                          >
+                            <Trash2 size={14} />
+                          </button>
                         )}
                       </div>
                     </td>
@@ -223,7 +263,12 @@ export default function AppointmentsList() {
         />
       )}
 
-      <Modal isOpen={isBookingOpen} onClose={() => setIsBookingOpen(false)} title={t('appointments.form.title')}>
+      <Modal
+        isOpen={isBookingOpen}
+        onClose={() => setIsBookingOpen(false)}
+        title={t('appointments.form.title')}
+        titleClassName={styles.bookingModalTitle}
+      >
         <AppointmentForm
           onSuccess={() => {
             setIsBookingOpen(false);
@@ -231,6 +276,27 @@ export default function AppointmentsList() {
           }}
           onCancel={() => setIsBookingOpen(false)}
         />
+      </Modal>
+
+      <Modal isOpen={Boolean(deleteTarget)} onClose={() => setDeleteTarget(null)} title={t('appointments.list.deleteConfirmTitle')}>
+        {deleteError && <div className={styles.error}>{deleteError}</div>}
+        <p className={styles.modalText}>
+          <Trans
+            i18nKey="appointments.list.deleteConfirmText"
+            values={{ name: deleteTarget?.patient_name }}
+            components={{ bold: <strong className={styles.deleteName} /> }}
+          />
+        </p>
+        <div className={styles.modalActions}>
+          <Button type="button" variant="secondary" onClick={() => setDeleteTarget(null)}>
+            <X size={14} />
+            {t('appointments.form.cancel')}
+          </Button>
+          <Button type="button" variant="danger" disabled={isDeleting} onClick={confirmDelete}>
+            <Trash2 size={14} />
+            {t('appointments.list.delete')}
+          </Button>
+        </div>
       </Modal>
     </div>
   );

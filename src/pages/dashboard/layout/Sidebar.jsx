@@ -24,23 +24,23 @@ export default function Sidebar() {
       <nav className={styles.group}>
         <span className={styles.groupLabel}>{t('sidebar.groupMain')}</span>
         <NavLink to="/dashboard" end className={navLinkClass}>
-          <LayoutDashboard size={18} />
+          <LayoutDashboard size={16} />
           {t('sidebar.dashboard')}
         </NavLink>
         <NavLink to="/dashboard/appointments" className={navLinkClass}>
-          <CalendarPlus size={18} />
+          <CalendarPlus size={16} />
           {t('sidebar.appointment')}
         </NavLink>
         <NavLink to="/dashboard/queue" className={navLinkClass}>
-          <Clock size={18} />
+          <Clock size={16} />
           {t('sidebar.queue')}
         </NavLink>
         <NavLink to="/dashboard/patients" className={navLinkClass}>
-          <Users size={18} />
+          <Users size={16} />
           {t('sidebar.patients')}
         </NavLink>
         <NavLink to="/dashboard/doctor-schedules" className={navLinkClass}>
-          <CalendarClock size={18} />
+          <CalendarClock size={16} />
           {t('sidebar.doctorSchedules')}
         </NavLink>
       </nav>
@@ -48,20 +48,20 @@ export default function Sidebar() {
       <nav className={styles.group}>
         <span className={styles.groupLabel}>{t('sidebar.groupOperations')}</span>
         <NavLink to="/dashboard/cashier" className={navLinkClass}>
-          <CreditCard size={18} />
+          <CreditCard size={16} />
           {t('sidebar.cashier')}
         </NavLink>
         <NavLink to="/dashboard/invoices" className={navLinkClass}>
-          <Receipt size={18} />
+          <Receipt size={16} />
           {t('sidebar.invoices')}
         </NavLink>
         <NavLink to="/dashboard/pharmacy" className={navLinkClass}>
-          <Pill size={18} />
+          <Pill size={16} />
           {t('sidebar.pharmacy')}
         </NavLink>
         {canManageMedicines && (
           <NavLink to="/dashboard/medicines" className={navLinkClass}>
-            <PillBottle size={18} />
+            <PillBottle size={16} />
             {t('sidebar.medicines')}
           </NavLink>
         )}
@@ -71,7 +71,7 @@ export default function Sidebar() {
         <nav className={styles.group}>
           <span className={styles.groupLabel}>{t('sidebar.groupOther')}</span>
           <NavLink to="/dashboard/users" className={navLinkClass}>
-            <UserCog size={18} />
+            <UserCog size={16} />
             {t('sidebar.users')}
           </NavLink>
         </nav>

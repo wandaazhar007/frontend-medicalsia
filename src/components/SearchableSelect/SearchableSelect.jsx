@@ -73,12 +73,10 @@ export default function SearchableSelect({
   }
 
   let dropdownContent;
-  if (trimmedQuery === '') {
-    dropdownContent = <div className={styles.empty}>{emptyMessage}</div>;
-  } else if (isSearching && searchingMessage) {
+  if (isSearching && searchingMessage) {
     dropdownContent = <div className={styles.empty}>{searchingMessage}</div>;
   } else if (options.length === 0) {
-    dropdownContent = onAddNew ? (
+    dropdownContent = onAddNew && trimmedQuery !== '' ? (
       <button type="button" className={styles.addNew} onMouseDown={onAddNew}>{addNewLabel}</button>
     ) : (
       <div className={styles.empty}>{emptyMessage}</div>

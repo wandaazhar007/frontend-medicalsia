@@ -196,7 +196,7 @@ export default function ConsultationPage() {
                     </div>
                   </div>
                   <Button variant="ghost" onClick={() => removeFromCart(item.medicine_id)}>
-                    <Trash2 size={16} />
+                    <Trash2 size={14} />
                   </Button>
                 </div>
               ))}
@@ -215,7 +215,7 @@ export default function ConsultationPage() {
 
       <div className={styles.actions}>
         <Button variant="secondary" onClick={handleFinish}>
-          <CheckCircle2 size={16} />
+          <CheckCircle2 size={14} />
           {t('consultationPage.finishConsultation')}
         </Button>
       </div>

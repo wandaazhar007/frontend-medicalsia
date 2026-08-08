@@ -120,7 +120,7 @@ export default function PharmacyPage() {
               <div key={entry.queue_number} className={styles.callRow}>
                 <span className={styles.queueNumber}>{entry.queue_number}</span>
                 <Button variant="secondary" onClick={() => handleCall(entry.queue_number)}>
-                  <Volume2 size={16} />
+                  <Volume2 size={14} />
                   {t('pharmacyPage.callButton')}
                 </Button>
               </div>

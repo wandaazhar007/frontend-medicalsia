@@ -35,6 +35,7 @@ export default function AppointmentForm({ onSuccess, onCancel }) {
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
   const [patientError, setPatientError] = useState('');
+  const [doctorError, setDoctorError] = useState('');
   const [dateError, setDateError] = useState('');
   const [timeError, setTimeError] = useState('');
   const [submitError, setSubmitError] = useState('');
@@ -82,6 +83,10 @@ export default function AppointmentForm({ onSuccess, onCancel }) {
       setPatientError(t('appointments.form.selectPatientRequired'));
       isValid = false;
     }
+    if (!selectedDoctor) {
+      setDoctorError(t('appointments.form.selectDoctorRequired'));
+      isValid = false;
+    }
     if (!date) {
       setDateError(t('appointments.form.dateRequired'));
       isValid = false;
@@ -97,6 +102,7 @@ export default function AppointmentForm({ onSuccess, onCancel }) {
     e.preventDefault();
     setSubmitError('');
     setPatientError('');
+    setDoctorError('');
     setDateError('');
     setTimeError('');
 
@@ -145,10 +151,14 @@ export default function AppointmentForm({ onSuccess, onCancel }) {
         label={t('appointments.form.doctorLabel')}
         placeholder={t('appointments.form.doctorPlaceholder')}
         value={selectedDoctor ? { label: selectedDoctor.full_name } : null}
-        onSelect={(option) => setSelectedDoctor(option ? { id: option.id, full_name: option.label } : null)}
+        onSelect={(option) => {
+          setSelectedDoctor(option ? { id: option.id, full_name: option.label } : null);
+          setDoctorError('');
+        }}
         loadOptions={loadDoctorOptions}
         emptyMessage={t('appointments.form.doctorEmpty')}
         searchingMessage={t('common.searching')}
+        error={doctorError}
       />
 
       <div className={styles.dateTimeRow}>
@@ -188,11 +198,11 @@ export default function AppointmentForm({ onSuccess, onCancel }) {
 
       <div className={styles.actions}>
         <Button type="submit" disabled={isSubmitting}>
-          <Save size={16} />
+          <Save size={14} />
           {isSubmitting ? t('appointments.form.saving') : t('appointments.form.save')}
         </Button>
         <Button type="button" variant="secondary" onClick={onCancel}>
-          <X size={16} />
+          <X size={14} />
           {t('appointments.form.cancel')}
         </Button>
       </div>

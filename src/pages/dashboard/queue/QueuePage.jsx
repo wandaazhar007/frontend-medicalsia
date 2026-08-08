@@ -76,11 +76,11 @@ export default function QueuePage() {
                 {appointment.status === 'checked_in' && (
                   <>
                     <Button variant="secondary" onClick={() => handleCall(appointment)}>
-                      <Volume2 size={16} />
+                      <Volume2 size={14} />
                       {t('queuePage.call')}
                     </Button>
                     <Button variant="ghost" onClick={() => handleStartConsultation(appointment)}>
-                      <Stethoscope size={16} />
+                      <Stethoscope size={14} />
                       {t('queuePage.startConsultation')}
                     </Button>
                   </>
@@ -88,7 +88,7 @@ export default function QueuePage() {
                 {appointment.status === 'in_consultation' && (
                   <>
                     <Button variant="secondary" onClick={() => navigate(`/dashboard/consultation/${appointment.id}`)}>
-                      <Stethoscope size={16} />
+                      <Stethoscope size={14} />
                       {t('queuePage.continueConsultation')}
                     </Button>
                     <Button variant="ghost" onClick={() => handleStatusChange(appointment.id, 'completed')}>

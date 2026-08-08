@@ -86,7 +86,7 @@ export default function Booking() {
       <div className={styles.wrapper}>
         <Card className={styles.card}>
           <div className={styles.success}>
-            <CheckCircle size={48} className={styles.successIcon} />
+            <CheckCircle size={43} className={styles.successIcon} />
             <h1>{t('bookingPage.successTitle')}</h1>
             <p>{t('bookingPage.successText')}</p>
           </div>
@@ -99,7 +99,7 @@ export default function Booking() {
     <div className={styles.wrapper}>
       <Card className={styles.card}>
         <div className={styles.brand}>
-          <LogoIcon variant="light" size={40} />
+          <LogoIcon variant="light" size={36} />
           <Wordmark variant="light" />
         </div>
         <p className={styles.subtitle}>{t('bookingPage.subtitle')}</p>

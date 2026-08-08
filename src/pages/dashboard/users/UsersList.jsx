@@ -67,7 +67,7 @@ export default function UsersList() {
       <div className={styles.header}>
         <h1 className={styles.title}>{t('usersPage.list.title')}</h1>
         <Button onClick={() => navigate('/dashboard/users/new')}>
-          <UserPlus size={16} />
+          <UserPlus size={14} />
           {t('usersPage.list.inviteButton')}
         </Button>
       </div>

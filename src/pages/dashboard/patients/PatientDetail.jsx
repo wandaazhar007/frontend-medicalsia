@@ -134,7 +134,7 @@ export default function PatientDetail() {
             <Input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} />
             <Input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} />
             <Button variant="secondary" onClick={handlePrintMedicalRecord} disabled={isPreparingPrint}>
-              <Printer size={16} />
+              <Printer size={14} />
               {isPreparingPrint ? t('patients.detail.preparingPrint') : t('patients.detail.printMedicalRecord')}
             </Button>
           </div>

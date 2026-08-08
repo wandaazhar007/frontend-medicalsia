@@ -264,7 +264,7 @@ export default function CashierPage() {
                       <span>{formatCurrency(item.price * item.quantity)}</span>
                       {!draftInvoice && (
                         <Button variant="ghost" onClick={() => removeCartItem(item.key)}>
-                          <Trash2 size={16} />
+                          <Trash2 size={14} />
                         </Button>
                       )}
                     </div>
@@ -305,7 +305,7 @@ export default function CashierPage() {
           <div className={styles.success}>{t('cashierPage.paidSuccess')}</div>
           <div className={styles.actions}>
             <Button onClick={() => setPrintCount((c) => c + 1)}>
-              <Printer size={16} />
+              <Printer size={14} />
               {t('cashierPage.printReceipt')}
             </Button>
             <Button variant="ghost" onClick={handleReset}>{t('cashierPage.newTransaction')}</Button>

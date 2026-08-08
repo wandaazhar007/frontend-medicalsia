@@ -107,7 +107,7 @@ export default function MedicinesList() {
       <div className={styles.header}>
         <h1 className={styles.title}>{t('medicinesPage.list.title')}</h1>
         <Button onClick={() => navigate('/dashboard/medicines/new')}>
-          <PlusCircle size={16} />
+          <PlusCircle size={14} />
           {t('medicinesPage.list.addButton')}
         </Button>
       </div>

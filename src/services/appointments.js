@@ -15,3 +15,7 @@ export function createAppointment(payload) {
 export function updateAppointmentStatus(id, status) {
   return api.patch(`/appointments/${id}/status`, { status }).then((res) => res.data);
 }
+
+export function deleteAppointment(id) {
+  return api.delete(`/appointments/${id}`).then((res) => res.data);
+}

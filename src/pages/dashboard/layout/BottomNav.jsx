@@ -27,34 +27,34 @@ export default function BottomNav() {
           <div className={styles.backdrop} onClick={() => setIsMoreOpen(false)} />
           <div className={styles.moreSheet}>
             <NavLink to="/dashboard/appointments" className={styles.moreItem} onClick={() => setIsMoreOpen(false)}>
-              <CalendarPlus size={18} />
+              <CalendarPlus size={16} />
               {t('sidebar.appointment')}
             </NavLink>
             <NavLink to="/dashboard/doctor-schedules" className={styles.moreItem} onClick={() => setIsMoreOpen(false)}>
-              <CalendarClock size={18} />
+              <CalendarClock size={16} />
               {t('sidebar.doctorSchedules')}
             </NavLink>
             <NavLink to="/dashboard/cashier" className={styles.moreItem} onClick={() => setIsMoreOpen(false)}>
-              <CreditCard size={18} />
+              <CreditCard size={16} />
               {t('sidebar.cashier')}
             </NavLink>
             <NavLink to="/dashboard/invoices" className={styles.moreItem} onClick={() => setIsMoreOpen(false)}>
-              <Receipt size={18} />
+              <Receipt size={16} />
               {t('sidebar.invoices')}
             </NavLink>
             <NavLink to="/dashboard/pharmacy" className={styles.moreItem} onClick={() => setIsMoreOpen(false)}>
-              <Pill size={18} />
+              <Pill size={16} />
               {t('sidebar.pharmacy')}
             </NavLink>
             {canManageMedicines && (
               <NavLink to="/dashboard/medicines" className={styles.moreItem} onClick={() => setIsMoreOpen(false)}>
-                <PillBottle size={18} />
+                <PillBottle size={16} />
                 {t('sidebar.medicines')}
               </NavLink>
             )}
             {canManageUsers && (
               <NavLink to="/dashboard/users" className={styles.moreItem} onClick={() => setIsMoreOpen(false)}>
-                <UserCog size={18} />
+                <UserCog size={16} />
                 {t('sidebar.users')}
               </NavLink>
             )}
@@ -63,19 +63,19 @@ export default function BottomNav() {
       )}
 
       <NavLink to="/dashboard" end className={navLinkClass}>
-        <LayoutDashboard size={20} />
+        <LayoutDashboard size={18} />
         {t('sidebar.home')}
       </NavLink>
       <NavLink to="/dashboard/queue" className={navLinkClass}>
-        <Clock size={20} />
+        <Clock size={18} />
         {t('sidebar.queue')}
       </NavLink>
       <NavLink to="/dashboard/patients" className={navLinkClass}>
-        <Users size={20} />
+        <Users size={18} />
         {t('sidebar.patients')}
       </NavLink>
       <button type="button" className={styles.navItem} onClick={() => setIsMoreOpen((open) => !open)}>
-        {isMoreOpen ? <X size={20} /> : <Menu size={20} />}
+        {isMoreOpen ? <X size={18} /> : <Menu size={18} />}
         {t('sidebar.menu')}
       </button>
     </nav>

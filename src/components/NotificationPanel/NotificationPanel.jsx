@@ -22,7 +22,7 @@ export default function NotificationPanel() {
         <ul className={styles.list}>
           {SAMPLE_NOTIFICATIONS.map(({ id, icon: Icon, textKey, timeKey }) => (
             <li key={id} className={styles.item}>
-              <Icon size={18} className={styles.itemIcon} />
+              <Icon size={16} className={styles.itemIcon} />
               <div className={styles.itemBody}>
                 <span className={styles.itemText}>{t(textKey)}</span>
                 <span className={styles.itemTime}>{t(timeKey)}</span>

@@ -77,7 +77,7 @@ export default function Display() {
   return (
     <div className={styles.wrapper}>
       <div className={styles.header}>
-        <LogoIcon variant="dark" size={40} />
+        <LogoIcon variant="dark" size={36} />
         <Wordmark variant="dark" />
       </div>
 

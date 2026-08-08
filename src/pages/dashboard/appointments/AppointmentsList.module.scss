@@ -62,3 +62,55 @@
   display: flex;
   gap: $space-2;
 }
+
+.bookingModalTitle {
+  font-size: $font-size-xl;
+  color: $color-primary;
+}
+
+.deleteButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.2rem;
+  height: 3.2rem;
+  border: 1.5px solid var(--color-danger);
+  border-radius: $radius-md;
+  background: transparent;
+  color: var(--color-danger);
+  cursor: pointer;
+  transition: background-color 0.15s ease, opacity 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background: var(--color-danger-bg);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+.modalText {
+  font-size: $font-size-sm;
+  color: var(--color-text-muted);
+}
+
+.deleteName {
+  color: var(--color-danger);
+  font-weight: $font-weight-medium;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: $space-2;
+}
+
+.error {
+  font-size: $font-size-xs;
+  color: var(--color-danger);
+  background: var(--color-danger-bg);
+  border-radius: $radius-sm;
+  padding: $space-2 $space-3;
+}

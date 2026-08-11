@@ -54,6 +54,18 @@ $space-8: 4.8rem;
 // Breakpoints — below this, sidebar gives way to bottom nav (06-design-system.md)
 $breakpoint-tablet: 768px;
 
+$sidebar-width: 22rem;
+
+// Standard container width for the dashboard shell's content column
+// (topbar/content/footer, i.e. everything right of the sidebar) — keeps
+// things readable on widescreen monitors instead of stretching edge to edge.
+$content-max-width: 144rem;
+
+// Sidebar + content column together, capped and centered as one unit so the
+// sidebar's right edge always touches the topbar/content's left edge instead
+// of floating apart on wide screens.
+$shell-max-width: $sidebar-width + $content-max-width;
+
 // Radius & Shadow
 $radius-sm: 0.6rem;
 $radius-md: 0.8rem;

@@ -3,6 +3,8 @@
 .layout {
   display: flex;
   min-height: 100vh;
+  max-width: $shell-max-width;
+  margin: 0 auto;
 }
 
 .main {

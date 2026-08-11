@@ -1,0 +1,35 @@
+@use '../../styles/variables' as *;
+
+.wrapper {
+  position: relative;
+}
+
+.results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  margin-top: $space-1;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: $radius-md;
+  box-shadow: $shadow-md;
+  max-height: 24rem;
+  overflow-y: auto;
+}
+
+.resultItem {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: $space-2 $space-3;
+  font-size: $font-size-sm;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--color-bg);
+  }
+}

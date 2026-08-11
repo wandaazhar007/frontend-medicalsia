@@ -47,6 +47,16 @@
   }
 }
 
+.dangerOutline {
+  background: var(--color-surface);
+  color: var(--color-danger);
+  border-color: var(--color-danger);
+
+  &:hover:not(:disabled) {
+    background: var(--color-danger-bg);
+  }
+}
+
 .ghost {
   background: transparent;
   color: var(--color-text-muted);

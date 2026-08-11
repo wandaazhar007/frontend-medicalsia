@@ -56,6 +56,14 @@
     border-top: 1px solid var(--color-border);
     white-space: nowrap;
   }
+
+  tbody tr {
+    transition: background-color 0.15s ease;
+
+    &:hover {
+      background: var(--color-info-bg);
+    }
+  }
 }
 
 .rowActions {

@@ -1,6 +1,6 @@
 import styles from './Select.module.scss';
 
-export default function Select({ label, id, children, ...rest }) {
+export default function Select({ label, id, error, children, ...rest }) {
   return (
     <div className={styles.field}>
       {label && (
@@ -8,9 +8,10 @@ export default function Select({ label, id, children, ...rest }) {
           {label}
         </label>
       )}
-      <select id={id} className={styles.select} {...rest}>
+      <select id={id} className={`${styles.select} ${error ? styles.selectError : ''}`} aria-invalid={error ? 'true' : undefined} {...rest}>
         {children}
       </select>
+      {error && <span className={styles.errorText}>{error}</span>}
     </div>
   );
 }

@@ -17,6 +17,10 @@ function formatDate(value) {
   return new Date(value).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
 }
 
+function formatCurrency(value) {
+  return `Rp${Number(value).toLocaleString('id-ID')}`;
+}
+
 export default function PatientDetail() {
   const { t } = useTranslation();
   const { id } = useParams();
@@ -81,51 +85,90 @@ export default function PatientDetail() {
         </div>
       </div>
 
-      <Card>
-        <div className={styles.infoGrid}>
-          <div>
-            <div className={styles.label}>{t('patients.detail.patientNumber')}</div>
-            <div>{patient.patient_number}</div>
+      <div className={styles.topGrid}>
+        <Card>
+          <h2 className={styles.sectionTitle}>{t('patients.detail.patientInfo')}</h2>
+          <div className={styles.infoGrid}>
+            <div>
+              <div className={styles.label}>{t('patients.detail.patientNumber')}</div>
+              <div>{patient.patient_number}</div>
+            </div>
+            <div>
+              <div className={styles.label}>{t('patients.detail.nik')}</div>
+              <div>{patient.nik || '-'}</div>
+            </div>
+            <div>
+              <div className={styles.label}>{t('patients.detail.dob')}</div>
+              <div>{formatDate(patient.dob)}</div>
+            </div>
+            <div>
+              <div className={styles.label}>{t('patients.detail.phone')}</div>
+              <div>{patient.phone || '-'}</div>
+            </div>
+            <div>
+              <div className={styles.label}>{t('patients.detail.email')}</div>
+              <div>{patient.email || '-'}</div>
+            </div>
+            <div>
+              <div className={styles.label}>{t('patients.detail.address')}</div>
+              <div>{patient.address || '-'}</div>
+            </div>
+            <div>
+              <div className={styles.label}>{t('patients.detail.villageDistrict')}</div>
+              <div>{[patient.village, patient.district].filter(Boolean).join(' / ') || '-'}</div>
+            </div>
+            <div>
+              <div className={styles.label}>{t('patients.detail.cityProvince')}</div>
+              <div>{[patient.city, patient.province].filter(Boolean).join(' / ') || '-'}</div>
+            </div>
+            <div>
+              <div className={styles.label}>{t('patients.detail.postalCode')}</div>
+              <div>{patient.postal_code || '-'}</div>
+            </div>
+            <div>
+              <div className={styles.label}>{t('patients.detail.registered')}</div>
+              <div>{formatDate(patient.created_at)}</div>
+            </div>
           </div>
-          <div>
-            <div className={styles.label}>{t('patients.detail.nik')}</div>
-            <div>{patient.nik || '-'}</div>
-          </div>
-          <div>
-            <div className={styles.label}>{t('patients.detail.dob')}</div>
-            <div>{formatDate(patient.dob)}</div>
-          </div>
-          <div>
-            <div className={styles.label}>{t('patients.detail.phone')}</div>
-            <div>{patient.phone || '-'}</div>
-          </div>
-          <div>
-            <div className={styles.label}>{t('patients.detail.email')}</div>
-            <div>{patient.email || '-'}</div>
-          </div>
-          <div>
-            <div className={styles.label}>{t('patients.detail.address')}</div>
-            <div>{patient.address || '-'}</div>
-          </div>
-          <div>
-            <div className={styles.label}>{t('patients.detail.villageDistrict')}</div>
-            <div>{[patient.village, patient.district].filter(Boolean).join(' / ') || '-'}</div>
-          </div>
-          <div>
-            <div className={styles.label}>{t('patients.detail.cityProvince')}</div>
-            <div>{[patient.city, patient.province].filter(Boolean).join(' / ') || '-'}</div>
-          </div>
-          <div>
-            <div className={styles.label}>{t('patients.detail.postalCode')}</div>
-            <div>{patient.postal_code || '-'}</div>
-          </div>
-          <div>
-            <div className={styles.label}>{t('patients.detail.registered')}</div>
-            <div>{formatDate(patient.created_at)}</div>
-          </div>
+          {patient.allergies && <p className={styles.allergies}>{t('patients.detail.allergies')}: {patient.allergies}</p>}
+        </Card>
+
+        <div>
+          <h2 className={styles.sectionTitle}>{t('patients.detail.visitHistory')}</h2>
+          {patient.medical_records.length === 0 ? (
+            <EmptyState message={t('patients.detail.noVisits')} />
+          ) : (
+            <Card>
+              <div className={styles.tableScroll}>
+                <table className={styles.table}>
+                  <thead>
+                    <tr>
+                      <th>{t('patients.detail.columnVisitDate')}</th>
+                      <th>{t('patients.detail.columnDoctor')}</th>
+                      <th>{t('patients.detail.columnTotalFee')}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {patient.medical_records.map((record) => (
+                      <tr key={record.id}>
+                        <td>{formatDate(record.created_at)}</td>
+                        <td>{record.doctor_name || t('patients.detail.unknownDoctor')}</td>
+                        <td>
+                          {record.invoice_status === 'paid'
+                            ? formatCurrency(record.invoice_total)
+                            : record.invoice_status
+                              ? t('patients.detail.feeUnpaid')
+                              : '-'}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </Card>
+          )}
         </div>
-        {patient.allergies && <p className={styles.allergies}>{t('patients.detail.allergies')}: {patient.allergies}</p>}
-      </Card>
+      </div>
 
       <div>
         <div className={styles.recordsHeader}>

@@ -25,3 +25,17 @@
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
   }
 }
+
+.selectError {
+  border-color: var(--color-danger);
+
+  &:focus {
+    border-color: var(--color-danger);
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+  }
+}
+
+.errorText {
+  font-size: $font-size-xs;
+  color: var(--color-danger);
+}

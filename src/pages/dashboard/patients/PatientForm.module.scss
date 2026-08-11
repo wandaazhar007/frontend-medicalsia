@@ -2,7 +2,6 @@
 
 .wrapper {
   padding: $space-6;
-  max-width: 60rem;
 }
 
 .title {
@@ -13,6 +12,23 @@
 }
 
 .form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+}
+
+.cardsGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: $space-4;
+  align-items: start;
+
+  @media (max-width: $breakpoint-tablet) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.cardBody {
   display: flex;
   flex-direction: column;
   gap: $space-4;
@@ -53,6 +69,7 @@
 
 .actions {
   display: flex;
+  justify-content: flex-end;
   gap: $space-2;
   margin-top: $space-2;
 }

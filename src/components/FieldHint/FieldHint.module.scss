@@ -1,0 +1,25 @@
+@use '../../styles/variables' as *;
+
+.wrapper {
+  position: relative;
+}
+
+.inert {
+  pointer-events: none;
+}
+
+.bubble {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  z-index: 20;
+  margin-bottom: $space-1;
+  padding: $space-2 $space-3;
+  max-width: 22rem;
+  background: var(--color-text);
+  color: var(--color-surface);
+  font-size: $font-size-xs;
+  border-radius: $radius-sm;
+  box-shadow: $shadow-md;
+  pointer-events: none;
+}

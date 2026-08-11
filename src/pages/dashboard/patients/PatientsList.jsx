@@ -8,9 +8,18 @@ import Input from '../../../components/Input/Input';
 import Button from '../../../components/Button/Button';
 import Pagination from '../../../components/Pagination/Pagination';
 import EmptyState from '../../../components/EmptyState/EmptyState';
+import TableSkeleton from '../../../components/TableSkeleton/TableSkeleton';
 import styles from './PatientsList.module.scss';
 
 const LIMIT = 20;
+
+const SKELETON_COLUMNS = [
+  { width: '50%' },
+  { width: '75%' },
+  { width: '65%' },
+  { width: '55%' },
+  { width: '45%' },
+];
 
 function formatDate(value) {
   if (!value) return '-';
@@ -64,10 +73,9 @@ export default function PatientsList() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        {isLoading && <span className={styles.loadingHint}>{t('patients.list.searching')}</span>}
       </div>
 
-      {result.data.length === 0 && !isLoading ? (
+      {!isLoading && result.data.length === 0 ? (
         <EmptyState
           icon={Users}
           message={debouncedSearch ? t('patients.list.noResultsSearch') : t('patients.list.noResults')}
@@ -86,25 +94,31 @@ export default function PatientsList() {
                 </tr>
               </thead>
               <tbody>
-                {result.data.map((patient) => (
-                  <tr key={patient.id} onClick={() => navigate(`/dashboard/patients/${patient.id}`)}>
-                    <td>{patient.patient_number}</td>
-                    <td>{patient.full_name}</td>
-                    <td>{patient.nik || '-'}</td>
-                    <td>{patient.phone || '-'}</td>
-                    <td>{formatDate(patient.dob)}</td>
-                  </tr>
-                ))}
+                {isLoading ? (
+                  <TableSkeleton rows={8} columns={SKELETON_COLUMNS} />
+                ) : (
+                  result.data.map((patient) => (
+                    <tr key={patient.id} onClick={() => navigate(`/dashboard/patients/${patient.id}`)}>
+                      <td>{patient.patient_number}</td>
+                      <td>{patient.full_name}</td>
+                      <td>{patient.nik || '-'}</td>
+                      <td>{patient.phone || '-'}</td>
+                      <td>{formatDate(patient.dob)}</td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
-          <Pagination
-            page={result.pagination.page}
-            limit={result.pagination.limit}
-            totalItems={result.pagination.total_items}
-            totalPages={result.pagination.total_pages}
-            onPageChange={setPage}
-          />
+          {!isLoading && result.data.length > 0 && (
+            <Pagination
+              page={result.pagination.page}
+              limit={result.pagination.limit}
+              totalItems={result.pagination.total_items}
+              totalPages={result.pagination.total_pages}
+              onPageChange={setPage}
+            />
+          )}
         </>
       )}
     </div>

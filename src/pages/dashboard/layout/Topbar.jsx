@@ -134,9 +134,11 @@ export default function Topbar() {
         <p className={styles.modalText}>{t('navbar.logoutConfirmText')}</p>
         <div className={styles.modalActions}>
           <Button type="button" variant="secondary" onClick={() => setIsLogoutModalOpen(false)}>
+            <X size={14} />
             {t('common.cancel')}
           </Button>
           <Button type="button" variant="danger" onClick={confirmLogout}>
+            <LogOut size={14} />
             {t('navbar.logout')}
           </Button>
         </div>

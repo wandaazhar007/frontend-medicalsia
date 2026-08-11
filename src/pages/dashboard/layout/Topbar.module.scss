@@ -17,7 +17,7 @@
 // Text wordmark is the first thing to go on narrow screens — the icon
 // buttons on the right (and the LogoIcon itself) stay put either way.
 .wordmark {
-  @media (max-width: 480px) {
+  @media (max-width: 280px) {
     display: none;
   }
 }

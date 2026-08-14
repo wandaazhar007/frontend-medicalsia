@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { CalendarClock, CalendarPlus, Clock, CreditCard, LayoutDashboard, Menu, Pill, PillBottle, Receipt, UserCog, Users, X } from 'lucide-react';
+import { CalendarClock, CalendarPlus, Clock, CreditCard, LayoutDashboard, Menu, Pill, PillBottle, Receipt, Syringe, UserCog, Users, X } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
 import styles from './BottomNav.module.scss';
 
@@ -50,6 +50,12 @@ export default function BottomNav() {
               <NavLink to="/dashboard/medicines" className={styles.moreItem} onClick={() => setIsMoreOpen(false)}>
                 <PillBottle size={16} />
                 {t('sidebar.medicines')}
+              </NavLink>
+            )}
+            {canManageUsers && (
+              <NavLink to="/dashboard/medical-procedures" className={styles.moreItem} onClick={() => setIsMoreOpen(false)}>
+                <Syringe size={16} />
+                {t('sidebar.medicalProcedures')}
               </NavLink>
             )}
             {canManageUsers && (

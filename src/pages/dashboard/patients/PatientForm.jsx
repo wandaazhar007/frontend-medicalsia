@@ -31,6 +31,26 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const DOB_DISPLAY_PATTERN = /^(\d{2})\/(\d{2})\/(\d{4})$/;
 const REQUIRED_FIELDS = ['full_name', 'nik', 'dob', 'phone', 'email', 'address', 'village', 'district', 'city', 'province'];
 
+// Draft persistence only applies to the create form — edit always hydrates
+// from the server on mount, so a stale localStorage draft would just flash
+// briefly before being overwritten by the fetched patient.
+const DRAFT_STORAGE_KEY = 'medicalsia_patient_form_draft';
+const EMPTY_WILAYAH_KODE = { province: null, city: null, district: null, village: null };
+
+function loadDraft() {
+  try {
+    const raw = window.localStorage.getItem(DRAFT_STORAGE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+function clearDraft() {
+  window.localStorage.removeItem(DRAFT_STORAGE_KEY);
+}
+
 // Formats as the user types into groups of 4 (0812-3456-7890) and normalizes
 // a leading country code (62...) back to the local 0-prefix form.
 function formatPhoneNumber(value) {
@@ -75,14 +95,16 @@ export default function PatientForm() {
   const isEdit = Boolean(id);
   const navigate = useNavigate();
 
-  const [form, setForm] = useState(EMPTY_FORM);
+  const [form, setForm] = useState(() => (isEdit ? EMPTY_FORM : loadDraft()?.form || EMPTY_FORM));
   // kode (wilayah region code) of whichever suggestion was last picked per
   // field — used both to filter the next field's suggestions (province ->
   // city -> district -> village) and to gate that next field: it stays
   // disabled until its parent has an actual pick, not just typed text (a
   // typo like "Jawa Bara" must not leave city/district/village pickable).
-  // The form itself always stores plain text.
-  const [wilayahKode, setWilayahKode] = useState({ province: null, city: null, district: null, village: null });
+  // The form itself always stores plain text. Persisted alongside the form
+  // draft so a restored draft doesn't re-lock city/district/village fields
+  // that already have a value picked before the refresh.
+  const [wilayahKode, setWilayahKode] = useState(() => (isEdit ? EMPTY_WILAYAH_KODE : loadDraft()?.wilayahKode || EMPTY_WILAYAH_KODE));
   const [fieldErrors, setFieldErrors] = useState({});
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -108,6 +130,11 @@ export default function PatientForm() {
       });
     });
   }, [id, isEdit]);
+
+  useEffect(() => {
+    if (isEdit) return;
+    window.localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify({ form, wilayahKode }));
+  }, [isEdit, form, wilayahKode]);
 
   function handleChange(field) {
     return (e) => setForm((prev) => ({ ...prev, [field]: e.target.value }));
@@ -210,6 +237,7 @@ export default function PatientForm() {
         navigate(`/dashboard/patients/${id}`);
       } else {
         const { data } = await createPatient(payload);
+        clearDraft();
         setCreatedPatient(data);
       }
     } catch {

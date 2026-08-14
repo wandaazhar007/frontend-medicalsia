@@ -4,6 +4,10 @@ export function listAppointments({ page = 1, limit = 20, search = '', date = '',
   return api.get('/appointments', { params: { page, limit, search, date, doctor_id, status } }).then((res) => res.data);
 }
 
+export function listCompletedAppointments({ page = 1, limit = 20, search = '', date = '' } = {}) {
+  return api.get('/appointments/completed', { params: { page, limit, search, date } }).then((res) => res.data);
+}
+
 export function getAppointment(id) {
   return api.get(`/appointments/${id}`).then((res) => res.data);
 }

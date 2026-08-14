@@ -53,6 +53,16 @@ export default function ReceiptPrint({ invoice, active }) {
         <span>Pasien</span>
         <span>{invoice.patient_name}</span>
       </div>
+      {invoice.doctor_name && (
+        <div className={styles.row}>
+          <span>Dokter</span>
+          <span>{invoice.doctor_name}</span>
+        </div>
+      )}
+      <div className={styles.row}>
+        <span>Kasir</span>
+        <span>{invoice.cashier_name || '-'}</span>
+      </div>
 
       <div className={styles.divider} />
 
@@ -82,6 +92,7 @@ export default function ReceiptPrint({ invoice, active }) {
       <div className={styles.divider} />
 
       <div className={styles.footer}>Terima kasih atas kunjungan Anda</div>
+      <div className={styles.footer}>Semoga lekas sembuh</div>
     </div>
   );
 }

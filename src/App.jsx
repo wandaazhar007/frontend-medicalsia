@@ -21,6 +21,7 @@ import InvoiceDetail from './pages/dashboard/invoices/InvoiceDetail';
 import PharmacyPage from './pages/dashboard/pharmacy/PharmacyPage';
 import MedicinesList from './pages/dashboard/medicines/MedicinesList';
 import MedicineForm from './pages/dashboard/medicines/MedicineForm';
+import MedicalProceduresPage from './pages/dashboard/medical-procedures/MedicalProceduresPage';
 import UsersList from './pages/dashboard/users/UsersList';
 import UserForm from './pages/dashboard/users/UserForm';
 import ProfilePage from './pages/dashboard/profile/ProfilePage';
@@ -95,6 +96,14 @@ function AppRoutes() {
           element={(
             <RequireRole roles={['owner', 'admin', 'pharmacy']}>
               <MedicineForm />
+            </RequireRole>
+          )}
+        />
+        <Route
+          path="medical-procedures"
+          element={(
+            <RequireRole roles={['owner', 'admin']}>
+              <MedicalProceduresPage />
             </RequireRole>
           )}
         />

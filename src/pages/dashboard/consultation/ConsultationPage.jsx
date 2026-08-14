@@ -7,6 +7,8 @@ import { getPatient } from '../../../services/patients';
 import { createMedicalRecord } from '../../../services/medicalRecords';
 import { createPrescription } from '../../../services/prescriptions';
 import { listMedicines } from '../../../services/medicines';
+import { createProcedureRecord } from '../../../services/procedureRecords';
+import { listMedicalProcedures } from '../../../services/medicalProcedures';
 import { useDebounce } from '../../../hooks/useDebounce';
 import Card from '../../../components/Card/Card';
 import Input from '../../../components/Input/Input';
@@ -37,6 +39,14 @@ export default function ConsultationPage() {
   const [prescriptionSaved, setPrescriptionSaved] = useState(false);
   const debouncedMedicineSearch = useDebounce(medicineSearch, 400);
 
+  const [procedureSearch, setProcedureSearch] = useState('');
+  const [procedureResults, setProcedureResults] = useState([]);
+  const [procedureCart, setProcedureCart] = useState([]);
+  const [procedureError, setProcedureError] = useState('');
+  const [isSavingProcedures, setIsSavingProcedures] = useState(false);
+  const [proceduresSaved, setProceduresSaved] = useState(false);
+  const debouncedProcedureSearch = useDebounce(procedureSearch, 400);
+
   useEffect(() => {
     getAppointment(appointmentId).then(({ data }) => {
       setAppointment(data);
@@ -51,6 +61,14 @@ export default function ConsultationPage() {
     }
     listMedicines({ search: debouncedMedicineSearch, limit: 10 }).then(({ data }) => setMedicineResults(data));
   }, [debouncedMedicineSearch]);
+
+  useEffect(() => {
+    if (!debouncedProcedureSearch) {
+      setProcedureResults([]);
+      return;
+    }
+    listMedicalProcedures({ search: debouncedProcedureSearch, limit: 10 }).then(({ data }) => setProcedureResults(data));
+  }, [debouncedProcedureSearch]);
 
   async function handleSaveRecord(e) {
     e.preventDefault();
@@ -103,6 +121,38 @@ export default function ConsultationPage() {
       setPrescriptionError(t('consultationPage.prescriptionError'));
     } finally {
       setIsSavingPrescription(false);
+    }
+  }
+
+  function addProcedureToCart(procedure) {
+    if (procedureCart.some((item) => item.medical_procedure_id === procedure.id)) return;
+    setProcedureCart((prev) => [...prev, { medical_procedure_id: procedure.id, name: procedure.name, price: procedure.price, quantity: 1, notes: '' }]);
+    setProcedureSearch('');
+    setProcedureResults([]);
+  }
+
+  function updateProcedureCartItem(medicalProcedureId, field, value) {
+    setProcedureCart((prev) => prev.map((item) => (item.medical_procedure_id === medicalProcedureId ? { ...item, [field]: value } : item)));
+  }
+
+  function removeProcedureFromCart(medicalProcedureId) {
+    setProcedureCart((prev) => prev.filter((item) => item.medical_procedure_id !== medicalProcedureId));
+  }
+
+  async function handleSaveProcedures() {
+    setProcedureError('');
+    setIsSavingProcedures(true);
+    try {
+      await createProcedureRecord({
+        medical_record_id: savedRecord.id,
+        items: procedureCart.map(({ medical_procedure_id, quantity, notes }) => ({ medical_procedure_id, quantity, notes })),
+      });
+      setProceduresSaved(true);
+      setProcedureCart([]);
+    } catch {
+      setProcedureError(t('consultationPage.procedureError'));
+    } finally {
+      setIsSavingProcedures(false);
     }
   }
 
@@ -205,6 +255,68 @@ export default function ConsultationPage() {
                 <div className={styles.actions}>
                   <Button onClick={handleSavePrescription} disabled={isSavingPrescription}>
                     {isSavingPrescription ? t('consultationPage.saving') : t('consultationPage.savePrescription')}
+                  </Button>
+                </div>
+              )}
+            </>
+          )}
+        </Card>
+      )}
+
+      {savedRecord && (
+        <Card>
+          <span className={styles.sectionTitle}>{t('consultationPage.procedureSectionTitle')}</span>
+          {procedureError && <div className={styles.error}>{procedureError}</div>}
+          {proceduresSaved ? (
+            <div className={styles.success}>{t('consultationPage.procedureSaved')}</div>
+          ) : (
+            <>
+              <div className={styles.medicineSearch}>
+                <Input
+                  placeholder={t('consultationPage.procedureSearchPlaceholder')}
+                  value={procedureSearch}
+                  onChange={(e) => setProcedureSearch(e.target.value)}
+                />
+                {procedureResults.length > 0 && (
+                  <div className={styles.results}>
+                    {procedureResults.map((procedure) => (
+                      <button key={procedure.id} type="button" className={styles.resultItem} onClick={() => addProcedureToCart(procedure)}>
+                        <span className={styles.resultInfo}>{procedure.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {procedureCart.map((item) => (
+                <div key={item.medical_procedure_id} className={styles.cartItem}>
+                  <div>
+                    <div className={styles.cartItemName}>{item.name}</div>
+                    <div className={styles.cartItemFields}>
+                      <Input
+                        type="number"
+                        min="1"
+                        placeholder={t('consultationPage.qtyPlaceholder')}
+                        value={item.quantity}
+                        onChange={(e) => updateProcedureCartItem(item.medical_procedure_id, 'quantity', parseInt(e.target.value, 10) || 1)}
+                      />
+                      <Input
+                        placeholder={t('consultationPage.procedureNotesPlaceholder')}
+                        value={item.notes}
+                        onChange={(e) => updateProcedureCartItem(item.medical_procedure_id, 'notes', e.target.value)}
+                      />
+                    </div>
+                  </div>
+                  <Button variant="ghost" onClick={() => removeProcedureFromCart(item.medical_procedure_id)}>
+                    <Trash2 size={14} />
+                  </Button>
+                </div>
+              ))}
+
+              {procedureCart.length > 0 && (
+                <div className={styles.actions}>
+                  <Button onClick={handleSaveProcedures} disabled={isSavingProcedures}>
+                    {isSavingProcedures ? t('consultationPage.saving') : t('consultationPage.saveProcedures')}
                   </Button>
                 </div>
               )}

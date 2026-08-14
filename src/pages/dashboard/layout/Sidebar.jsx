@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { CalendarClock, CalendarPlus, Clock, CreditCard, LayoutDashboard, Pill, PillBottle, Receipt, UserCog, Users } from 'lucide-react';
+import { CalendarClock, CalendarPlus, Clock, CreditCard, LayoutDashboard, Pill, PillBottle, Receipt, Syringe, UserCog, Users } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
 import styles from './Sidebar.module.scss';
 
@@ -63,6 +63,12 @@ export default function Sidebar() {
           <NavLink to="/dashboard/medicines" className={navLinkClass}>
             <PillBottle size={16} />
             {t('sidebar.medicines')}
+          </NavLink>
+        )}
+        {canManageUsers && (
+          <NavLink to="/dashboard/medical-procedures" className={navLinkClass}>
+            <Syringe size={16} />
+            {t('sidebar.medicalProcedures')}
           </NavLink>
         )}
       </nav>

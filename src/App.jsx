@@ -84,14 +84,6 @@ function AppRoutes() {
           )}
         />
         <Route
-          path="medicines/new"
-          element={(
-            <RequireRole roles={['owner', 'admin', 'pharmacy']}>
-              <MedicineForm />
-            </RequireRole>
-          )}
-        />
-        <Route
           path="medicines/:id/edit"
           element={(
             <RequireRole roles={['owner', 'admin', 'pharmacy']}>
@@ -112,14 +104,6 @@ function AppRoutes() {
           element={(
             <RequireRole roles={['owner', 'admin']}>
               <UsersList />
-            </RequireRole>
-          )}
-        />
-        <Route
-          path="users/new"
-          element={(
-            <RequireRole roles={['owner', 'admin']}>
-              <UserForm />
             </RequireRole>
           )}
         />

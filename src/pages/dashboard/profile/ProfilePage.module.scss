@@ -21,6 +21,10 @@
   display: flex;
   flex-direction: column;
   gap: $space-5;
+
+  @media (min-width: $breakpoint-tablet) {
+    max-width: 50%;
+  }
 }
 
 .photoSection {

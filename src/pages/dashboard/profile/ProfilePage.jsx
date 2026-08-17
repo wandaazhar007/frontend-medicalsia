@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { User as UserIcon } from 'lucide-react';
+import { Camera, Save, User as UserIcon } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
 import { getMe, updateMe, uploadMyPhoto } from '../../../services/users';
+import { formatPhoneNumber } from '../../../utils/phone';
 import Card from '../../../components/Card/Card';
 import Input from '../../../components/Input/Input';
 import Button from '../../../components/Button/Button';
@@ -44,6 +45,12 @@ export default function ProfilePage() {
     const errors = {};
     if (!fullName.trim()) {
       errors.fullName = t('profilePage.fullNameRequired');
+    }
+    if (phone.trim()) {
+      const digitCount = phone.replace(/\D/g, '').length;
+      if (digitCount < 9 || digitCount > 13) {
+        errors.phone = t('profilePage.phoneInvalid');
+      }
     }
     return errors;
   }
@@ -114,6 +121,7 @@ export default function ProfilePage() {
           </div>
           <div className={styles.photoActions}>
             <Button type="button" variant="secondary" onClick={() => fileInputRef.current?.click()} disabled={isUploadingPhoto}>
+              <Camera size={14} />
               {isUploadingPhoto ? t('profilePage.uploading') : t('profilePage.changePhoto')}
             </Button>
             <input ref={fileInputRef} type="file" accept="image/*" className={styles.hiddenFileInput} onChange={handlePhotoChange} />
@@ -136,14 +144,15 @@ export default function ProfilePage() {
           <Input
             id="phone"
             label={t('profilePage.phoneLabel')}
-            type="tel"
+            inputMode="numeric"
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            onChange={(e) => setPhone(formatPhoneNumber(e.target.value))}
             error={fieldErrors.phone}
           />
 
           <div className={styles.actions}>
             <Button type="submit" disabled={isSaving}>
+              <Save size={14} />
               {isSaving ? t('profilePage.saving') : t('profilePage.saveChanges')}
             </Button>
           </div>

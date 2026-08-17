@@ -10,11 +10,71 @@
 }
 
 .card {
+  position: relative;
   width: 100%;
   max-width: 44rem;
   display: flex;
   flex-direction: column;
   gap: $space-4;
+}
+
+.langToggle {
+  position: absolute;
+  top: $space-4;
+  right: $space-4;
+  display: flex;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  background: $color-bg;
+  padding: 0.2rem;
+  cursor: pointer;
+}
+
+.langOption {
+  padding: $space-1 $space-2;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  color: $color-text-muted;
+  border-radius: $radius-sm;
+}
+
+.langOptionActive {
+  background: $color-primary;
+  color: $color-surface;
+}
+
+.labelWithTooltip {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-1;
+}
+
+.phoneStatusChecking {
+  font-size: $font-size-xs;
+  color: $color-text-muted;
+  margin-top: $space-1;
+}
+
+.phoneStatusFound {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-1;
+  font-size: $font-size-xs;
+  color: $color-success;
+  margin-top: $space-1;
+}
+
+.spinner {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .brand {

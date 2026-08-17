@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { getUser, inviteUser, updateUser } from '../../../services/users';
+import { getUser, updateUser } from '../../../services/users';
+import { formatPhoneNumber } from '../../../utils/phone';
 import Card from '../../../components/Card/Card';
 import Input from '../../../components/Input/Input';
 import Select from '../../../components/Select/Select';
@@ -20,90 +21,62 @@ const ROLE_ORDER = [
 export default function UserForm() {
   const { t } = useTranslation();
   const { id } = useParams();
-  const isEdit = Boolean(id);
   const navigate = useNavigate();
 
   const roleOptions = ROLE_ORDER.map(([value, key]) => ({ value, label: t(`usersPage.form.${key}`) }));
 
   const [fullName, setFullName] = useState('');
-  const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [role, setRole] = useState('receptionist');
   const [isActive, setIsActive] = useState(true);
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  // Populated after a successful invite — email delivery isn't wired up yet
-  // (Fase 6), so the reset link is shown here to share with the new staff manually.
-  const [inviteResult, setInviteResult] = useState(null);
 
   useEffect(() => {
-    if (!isEdit) return;
     getUser(id).then(({ data }) => {
       setFullName(data.full_name);
       setPhone(data.phone || '');
       setRole(data.role);
       setIsActive(data.is_active);
     });
-  }, [id, isEdit]);
+  }, [id]);
 
   async function handleSubmit(e) {
     e.preventDefault();
     setError('');
 
-    if (!fullName || (!isEdit && !email)) {
-      setError(isEdit ? t('usersPage.form.editRequiredError') : t('usersPage.form.inviteRequiredError'));
+    if (!fullName) {
+      setError(t('usersPage.form.editRequiredError'));
       return;
     }
 
     setIsSubmitting(true);
     try {
-      if (isEdit) {
-        await updateUser(id, { full_name: fullName, phone, role, is_active: isActive });
-        navigate('/dashboard/users');
-      } else {
-        const { data } = await inviteUser({ full_name: fullName, email, phone, role });
-        setInviteResult(data);
-      }
+      await updateUser(id, { full_name: fullName, phone, role, is_active: isActive });
+      navigate('/dashboard/users');
     } catch {
-      setError(isEdit ? t('usersPage.form.editSaveError') : t('usersPage.form.inviteSaveError'));
+      setError(t('usersPage.form.editSaveError'));
     } finally {
       setIsSubmitting(false);
     }
   }
 
-  if (inviteResult) {
-    return (
-      <div className={styles.wrapper}>
-        <h1 className={styles.title}>{t('usersPage.form.inviteTitle')}</h1>
-        <Card>
-          <div className={styles.success}>
-            <p>
-              <strong>{inviteResult.user.full_name}</strong> {t('usersPage.form.invitedSuccessPart1')} {roleOptions.find((r) => r.value === inviteResult.user.role)?.label}.
-              {' '}{t('usersPage.form.invitedSuccessPart2')}
-            </p>
-            <div className={styles.inviteLink}>{inviteResult.invite_link}</div>
-            <Button onClick={() => navigate('/dashboard/users')}>{t('usersPage.form.done')}</Button>
-          </div>
-        </Card>
-      </div>
-    );
-  }
-
   return (
     <div className={styles.wrapper}>
-      <h1 className={styles.title}>{isEdit ? t('usersPage.form.editTitle') : t('usersPage.form.inviteTitle')}</h1>
+      <h1 className={styles.title}>{t('usersPage.form.editTitle')}</h1>
       <Card>
         <form className={styles.form} onSubmit={handleSubmit}>
           {error && <div className={styles.error}>{error}</div>}
 
           <Input id="full_name" label={t('usersPage.form.fullNameLabel')} value={fullName} onChange={(e) => setFullName(e.target.value)} required />
 
-          <div className={styles.grid}>
-            {!isEdit && (
-              <Input id="email" label={t('usersPage.form.emailLabel')} type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-            )}
-            <Input id="phone" label={t('usersPage.form.phoneLabel')} value={phone} onChange={(e) => setPhone(e.target.value)} />
-          </div>
+          <Input
+            id="phone"
+            label={t('usersPage.form.phoneLabel')}
+            value={phone}
+            onChange={(e) => setPhone(formatPhoneNumber(e.target.value))}
+            inputMode="numeric"
+          />
 
           <Select id="role" label={t('usersPage.form.roleLabel')} value={role} onChange={(e) => setRole(e.target.value)}>
             {roleOptions.map((option) => (
@@ -111,16 +84,14 @@ export default function UserForm() {
             ))}
           </Select>
 
-          {isEdit && (
-            <label className={styles.checkboxLabel}>
-              <input type="checkbox" checked={isActive} onChange={(e) => setIsActive(e.target.checked)} />
-              {t('usersPage.form.activeCheckbox')}
-            </label>
-          )}
+          <label className={styles.checkboxLabel}>
+            <input type="checkbox" checked={isActive} onChange={(e) => setIsActive(e.target.checked)} />
+            {t('usersPage.form.activeCheckbox')}
+          </label>
 
           <div className={styles.actions}>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? t('usersPage.form.saving') : isEdit ? t('usersPage.form.save') : t('usersPage.form.sendInvite')}
+              {isSubmitting ? t('usersPage.form.saving') : t('usersPage.form.save')}
             </Button>
             <Button type="button" variant="ghost" onClick={() => navigate(-1)}>{t('usersPage.form.cancel')}</Button>
           </div>

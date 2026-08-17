@@ -11,3 +11,13 @@ export function createMedicalProcedure(payload) {
 export function updateMedicalProcedure(id, payload) {
   return api.patch(`/medical-procedures/${id}`, payload).then((res) => res.data);
 }
+
+export function previewMedicalProcedureImport(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+  return api.post('/medical-procedures/import/preview', formData, { headers: { 'Content-Type': 'multipart/form-data' } }).then((res) => res.data);
+}
+
+export function commitMedicalProcedureImport(rows) {
+  return api.post('/medical-procedures/import', { rows }).then((res) => res.data);
+}

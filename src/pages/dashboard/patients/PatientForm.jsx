@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Save, X } from 'lucide-react';
 import { createPatient, getPatient, updatePatient } from '../../../services/patients';
 import { listWilayah } from '../../../services/wilayah';
+import { formatPhoneNumber } from '../../../utils/phone';
 import Card from '../../../components/Card/Card';
 import Input from '../../../components/Input/Input';
 import AutosuggestInput from '../../../components/AutosuggestInput/AutosuggestInput';
@@ -49,15 +50,6 @@ function loadDraft() {
 
 function clearDraft() {
   window.localStorage.removeItem(DRAFT_STORAGE_KEY);
-}
-
-// Formats as the user types into groups of 4 (0812-3456-7890) and normalizes
-// a leading country code (62...) back to the local 0-prefix form.
-function formatPhoneNumber(value) {
-  let digits = value.replace(/\D/g, '');
-  if (digits.startsWith('62')) digits = `0${digits.slice(2)}`;
-  digits = digits.slice(0, 13);
-  return [digits.slice(0, 4), digits.slice(4, 8), digits.slice(8, 13)].filter(Boolean).join('-');
 }
 
 // Formats as the user types into DD/MM/YYYY.

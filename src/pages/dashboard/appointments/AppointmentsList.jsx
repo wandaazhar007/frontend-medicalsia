@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Trans, useTranslation } from 'react-i18next';
-import { Ban, CalendarPlus, CheckCircle2, PlayCircle, Stethoscope, Trash2, UserCheck, UserX, X } from 'lucide-react';
+import { Ban, CalendarPlus, CheckCircle2, ClipboardEdit, PlayCircle, Stethoscope, Trash2, UserCheck, UserX, X } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
 import { listAppointments, updateAppointmentStatus, deleteAppointment } from '../../../services/appointments';
 import { getBookingDoctors } from '../../../services/publicBooking';
@@ -63,6 +63,14 @@ function formatDateTime(value) {
   const hours = String(d.getHours()).padStart(2, '0');
   const minutes = String(d.getMinutes()).padStart(2, '0');
   return `${day}-${month}-${year} ${hours}:${minutes}`;
+}
+
+// The public booking form only collects name + phone — a patient created
+// that way still needs NIK/DOB/address filled in before staff can act on
+// their appointment (check-in, consultation, etc.).
+function isIncompleteBookingPatient(appointment) {
+  return appointment.booked_via === 'public_portal'
+    && (!appointment.patient_nik || !appointment.patient_dob || !appointment.patient_address);
 }
 
 export default function AppointmentsList() {
@@ -189,64 +197,79 @@ export default function AppointmentsList() {
               {isLoading ? (
                 <TableSkeleton rows={8} columns={SKELETON_COLUMNS} />
               ) : (
-                result.data.map((appointment) => (
-                  <tr key={appointment.id}>
-                    <td>{appointment.patient_name}</td>
-                    <td>{appointment.doctor_name || '-'}</td>
-                    <td>{formatDateTime(appointment.scheduled_at)}</td>
-                    <td>{appointment.queue_number || '-'}</td>
-                    <td><Badge variant={STATUS_VARIANTS[appointment.status]}>{statusLabels[appointment.status]}</Badge></td>
-                    <td>
-                      <div className={styles.rowActions}>
-                        {appointment.status === 'booked' && (
-                          <>
-                            <Button variant="secondary" onClick={() => handleStatusChange(appointment.id, 'checked_in')}>
-                              <UserCheck size={14} />
-                              {t('appointments.list.checkIn')}
+                result.data.map((appointment) => {
+                  const incomplete = isIncompleteBookingPatient(appointment);
+                  return (
+                    <tr key={appointment.id}>
+                      <td>{appointment.patient_name}</td>
+                      <td>{appointment.doctor_name || '-'}</td>
+                      <td>{formatDateTime(appointment.scheduled_at)}</td>
+                      <td>{appointment.queue_number || '-'}</td>
+                      <td>
+                        <div className={styles.statusCell}>
+                          <Badge variant={STATUS_VARIANTS[appointment.status]}>{statusLabels[appointment.status]}</Badge>
+                          {incomplete && <Badge variant="warning">{t('appointments.list.incompleteDataBadge')}</Badge>}
+                        </div>
+                      </td>
+                      <td>
+                        <div className={styles.rowActions}>
+                          {incomplete && (
+                            <Button variant="secondary" onClick={() => navigate(`/dashboard/patients/${appointment.patient_id}/edit`)}>
+                              <ClipboardEdit size={14} />
+                              {t('appointments.list.completeData')}
                             </Button>
-                            <Button variant="secondary" onClick={() => handleStatusChange(appointment.id, 'no_show')}>
-                              <UserX size={14} />
-                              {t('appointments.list.noShow')}
+                          )}
+                          {appointment.status === 'booked' && (
+                            <>
+                              <Button variant="secondary" disabled={incomplete} onClick={() => handleStatusChange(appointment.id, 'checked_in')}>
+                                <UserCheck size={14} />
+                                {t('appointments.list.checkIn')}
+                              </Button>
+                              <Button variant="secondary" disabled={incomplete} onClick={() => handleStatusChange(appointment.id, 'no_show')}>
+                                <UserX size={14} />
+                                {t('appointments.list.noShow')}
+                              </Button>
+                              <Button variant="danger" disabled={incomplete} onClick={() => handleStatusChange(appointment.id, 'cancelled')}>
+                                <Ban size={14} />
+                                {t('appointments.list.cancel')}
+                              </Button>
+                            </>
+                          )}
+                          {appointment.status === 'checked_in' && (
+                            <Button variant="secondary" disabled={incomplete} onClick={() => handleStartConsultation(appointment)}>
+                              <Stethoscope size={14} />
+                              {t('appointments.list.startConsultation')}
                             </Button>
-                            <Button variant="danger" onClick={() => handleStatusChange(appointment.id, 'cancelled')}>
-                              <Ban size={14} />
-                              {t('appointments.list.cancel')}
-                            </Button>
-                          </>
-                        )}
-                        {appointment.status === 'checked_in' && (
-                          <Button variant="secondary" onClick={() => handleStartConsultation(appointment)}>
-                            <Stethoscope size={14} />
-                            {t('appointments.list.startConsultation')}
-                          </Button>
-                        )}
-                        {appointment.status === 'in_consultation' && (
-                          <>
-                            <Button variant="secondary" onClick={() => navigate(`/dashboard/consultation/${appointment.id}`)}>
-                              <PlayCircle size={14} />
-                              {t('appointments.list.continueConsultation')}
-                            </Button>
-                            <Button variant="secondary" onClick={() => handleStatusChange(appointment.id, 'completed')}>
-                              <CheckCircle2 size={14} />
-                              {t('appointments.list.complete')}
-                            </Button>
-                          </>
-                        )}
-                        {appointment.status === 'booked' && (
-                          <button
-                            type="button"
-                            className={styles.deleteButton}
-                            title={t('appointments.list.delete')}
-                            aria-label={t('appointments.list.delete')}
-                            onClick={() => openDeleteModal(appointment)}
-                          >
-                            <Trash2 size={14} />
-                          </button>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))
+                          )}
+                          {appointment.status === 'in_consultation' && (
+                            <>
+                              <Button variant="secondary" disabled={incomplete} onClick={() => navigate(`/dashboard/consultation/${appointment.id}`)}>
+                                <PlayCircle size={14} />
+                                {t('appointments.list.continueConsultation')}
+                              </Button>
+                              <Button variant="secondary" disabled={incomplete} onClick={() => handleStatusChange(appointment.id, 'completed')}>
+                                <CheckCircle2 size={14} />
+                                {t('appointments.list.complete')}
+                              </Button>
+                            </>
+                          )}
+                          {appointment.status === 'booked' && (
+                            <button
+                              type="button"
+                              className={styles.deleteButton}
+                              title={t('appointments.list.delete')}
+                              aria-label={t('appointments.list.delete')}
+                              disabled={incomplete}
+                              onClick={() => openDeleteModal(appointment)}
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>

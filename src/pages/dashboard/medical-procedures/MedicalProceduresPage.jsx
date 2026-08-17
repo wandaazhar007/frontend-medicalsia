@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Ban, Pencil, Plus, Power, Save, Stethoscope, X } from 'lucide-react';
+import { Ban, Pencil, Plus, Power, Save, Stethoscope, Upload, X } from 'lucide-react';
 import { createMedicalProcedure, listMedicalProcedures, updateMedicalProcedure } from '../../../services/medicalProcedures';
 import { useDebounce } from '../../../hooks/useDebounce';
 import Input from '../../../components/Input/Input';
@@ -10,6 +10,7 @@ import Pagination from '../../../components/Pagination/Pagination';
 import EmptyState from '../../../components/EmptyState/EmptyState';
 import Modal from '../../../components/Modal/Modal';
 import TableSkeleton from '../../../components/TableSkeleton/TableSkeleton';
+import MedicalProcedureImportModal from './MedicalProcedureImportModal';
 import styles from './MedicalProceduresPage.module.scss';
 
 const LIMIT = 20;
@@ -24,6 +25,18 @@ const SKELETON_COLUMNS = [
 
 function formatCurrency(value) {
   return `Rp${Number(value).toLocaleString('id-ID')}`;
+}
+
+// Strips everything but digits, then re-inserts thousand separator dots as
+// the user types — e.g. "100000" -> "100.000".
+function formatRupiahInput(value) {
+  const digits = value.replace(/\D/g, '');
+  if (!digits) return '';
+  return Number(digits).toLocaleString('id-ID');
+}
+
+function parseRupiahInput(value) {
+  return Number(value.replace(/\D/g, '')) || 0;
 }
 
 export default function MedicalProceduresPage() {
@@ -42,6 +55,7 @@ export default function MedicalProceduresPage() {
   const [formError, setFormError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [deactivateTarget, setDeactivateTarget] = useState(null);
+  const [isImportOpen, setIsImportOpen] = useState(false);
 
   useEffect(() => {
     setPage(1);
@@ -76,7 +90,7 @@ export default function MedicalProceduresPage() {
 
   function openEditModal(procedure) {
     setEditingProcedure(procedure);
-    setForm({ name: procedure.name, price: String(procedure.price) });
+    setForm({ name: procedure.name, price: formatRupiahInput(String(procedure.price)) });
     setFieldErrors({});
     setFormError('');
     setIsModalOpen(true);
@@ -91,8 +105,8 @@ export default function MedicalProceduresPage() {
     if (!form.name.trim()) {
       errors.name = t('medicalProceduresPage.fieldRequired');
     }
-    const price = Number(form.price);
-    if (!form.price || Number.isNaN(price) || price < 0) {
+    const price = parseRupiahInput(form.price);
+    if (!form.price || price <= 0) {
       errors.price = t('medicalProceduresPage.priceInvalid');
     }
     return errors;
@@ -108,7 +122,7 @@ export default function MedicalProceduresPage() {
 
     setIsSubmitting(true);
     try {
-      const payload = { name: form.name.trim(), price: Number(form.price) };
+      const payload = { name: form.name.trim(), price: parseRupiahInput(form.price) };
       if (editingProcedure) {
         await updateMedicalProcedure(editingProcedure.id, payload);
       } else {
@@ -138,10 +152,16 @@ export default function MedicalProceduresPage() {
     <div className={styles.wrapper}>
       <div className={styles.header}>
         <h1 className={styles.title}>{t('medicalProceduresPage.title')}</h1>
-        <Button onClick={openCreateModal}>
-          <Plus size={14} />
-          {t('medicalProceduresPage.addButton')}
-        </Button>
+        <div className={styles.headerActions}>
+          <Button variant="secondary" onClick={() => setIsImportOpen(true)}>
+            <Upload size={14} />
+            {t('medicalProceduresPage.importButton')}
+          </Button>
+          <Button onClick={openCreateModal}>
+            <Plus size={14} />
+            {t('medicalProceduresPage.addButton')}
+          </Button>
+        </div>
       </div>
 
       <div className={styles.searchRow}>
@@ -218,11 +238,11 @@ export default function MedicalProceduresPage() {
           />
           <Input
             id="procedure_price"
-            type="number"
-            min="0"
+            type="text"
+            inputMode="numeric"
             label={t('medicalProceduresPage.priceLabel')}
             value={form.price}
-            onChange={handleChange('price')}
+            onChange={(e) => setForm((prev) => ({ ...prev, price: formatRupiahInput(e.target.value) }))}
             error={fieldErrors.price}
           />
           <div className={styles.actions}>
@@ -251,6 +271,12 @@ export default function MedicalProceduresPage() {
           </Button>
         </div>
       </Modal>
+
+      <MedicalProcedureImportModal
+        isOpen={isImportOpen}
+        onClose={() => setIsImportOpen(false)}
+        onImported={fetchProcedures}
+      />
     </div>
   );
 }

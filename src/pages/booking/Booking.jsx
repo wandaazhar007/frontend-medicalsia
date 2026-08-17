@@ -1,12 +1,17 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CheckCircle } from 'lucide-react';
-import { createPublicBooking, getBookingDoctors } from '../../services/publicBooking';
+import { CheckCircle, Loader2, Send } from 'lucide-react';
+import { checkPhone, createPublicBooking, getBookingDoctors } from '../../services/publicBooking';
+import { formatPhoneNumber, countPhoneDigits } from '../../utils/phone';
+import { usePreferences } from '../../context/PreferencesContext';
+import { useDebounce } from '../../hooks/useDebounce';
 import LogoIcon from '../../components/LogoIcon/LogoIcon';
 import Wordmark from '../../components/LogoIcon/Wordmark';
 import Card from '../../components/Card/Card';
 import Input from '../../components/Input/Input';
 import Select from '../../components/Select/Select';
+import SearchableSelect from '../../components/SearchableSelect/SearchableSelect';
+import Tooltip from '../../components/Tooltip/Tooltip';
 import Button from '../../components/Button/Button';
 import styles from './Booking.module.scss';
 
@@ -44,15 +49,18 @@ function buildAvailableSlots(doctor, dateStr) {
 
 export default function Booking() {
   const { t } = useTranslation();
+  const { language, toggleLanguage } = usePreferences();
   const [doctors, setDoctors] = useState([]);
   const [doctorId, setDoctorId] = useState('');
   const [date, setDate] = useState('');
   const [scheduledAt, setScheduledAt] = useState('');
-  const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [fieldErrors, setFieldErrors] = useState({});
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isBooked, setIsBooked] = useState(false);
+  const [phoneCheckStatus, setPhoneCheckStatus] = useState('idle'); // idle | checking | found
 
   useEffect(() => {
     getBookingDoctors().then(({ data }) => setDoctors(data));
@@ -61,14 +69,77 @@ export default function Booking() {
   const selectedDoctor = doctors.find((d) => d.id === doctorId);
   const availableSlots = useMemo(() => buildAvailableSlots(selectedDoctor, date), [selectedDoctor, date]);
 
+  const loadDoctorOptions = useCallback(
+    async (query) => {
+      const filtered = query ? doctors.filter((d) => d.full_name.toLowerCase().includes(query.toLowerCase())) : doctors;
+      return filtered.map((doctor) => ({ id: doctor.id, label: doctor.full_name }));
+    },
+    [doctors]
+  );
+
+  const debouncedPhone = useDebounce(phone, 500);
+
+  useEffect(() => {
+    const digitCount = countPhoneDigits(debouncedPhone);
+    if (digitCount < 9) {
+      setPhoneCheckStatus('idle');
+      return undefined;
+    }
+
+    let isCurrent = true;
+    setPhoneCheckStatus('checking');
+    checkPhone(debouncedPhone)
+      .then(({ data }) => {
+        if (!isCurrent) return;
+        if (data) {
+          setPhoneCheckStatus('found');
+          setFullName(data.full_name);
+        } else {
+          setPhoneCheckStatus('idle');
+        }
+      })
+      .catch(() => {
+        if (isCurrent) setPhoneCheckStatus('idle');
+      });
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [debouncedPhone]);
+
+  function handleSelectDoctor(option) {
+    setDoctorId(option ? option.id : '');
+    setScheduledAt('');
+    setFieldErrors((prev) => ({ ...prev, doctor_id: undefined }));
+  }
+
+  function handlePhoneChange(e) {
+    setPhone(formatPhoneNumber(e.target.value));
+    setFieldErrors((prev) => ({ ...prev, phone: undefined }));
+    setPhoneCheckStatus('idle');
+  }
+
+  function validate() {
+    const errors = {};
+    if (!doctorId) errors.doctor_id = t('bookingPage.fieldRequired');
+    if (!scheduledAt) errors.scheduled_at = t('bookingPage.fieldRequired');
+    if (!phone.trim()) {
+      errors.phone = t('bookingPage.fieldRequired');
+    } else {
+      const digitCount = countPhoneDigits(phone);
+      if (digitCount < 9 || digitCount > 13) errors.phone = t('bookingPage.phoneInvalid');
+    }
+    if (!fullName.trim()) errors.full_name = t('bookingPage.fieldRequired');
+    return errors;
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     setError('');
 
-    if (!doctorId || !scheduledAt || !fullName) {
-      setError(t('bookingPage.requiredError'));
-      return;
-    }
+    const errors = validate();
+    setFieldErrors(errors);
+    if (Object.keys(errors).length > 0) return;
 
     setIsSubmitting(true);
     try {
@@ -98,34 +169,46 @@ export default function Booking() {
   return (
     <div className={styles.wrapper}>
       <Card className={styles.card}>
+        <button type="button" className={styles.langToggle} role="switch" aria-checked={language === 'en'} onClick={toggleLanguage}>
+          <span className={`${styles.langOption} ${language === 'id' ? styles.langOptionActive : ''}`}>IND</span>
+          <span className={`${styles.langOption} ${language === 'en' ? styles.langOptionActive : ''}`}>ENG</span>
+        </button>
+
         <div className={styles.brand}>
           <LogoIcon variant="light" size={36} />
           <Wordmark variant="light" />
         </div>
         <p className={styles.subtitle}>{t('bookingPage.subtitle')}</p>
 
-        <form className={styles.form} onSubmit={handleSubmit}>
+        <form className={styles.form} onSubmit={handleSubmit} noValidate>
           {error && <div className={styles.error}>{error}</div>}
 
-          <Select
+          <SearchableSelect
             id="doctor_id"
-            label={t('bookingPage.selectDoctorLabel')}
-            value={doctorId}
-            onChange={(e) => {
-              setDoctorId(e.target.value);
-              setScheduledAt('');
-            }}
-          >
-            <option value="">{t('bookingPage.selectDoctorPlaceholder')}</option>
-            {doctors.map((doctor) => (
-              <option key={doctor.id} value={doctor.id}>{doctor.full_name}</option>
-            ))}
-          </Select>
+            label={(
+              <span className={styles.labelWithTooltip}>
+                {t('bookingPage.selectDoctorLabel')}
+                <Tooltip content={t('bookingPage.doctorTooltip')} ariaLabel={t('bookingPage.tooltipAriaLabel')} />
+              </span>
+            )}
+            placeholder={t('bookingPage.searchDoctorPlaceholder')}
+            value={selectedDoctor ? { label: selectedDoctor.full_name } : null}
+            onSelect={handleSelectDoctor}
+            loadOptions={loadDoctorOptions}
+            emptyMessage={t('bookingPage.searchDoctorEmpty')}
+            searchingMessage={t('common.searching')}
+            error={fieldErrors.doctor_id}
+          />
 
           <div className={styles.grid}>
             <Input
               id="date"
-              label={t('bookingPage.dateLabel')}
+              label={(
+                <span className={styles.labelWithTooltip}>
+                  {t('bookingPage.dateLabel')}
+                  <Tooltip content={t('bookingPage.dateTooltip')} ariaLabel={t('bookingPage.tooltipAriaLabel')} />
+                </span>
+              )}
               type="date"
               min={new Date().toISOString().slice(0, 10)}
               value={date}
@@ -137,10 +220,19 @@ export default function Booking() {
             />
             <Select
               id="scheduled_at"
-              label={t('bookingPage.timeLabel')}
+              label={(
+                <span className={styles.labelWithTooltip}>
+                  {t('bookingPage.timeLabel')}
+                  <Tooltip content={t('bookingPage.timeTooltip')} ariaLabel={t('bookingPage.tooltipAriaLabel')} />
+                </span>
+              )}
               value={scheduledAt}
-              onChange={(e) => setScheduledAt(e.target.value)}
+              onChange={(e) => {
+                setScheduledAt(e.target.value);
+                setFieldErrors((prev) => ({ ...prev, scheduled_at: undefined }));
+              }}
               disabled={!date || availableSlots.length === 0}
+              error={fieldErrors.scheduled_at}
             >
               <option value="">
                 {date && availableSlots.length === 0 ? t('bookingPage.noSlotsAvailable') : t('bookingPage.selectTimePlaceholder')}
@@ -153,10 +245,48 @@ export default function Booking() {
             </Select>
           </div>
 
-          <Input id="full_name" label={t('bookingPage.fullNameLabel')} value={fullName} onChange={(e) => setFullName(e.target.value)} required />
-          <Input id="phone" label={t('bookingPage.phoneLabel')} value={phone} onChange={(e) => setPhone(e.target.value)} />
+          <div>
+            <Input
+              id="phone"
+              label={(
+                <span className={styles.labelWithTooltip}>
+                  {t('bookingPage.phoneLabel')}
+                  <Tooltip content={t('bookingPage.phoneTooltip')} ariaLabel={t('bookingPage.tooltipAriaLabel')} />
+                </span>
+              )}
+              type="tel"
+              placeholder="0812-3456-7890"
+              value={phone}
+              onChange={handlePhoneChange}
+              error={fieldErrors.phone}
+            />
+            {phoneCheckStatus === 'checking' && <p className={styles.phoneStatusChecking}>{t('bookingPage.phoneCheckingText')}</p>}
+            {phoneCheckStatus === 'found' && (
+              <p className={styles.phoneStatusFound}>
+                <CheckCircle size={13} />
+                {t('bookingPage.phoneFoundText', { name: fullName })}
+              </p>
+            )}
+          </div>
+
+          <Input
+            id="full_name"
+            label={(
+              <span className={styles.labelWithTooltip}>
+                {t('bookingPage.fullNameLabel')}
+                <Tooltip content={t('bookingPage.fullNameTooltip')} ariaLabel={t('bookingPage.tooltipAriaLabel')} />
+              </span>
+            )}
+            value={fullName}
+            onChange={(e) => {
+              setFullName(e.target.value);
+              setFieldErrors((prev) => ({ ...prev, full_name: undefined }));
+            }}
+            error={fieldErrors.full_name}
+          />
 
           <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? <Loader2 size={16} className={styles.spinner} /> : <Send size={16} />}
             {isSubmitting ? t('bookingPage.processing') : t('bookingPage.submit')}
           </Button>
         </form>

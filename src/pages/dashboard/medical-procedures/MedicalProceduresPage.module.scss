@@ -25,6 +25,11 @@
   color: $color-primary;
 }
 
+.headerActions {
+  display: flex;
+  gap: $space-2;
+}
+
 .searchRow {
   max-width: 32rem;
 

@@ -78,13 +78,13 @@ export default function BottomNav() {
                 {t('sidebar.users')}
               </NavLink>
             )}
-            {(isReceptionist || isPharmacy) && (
+            {(isReceptionist || isPharmacy || canManageUsers) && (
               <a href="/display" target="_blank" rel="noopener noreferrer" className={styles.moreItem} onClick={() => setIsMoreOpen(false)}>
                 <Monitor size={16} />
                 {t('sidebar.displayQueue')}
               </a>
             )}
-            {(isReceptionist || isPharmacy) && (
+            {(isReceptionist || isPharmacy || canManageUsers) && (
               <a href="/display-pharmacy" target="_blank" rel="noopener noreferrer" className={styles.moreItem} onClick={() => setIsMoreOpen(false)}>
                 <Tv size={16} />
                 {t('sidebar.displayPharmacyQueue')}

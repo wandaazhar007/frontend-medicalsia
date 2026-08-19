@@ -126,16 +126,12 @@ export default function Sidebar() {
         </nav>
       )}
 
-      {canManageUsers && (
+      {(canManageUsers || isReceptionist || isPharmacy) && (
         <nav className={styles.group}>
           <span className={styles.groupLabel}>{t('sidebar.groupOther')}</span>
-          <SidebarNavLink to="/dashboard/users" icon={UserCog} label={t('sidebar.users')} loadingPath={loadingPath} onNavigate={handleNavigate} />
-        </nav>
-      )}
-
-      {(isReceptionist || isPharmacy) && (
-        <nav className={styles.group}>
-          <span className={styles.groupLabel}>{t('sidebar.groupOther')}</span>
+          {canManageUsers && (
+            <SidebarNavLink to="/dashboard/users" icon={UserCog} label={t('sidebar.users')} loadingPath={loadingPath} onNavigate={handleNavigate} />
+          )}
           <a href="/display" target="_blank" rel="noopener noreferrer" className={styles.navItem}>
             <Monitor size={16} />
             {t('sidebar.displayQueue')}

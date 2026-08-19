@@ -32,6 +32,7 @@ const EMPTY_INVITE_FORM = { full_name: '', email: '', phone: '', role: 'receptio
 
 const SKELETON_COLUMNS = [
   { width: '60%' },
+  { width: '70%' },
   { width: '50%' },
   { width: '35%', variant: 'badge' },
   { width: '55%' },
@@ -176,6 +177,7 @@ export default function UsersList() {
               <thead>
                 <tr>
                   <th>{t('usersPage.list.columnName')}</th>
+                  <th>{t('usersPage.list.columnEmail')}</th>
                   <th>{t('usersPage.list.columnPhone')}</th>
                   <th>{t('usersPage.list.columnRole')}</th>
                   <th>{t('usersPage.list.columnLastLogin')}</th>
@@ -190,6 +192,7 @@ export default function UsersList() {
                   result.data.map((user) => (
                     <tr key={user.id}>
                       <td>{user.full_name}</td>
+                      <td>{user.email || '-'}</td>
                       <td>{user.phone || '-'}</td>
                       <td><Badge variant="info">{roleLabels[user.role] || user.role}</Badge></td>
                       <td>{formatLastLogin(user.last_login, t)}</td>

@@ -466,6 +466,7 @@ export default {
       loading: 'Memuat...',
       noResults: 'Belum ada user.',
       columnName: 'Nama',
+      columnEmail: 'Email',
       columnPhone: 'Telepon',
       columnRole: 'Role',
       columnLastLogin: 'Terakhir Login',

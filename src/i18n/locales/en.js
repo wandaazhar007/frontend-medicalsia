@@ -465,6 +465,7 @@ export default {
       loading: 'Loading...',
       noResults: 'No users yet.',
       columnName: 'Name',
+      columnEmail: 'Email',
       columnPhone: 'Phone',
       columnRole: 'Role',
       columnLastLogin: 'Last Login',

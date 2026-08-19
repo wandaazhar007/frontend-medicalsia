@@ -27,15 +27,16 @@ import UserForm from './pages/dashboard/users/UserForm';
 import ProfilePage from './pages/dashboard/profile/ProfilePage';
 import AccessDenied from './pages/dashboard/access-denied/AccessDenied';
 
-// Receptionist is scoped to front-desk operations only (Appointment, Queue,
-// Patients, Doctor Schedules) — everything else uses this list to exclude them.
-const NON_RECEPTIONIST_ROLES = ['owner', 'admin', 'doctor', 'pharmacy', 'cashier'];
-
-// Doctor is scoped to Dashboard/Queue/Patients/Doctor Schedules — manual
-// booking is a front-desk tool, and cashier/invoices/pharmacy are non-clinical
-// operations, so doctor is excluded from both.
-const NON_DOCTOR_ROLES = ['owner', 'admin', 'receptionist', 'pharmacy', 'cashier'];
-const OPERATIONAL_ROLES = ['owner', 'admin', 'pharmacy', 'cashier'];
+// Each role is scoped to the handful of pages its actual workflow touches —
+// receptionist: Appointment/Queue/Patients/Doctor Schedules (front desk).
+// doctor: Dashboard/Queue/Patients/Doctor Schedules (Queue -> consultation).
+// cashier: Dashboard/Patients/Cashier/Invoices (billing only, no clinical or
+// scheduling tools). The lists below capture the resulting per-route overlap.
+const APPOINTMENT_ROLES = ['owner', 'admin', 'receptionist', 'pharmacy']; // excludes doctor, cashier
+const QUEUE_ROLES = ['owner', 'admin', 'doctor', 'receptionist', 'pharmacy']; // excludes cashier
+const CONSULTATION_ROLES = ['owner', 'admin', 'doctor', 'pharmacy']; // excludes receptionist, cashier
+const CASHIER_ROLES = ['owner', 'admin', 'pharmacy', 'cashier']; // excludes receptionist, doctor
+const PHARMACY_ROLES = ['owner', 'admin', 'pharmacy']; // excludes receptionist, doctor, cashier
 
 // /pages/dashboard/* requires an authenticated session; /pages/booking,
 // /pages/display, and /pages/display-pharmacy must never be wrapped in this guard.
@@ -92,25 +93,39 @@ function AppRoutes() {
         <Route
           path="appointments"
           element={(
-            <RequireRole roles={NON_DOCTOR_ROLES}>
+            <RequireRole roles={APPOINTMENT_ROLES}>
               <AppointmentsList />
             </RequireRole>
           )}
         />
-        <Route path="queue" element={<QueuePage />} />
+        <Route
+          path="queue"
+          element={(
+            <RequireRole roles={QUEUE_ROLES}>
+              <QueuePage />
+            </RequireRole>
+          )}
+        />
         <Route
           path="consultation/:id"
           element={(
-            <RequireRole roles={NON_RECEPTIONIST_ROLES}>
+            <RequireRole roles={CONSULTATION_ROLES}>
               <ConsultationPage />
             </RequireRole>
           )}
         />
-        <Route path="doctor-schedules" element={<DoctorSchedulesPage />} />
+        <Route
+          path="doctor-schedules"
+          element={(
+            <RequireRole roles={QUEUE_ROLES}>
+              <DoctorSchedulesPage />
+            </RequireRole>
+          )}
+        />
         <Route
           path="cashier"
           element={(
-            <RequireRole roles={OPERATIONAL_ROLES}>
+            <RequireRole roles={CASHIER_ROLES}>
               <CashierPage />
             </RequireRole>
           )}
@@ -118,7 +133,7 @@ function AppRoutes() {
         <Route
           path="invoices"
           element={(
-            <RequireRole roles={OPERATIONAL_ROLES}>
+            <RequireRole roles={CASHIER_ROLES}>
               <InvoicesList />
             </RequireRole>
           )}
@@ -126,7 +141,7 @@ function AppRoutes() {
         <Route
           path="invoices/:id"
           element={(
-            <RequireRole roles={OPERATIONAL_ROLES}>
+            <RequireRole roles={CASHIER_ROLES}>
               <InvoiceDetail />
             </RequireRole>
           )}
@@ -134,7 +149,7 @@ function AppRoutes() {
         <Route
           path="pharmacy"
           element={(
-            <RequireRole roles={OPERATIONAL_ROLES}>
+            <RequireRole roles={PHARMACY_ROLES}>
               <PharmacyPage />
             </RequireRole>
           )}

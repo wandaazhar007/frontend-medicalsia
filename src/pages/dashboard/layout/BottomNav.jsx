@@ -20,6 +20,7 @@ export default function BottomNav() {
   const canManageMedicines = user && ['owner', 'admin', 'pharmacy'].includes(user.role);
   const isReceptionist = user?.role === 'receptionist';
   const isDoctor = user?.role === 'doctor';
+  const isCashier = user?.role === 'cashier';
   const [isMoreOpen, setIsMoreOpen] = useState(false);
 
   return (
@@ -28,17 +29,19 @@ export default function BottomNav() {
         <>
           <div className={styles.backdrop} onClick={() => setIsMoreOpen(false)} />
           <div className={styles.moreSheet}>
-            {!isReceptionist && !isDoctor && (
+            {!isReceptionist && !isDoctor && !isCashier && (
               <NavLink to="/dashboard/appointments" className={styles.moreItem} onClick={() => setIsMoreOpen(false)}>
                 <CalendarPlus size={16} />
                 {t('sidebar.appointment')}
               </NavLink>
             )}
-            <NavLink to="/dashboard/doctor-schedules" className={styles.moreItem} onClick={() => setIsMoreOpen(false)}>
-              <CalendarClock size={16} />
-              {t('sidebar.doctorSchedules')}
-            </NavLink>
-            {!isReceptionist && !isDoctor && (
+            {!isCashier && (
+              <NavLink to="/dashboard/doctor-schedules" className={styles.moreItem} onClick={() => setIsMoreOpen(false)}>
+                <CalendarClock size={16} />
+                {t('sidebar.doctorSchedules')}
+              </NavLink>
+            )}
+            {!isReceptionist && !isDoctor && !isCashier && (
               <NavLink to="/dashboard/cashier" className={styles.moreItem} onClick={() => setIsMoreOpen(false)}>
                 <CreditCard size={16} />
                 {t('sidebar.cashier')}
@@ -50,7 +53,7 @@ export default function BottomNav() {
                 {t('sidebar.invoices')}
               </NavLink>
             )}
-            {!isReceptionist && !isDoctor && (
+            {!isReceptionist && !isDoctor && !isCashier && (
               <NavLink to="/dashboard/pharmacy" className={styles.moreItem} onClick={() => setIsMoreOpen(false)}>
                 <Pill size={16} />
                 {t('sidebar.pharmacy')}
@@ -101,10 +104,17 @@ export default function BottomNav() {
           {t('sidebar.home')}
         </NavLink>
       )}
-      <NavLink to="/dashboard/queue" className={navLinkClass}>
-        <Clock size={18} />
-        {t('sidebar.queue')}
-      </NavLink>
+      {isCashier ? (
+        <NavLink to="/dashboard/cashier" className={navLinkClass}>
+          <CreditCard size={18} />
+          {t('sidebar.cashier')}
+        </NavLink>
+      ) : (
+        <NavLink to="/dashboard/queue" className={navLinkClass}>
+          <Clock size={18} />
+          {t('sidebar.queue')}
+        </NavLink>
+      )}
       <NavLink to="/dashboard/patients" className={navLinkClass}>
         <Users size={18} />
         {t('sidebar.patients')}

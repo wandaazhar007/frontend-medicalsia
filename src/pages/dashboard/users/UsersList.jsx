@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Ban, Check, Pencil, Power, Save, UserPlus, Users as UsersIcon, X } from 'lucide-react';
+import { AlertTriangle, Ban, Check, Copy, Pencil, Power, Save, UserPlus, Users as UsersIcon, X } from 'lucide-react';
 import { inviteUser, listUsers, updateUser } from '../../../services/users';
 import { useDebounce } from '../../../hooks/useDebounce';
 import { formatPhoneNumber } from '../../../utils/phone';
@@ -63,6 +63,7 @@ export default function UsersList() {
   const [inviteFormError, setInviteFormError] = useState('');
   const [isSavingInvite, setIsSavingInvite] = useState(false);
   const [inviteResult, setInviteResult] = useState(null);
+  const [isLinkCopied, setIsLinkCopied] = useState(false);
 
   useEffect(() => {
     setPage(1);
@@ -98,12 +99,18 @@ export default function UsersList() {
     setInviteFieldErrors({});
     setInviteFormError('');
     setInviteResult(null);
+    setIsLinkCopied(false);
     setIsInviteModalOpen(true);
   }
 
   function closeInviteModal() {
     setIsInviteModalOpen(false);
     if (inviteResult) fetchUsers();
+  }
+
+  async function handleCopyInviteLink() {
+    await navigator.clipboard.writeText(inviteResult.invite_link);
+    setIsLinkCopied(true);
   }
 
   function handleInviteFieldChange(field) {
@@ -224,7 +231,24 @@ export default function UsersList() {
               <strong>{inviteResult.user.full_name}</strong> {t('usersPage.form.invitedSuccessPart1')} {roleOptions.find((r) => r.value === inviteResult.user.role)?.label}.
               {' '}{t('usersPage.form.invitedSuccessPart2')}
             </p>
-            <div className={styles.inviteLink}>{inviteResult.invite_link}</div>
+            <div className={styles.inviteLinkRow}>
+              <div className={styles.inviteLink}>{inviteResult.invite_link}</div>
+              <button
+                type="button"
+                className={styles.copyButton}
+                onClick={handleCopyInviteLink}
+                title={t('usersPage.form.copyLink')}
+              >
+                {isLinkCopied ? <Check size={16} /> : <Copy size={16} />}
+              </button>
+            </div>
+            {isLinkCopied && <span className={styles.copiedHint}>{t('usersPage.form.linkCopied')}</span>}
+
+            <div className={styles.oneTimeWarning}>
+              <AlertTriangle size={16} />
+              <span>{t('usersPage.form.oneTimeWarning')}</span>
+            </div>
+
             <div className={styles.actions}>
               <Button onClick={closeInviteModal}>
                 <Check size={14} />

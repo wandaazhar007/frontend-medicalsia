@@ -96,10 +96,61 @@
   gap: $space-3;
 }
 
+.inviteLinkRow {
+  display: flex;
+  align-items: stretch;
+  gap: $space-2;
+}
+
 .inviteLink {
+  flex: 1;
+  min-width: 0;
   font-size: $font-size-xs;
-  word-break: break-all;
   background: var(--color-bg);
   border-radius: $radius-sm;
   padding: $space-2 $space-3;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  user-select: none;
+}
+
+.copyButton {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.6rem;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: $radius-sm;
+  color: $color-primary;
+
+  &:hover {
+    border-color: $color-primary;
+  }
+}
+
+.copiedHint {
+  font-size: $font-size-xs;
+  color: var(--color-success);
+  margin-top: -#{$space-2};
+}
+
+.oneTimeWarning {
+  display: flex;
+  align-items: flex-start;
+  gap: $space-2;
+  font-size: $font-size-xs;
+  color: var(--color-warning);
+  background: var(--color-warning-bg);
+  border-radius: $radius-sm;
+  padding: $space-2 $space-3;
+
+  svg {
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
 }

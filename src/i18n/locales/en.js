@@ -228,6 +228,7 @@ export default {
       selectDoctorRequired: 'Please select a doctor first.',
       dateRequired: 'Date is required.',
       dateNoScheduleError: 'The doctor has no schedule on this date.',
+      timeOutsideScheduleError: "This time is outside the doctor's working hours on that date.",
       timeRequired: 'Time is required.',
       createError: 'Failed to create appointment.',
       searchPatientLabel: 'Search Patient',

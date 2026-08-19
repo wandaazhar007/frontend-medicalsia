@@ -55,10 +55,22 @@ export default function AppointmentForm({ onSuccess, onCancel }) {
 
   // day_of_week uses JS Date#getDay() convention (0 = Sunday), matching
   // Postgres EXTRACT(DOW) used when the schedule rows were created.
-  function doctorHasScheduleOn(doctorId, dateStr) {
-    if (!doctorId || !dateStr) return true;
+  function getMatchingSchedule(doctorId, dateStr) {
+    if (!doctorId || !dateStr) return null;
     const dayOfWeek = new Date(`${dateStr}T00:00:00`).getDay();
-    return schedules.some((s) => s.doctor_id === doctorId && s.is_active && s.day_of_week === dayOfWeek);
+    return schedules.find((s) => s.doctor_id === doctorId && s.is_active && s.day_of_week === dayOfWeek) || null;
+  }
+
+  function doctorHasScheduleOn(doctorId, dateStr) {
+    return Boolean(getMatchingSchedule(doctorId, dateStr));
+  }
+
+  // start_time/end_time come back as "HH:MM:SS" — compared as "HH:MM" strings
+  // against the <input type="time"> value, which sorts correctly lexically.
+  function isTimeWithinSchedule(doctorId, dateStr, timeStr) {
+    const schedule = getMatchingSchedule(doctorId, dateStr);
+    if (!schedule || !timeStr) return true;
+    return timeStr >= schedule.start_time.slice(0, 5) && timeStr < schedule.end_time.slice(0, 5);
   }
 
   const loadPatientOptions = useCallback(async (query) => {
@@ -89,10 +101,20 @@ export default function AppointmentForm({ onSuccess, onCancel }) {
     }
     setDate(newDate);
     setDateError('');
+    if (selectedDoctor && time && !isTimeWithinSchedule(selectedDoctor.id, newDate, time)) {
+      setTime('');
+      setTimeError(t('appointments.form.timeOutsideScheduleError'));
+    }
   }
 
   function handleTimeChange(e) {
-    setTime(e.target.value);
+    const newTime = e.target.value;
+    if (selectedDoctor && date && newTime && !isTimeWithinSchedule(selectedDoctor.id, date, newTime)) {
+      setTime('');
+      setTimeError(t('appointments.form.timeOutsideScheduleError'));
+      return;
+    }
+    setTime(newTime);
     setTimeError('');
   }
 
@@ -115,6 +137,9 @@ export default function AppointmentForm({ onSuccess, onCancel }) {
     }
     if (!time) {
       setTimeError(t('appointments.form.timeRequired'));
+      isValid = false;
+    } else if (selectedDoctor && date && !isTimeWithinSchedule(selectedDoctor.id, date, time)) {
+      setTimeError(t('appointments.form.timeOutsideScheduleError'));
       isValid = false;
     }
     return isValid;
@@ -144,6 +169,12 @@ export default function AppointmentForm({ onSuccess, onCancel }) {
       setIsSubmitting(false);
     }
   }
+
+  const matchedSchedule = getMatchingSchedule(selectedDoctor?.id, date);
+  const scheduleMinTime = matchedSchedule ? matchedSchedule.start_time.slice(0, 5) : undefined;
+  const scheduleMaxTime = matchedSchedule ? matchedSchedule.end_time.slice(0, 5) : undefined;
+  const todayMinTime = date === todayLocalDate() ? nowLocalTime() : undefined;
+  const effectiveMinTime = [todayMinTime, scheduleMinTime].filter(Boolean).sort().pop();
 
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
@@ -180,6 +211,9 @@ export default function AppointmentForm({ onSuccess, onCancel }) {
           if (doctor && date && !doctorHasScheduleOn(doctor.id, date)) {
             setDate('');
             setDateError(t('appointments.form.dateNoScheduleError'));
+          } else if (doctor && date && time && !isTimeWithinSchedule(doctor.id, date, time)) {
+            setTime('');
+            setTimeError(t('appointments.form.timeOutsideScheduleError'));
           }
         }}
         loadOptions={loadDoctorOptions}
@@ -216,7 +250,8 @@ export default function AppointmentForm({ onSuccess, onCancel }) {
           )}
           type="time"
           lang="id-ID"
-          min={date === todayLocalDate() ? nowLocalTime() : undefined}
+          min={effectiveMinTime}
+          max={scheduleMaxTime}
           value={time}
           onChange={handleTimeChange}
           error={timeError}

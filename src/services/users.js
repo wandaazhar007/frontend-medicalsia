@@ -29,3 +29,7 @@ export function uploadMyPhoto(file) {
   formData.append('photo', file);
   return api.post('/users/me/photo', formData, { headers: { 'Content-Type': 'multipart/form-data' } }).then((res) => res.data);
 }
+
+export function getMyLoginHistory() {
+  return api.get('/users/me/login-history').then((res) => res.data);
+}

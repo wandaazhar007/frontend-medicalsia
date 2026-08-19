@@ -17,10 +17,18 @@
   color: $color-primary;
 }
 
+.cardsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-4;
+}
+
 .card {
   display: flex;
   flex-direction: column;
   gap: $space-5;
+  flex: 1;
+  min-width: 28rem;
 
   @media (min-width: $breakpoint-tablet) {
     max-width: 50%;
@@ -107,4 +115,48 @@
 .actions {
   display: flex;
   justify-content: flex-end;
+}
+
+.accountInfo {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.accountInfoRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-3;
+}
+
+.accountInfoLabel {
+  font-size: $font-size-sm;
+  color: var(--color-text-muted);
+}
+
+.sectionTitle {
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: var(--color-text);
+}
+
+.historyList {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  list-style: none;
+}
+
+.historyItem {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  font-size: $font-size-sm;
+  color: var(--color-text);
+
+  svg {
+    color: var(--color-text-muted);
+    flex-shrink: 0;
+  }
 }

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { Ban, Pencil, Plus, Power, Save, X } from 'lucide-react';
-import { createDoctorSchedule, listDoctorSchedules, updateDoctorSchedule } from '../../../services/doctorSchedules';
+import { Ban, Pencil, Plus, Power, Save, Trash2, X } from 'lucide-react';
+import { createDoctorSchedule, deleteDoctorSchedule, listDoctorSchedules, updateDoctorSchedule } from '../../../services/doctorSchedules';
 import { getBookingDoctors } from '../../../services/publicBooking';
 import { useDebounce } from '../../../hooks/useDebounce';
 import Input from '../../../components/Input/Input';
@@ -42,6 +42,9 @@ export default function DoctorSchedulesPage() {
   const [formError, setFormError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [deactivateTarget, setDeactivateTarget] = useState(null);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState('');
 
   const dayLabels = DAY_KEYS.map((key) => t(`doctorSchedulesPage.${key}`));
 
@@ -163,6 +166,25 @@ export default function DoctorSchedulesPage() {
     fetchSchedules();
   }
 
+  function openDeleteModal(schedule) {
+    setDeleteError('');
+    setDeleteTarget(schedule);
+  }
+
+  async function confirmDelete() {
+    setDeleteError('');
+    setIsDeleting(true);
+    try {
+      await deleteDoctorSchedule(deleteTarget.id);
+      setDeleteTarget(null);
+      fetchSchedules();
+    } catch {
+      setDeleteError(t('doctorSchedulesPage.deleteError'));
+    } finally {
+      setIsDeleting(false);
+    }
+  }
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.header}>
@@ -216,6 +238,12 @@ export default function DoctorSchedulesPage() {
                           {schedule.is_active ? <Ban size={14} /> : <Power size={14} />}
                           {schedule.is_active ? t('doctorSchedulesPage.deactivate') : t('doctorSchedulesPage.activate')}
                         </Button>
+                        {!schedule.has_appointments && (
+                          <Button variant="dangerOutline" onClick={() => openDeleteModal(schedule)}>
+                            <Trash2 size={14} />
+                            {t('doctorSchedulesPage.delete')}
+                          </Button>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -310,6 +338,27 @@ export default function DoctorSchedulesPage() {
           <Button type="button" variant="dangerOutline" onClick={confirmDeactivate}>
             <Ban size={14} />
             {t('doctorSchedulesPage.deactivate')}
+          </Button>
+        </div>
+      </Modal>
+
+      <Modal isOpen={Boolean(deleteTarget)} onClose={() => setDeleteTarget(null)} title={t('doctorSchedulesPage.deleteConfirmTitle')}>
+        {deleteError && <div className={styles.error}>{deleteError}</div>}
+        <p className={styles.modalText}>
+          <Trans
+            i18nKey="doctorSchedulesPage.deleteConfirmText"
+            values={{ name: deleteTarget?.doctor_name }}
+            components={{ bold: <strong className={styles.deactivateName} /> }}
+          />
+        </p>
+        <div className={styles.modalActions}>
+          <Button type="button" variant="secondary" onClick={() => setDeleteTarget(null)}>
+            <X size={14} />
+            {t('doctorSchedulesPage.cancel')}
+          </Button>
+          <Button type="button" variant="danger" disabled={isDeleting} onClick={confirmDelete}>
+            <Trash2 size={14} />
+            {t('doctorSchedulesPage.delete')}
           </Button>
         </div>
       </Modal>

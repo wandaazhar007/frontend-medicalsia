@@ -11,3 +11,7 @@ export function createDoctorSchedule(payload) {
 export function updateDoctorSchedule(id, payload) {
   return api.patch(`/doctor-schedules/${id}`, payload).then((res) => res.data);
 }
+
+export function deleteDoctorSchedule(id) {
+  return api.delete(`/doctor-schedules/${id}`).then((res) => res.data);
+}

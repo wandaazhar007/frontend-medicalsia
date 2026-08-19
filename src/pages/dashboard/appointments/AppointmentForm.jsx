@@ -112,6 +112,15 @@ export default function AppointmentForm({ onSuccess, onCancel }) {
     if (selectedDoctor && date && newTime && !isTimeWithinSchedule(selectedDoctor.id, date, newTime)) {
       setTime('');
       setTimeError(t('appointments.form.timeOutsideScheduleError'));
+      // Clearing the value doesn't move the browser's active segment back to
+      // the hour field, so retyping right away would land in whatever segment
+      // (e.g. AM/PM) was focused when the invalid time was rejected. Re-focus
+      // resets the cursor to the first segment so retyping just works.
+      const input = e.target;
+      requestAnimationFrame(() => {
+        input.blur();
+        input.focus();
+      });
       return;
     }
     setTime(newTime);

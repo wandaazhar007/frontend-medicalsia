@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { CalendarClock, CalendarPlus, Clock, CreditCard, LayoutDashboard, Menu, Pill, PillBottle, Receipt, Syringe, UserCog, Users, X } from 'lucide-react';
+import { CalendarClock, CalendarPlus, Clock, CreditCard, LayoutDashboard, Menu, Monitor, Pill, PillBottle, Receipt, Syringe, Tv, UserCog, Users, X } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
 import styles from './BottomNav.module.scss';
 
@@ -18,6 +18,7 @@ export default function BottomNav() {
   const { user } = useAuth();
   const canManageUsers = user && ['owner', 'admin'].includes(user.role);
   const canManageMedicines = user && ['owner', 'admin', 'pharmacy'].includes(user.role);
+  const isReceptionist = user?.role === 'receptionist';
   const [isMoreOpen, setIsMoreOpen] = useState(false);
 
   return (
@@ -26,26 +27,34 @@ export default function BottomNav() {
         <>
           <div className={styles.backdrop} onClick={() => setIsMoreOpen(false)} />
           <div className={styles.moreSheet}>
-            <NavLink to="/dashboard/appointments" className={styles.moreItem} onClick={() => setIsMoreOpen(false)}>
-              <CalendarPlus size={16} />
-              {t('sidebar.appointment')}
-            </NavLink>
+            {!isReceptionist && (
+              <NavLink to="/dashboard/appointments" className={styles.moreItem} onClick={() => setIsMoreOpen(false)}>
+                <CalendarPlus size={16} />
+                {t('sidebar.appointment')}
+              </NavLink>
+            )}
             <NavLink to="/dashboard/doctor-schedules" className={styles.moreItem} onClick={() => setIsMoreOpen(false)}>
               <CalendarClock size={16} />
               {t('sidebar.doctorSchedules')}
             </NavLink>
-            <NavLink to="/dashboard/cashier" className={styles.moreItem} onClick={() => setIsMoreOpen(false)}>
-              <CreditCard size={16} />
-              {t('sidebar.cashier')}
-            </NavLink>
-            <NavLink to="/dashboard/invoices" className={styles.moreItem} onClick={() => setIsMoreOpen(false)}>
-              <Receipt size={16} />
-              {t('sidebar.invoices')}
-            </NavLink>
-            <NavLink to="/dashboard/pharmacy" className={styles.moreItem} onClick={() => setIsMoreOpen(false)}>
-              <Pill size={16} />
-              {t('sidebar.pharmacy')}
-            </NavLink>
+            {!isReceptionist && (
+              <NavLink to="/dashboard/cashier" className={styles.moreItem} onClick={() => setIsMoreOpen(false)}>
+                <CreditCard size={16} />
+                {t('sidebar.cashier')}
+              </NavLink>
+            )}
+            {!isReceptionist && (
+              <NavLink to="/dashboard/invoices" className={styles.moreItem} onClick={() => setIsMoreOpen(false)}>
+                <Receipt size={16} />
+                {t('sidebar.invoices')}
+              </NavLink>
+            )}
+            {!isReceptionist && (
+              <NavLink to="/dashboard/pharmacy" className={styles.moreItem} onClick={() => setIsMoreOpen(false)}>
+                <Pill size={16} />
+                {t('sidebar.pharmacy')}
+              </NavLink>
+            )}
             {canManageMedicines && (
               <NavLink to="/dashboard/medicines" className={styles.moreItem} onClick={() => setIsMoreOpen(false)}>
                 <PillBottle size={16} />
@@ -64,14 +73,33 @@ export default function BottomNav() {
                 {t('sidebar.users')}
               </NavLink>
             )}
+            {isReceptionist && (
+              <a href="/display" target="_blank" rel="noopener noreferrer" className={styles.moreItem} onClick={() => setIsMoreOpen(false)}>
+                <Monitor size={16} />
+                {t('sidebar.displayQueue')}
+              </a>
+            )}
+            {isReceptionist && (
+              <a href="/display-pharmacy" target="_blank" rel="noopener noreferrer" className={styles.moreItem} onClick={() => setIsMoreOpen(false)}>
+                <Tv size={16} />
+                {t('sidebar.displayPharmacyQueue')}
+              </a>
+            )}
           </div>
         </>
       )}
 
-      <NavLink to="/dashboard" end className={navLinkClass}>
-        <LayoutDashboard size={18} />
-        {t('sidebar.home')}
-      </NavLink>
+      {isReceptionist ? (
+        <NavLink to="/dashboard/appointments" className={navLinkClass}>
+          <CalendarPlus size={18} />
+          {t('sidebar.appointment')}
+        </NavLink>
+      ) : (
+        <NavLink to="/dashboard" end className={navLinkClass}>
+          <LayoutDashboard size={18} />
+          {t('sidebar.home')}
+        </NavLink>
+      )}
       <NavLink to="/dashboard/queue" className={navLinkClass}>
         <Clock size={18} />
         {t('sidebar.queue')}

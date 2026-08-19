@@ -598,6 +598,12 @@ export default {
     users: 'User',
     home: 'Beranda',
     menu: 'Menu',
+    displayQueue: 'Display Antrian',
+    displayPharmacyQueue: 'Display Antrian Farmasi',
+  },
+  accessDenied: {
+    message: 'Anda tidak memiliki akses pada halaman ini',
+    backButton: 'Kembali',
   },
   doctorSchedulesPage: {
     title: 'Jadwal Dokter',

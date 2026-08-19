@@ -597,6 +597,12 @@ export default {
     users: 'Users',
     home: 'Home',
     menu: 'Menu',
+    displayQueue: 'Queue Display',
+    displayPharmacyQueue: 'Pharmacy Queue Display',
+  },
+  accessDenied: {
+    message: 'You do not have access to this page',
+    backButton: 'Back',
   },
   doctorSchedulesPage: {
     title: "Doctor's Schedule",

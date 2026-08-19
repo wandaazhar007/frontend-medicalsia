@@ -25,6 +25,11 @@ import MedicalProceduresPage from './pages/dashboard/medical-procedures/MedicalP
 import UsersList from './pages/dashboard/users/UsersList';
 import UserForm from './pages/dashboard/users/UserForm';
 import ProfilePage from './pages/dashboard/profile/ProfilePage';
+import AccessDenied from './pages/dashboard/access-denied/AccessDenied';
+
+// Receptionist is scoped to front-desk operations only (Appointment, Queue,
+// Patients, Doctor Schedules) — everything else uses this list to exclude them.
+const NON_RECEPTIONIST_ROLES = ['owner', 'admin', 'doctor', 'pharmacy', 'cashier'];
 
 // /pages/dashboard/* requires an authenticated session; /pages/booking,
 // /pages/display, and /pages/display-pharmacy must never be wrapped in this guard.
@@ -42,9 +47,20 @@ function RequireAuth({ children }) {
 function RequireRole({ roles, children }) {
   const { user } = useAuth();
 
-  if (!user || !roles.includes(user.role)) return <Navigate to="/dashboard" replace />;
+  if (!user || !roles.includes(user.role)) return <AccessDenied />;
 
   return children;
+}
+
+// Dashboard has no widgets for receptionist, so instead of showing an empty
+// page (or an access-denied flash right after login), send them straight to
+// the one section they actually use.
+function DashboardHome() {
+  const { user } = useAuth();
+
+  if (user?.role === 'receptionist') return <Navigate to="/dashboard/appointments" replace />;
+
+  return <Dashboard />;
 }
 
 function AppRoutes() {
@@ -62,19 +78,54 @@ function AppRoutes() {
           </RequireAuth>
         )}
       >
-        <Route index element={<Dashboard />} />
+        <Route index element={<DashboardHome />} />
         <Route path="patients" element={<PatientsList />} />
         <Route path="patients/new" element={<PatientForm />} />
         <Route path="patients/:id" element={<PatientDetail />} />
         <Route path="patients/:id/edit" element={<PatientForm />} />
         <Route path="appointments" element={<AppointmentsList />} />
         <Route path="queue" element={<QueuePage />} />
-        <Route path="consultation/:id" element={<ConsultationPage />} />
+        <Route
+          path="consultation/:id"
+          element={(
+            <RequireRole roles={NON_RECEPTIONIST_ROLES}>
+              <ConsultationPage />
+            </RequireRole>
+          )}
+        />
         <Route path="doctor-schedules" element={<DoctorSchedulesPage />} />
-        <Route path="cashier" element={<CashierPage />} />
-        <Route path="invoices" element={<InvoicesList />} />
-        <Route path="invoices/:id" element={<InvoiceDetail />} />
-        <Route path="pharmacy" element={<PharmacyPage />} />
+        <Route
+          path="cashier"
+          element={(
+            <RequireRole roles={NON_RECEPTIONIST_ROLES}>
+              <CashierPage />
+            </RequireRole>
+          )}
+        />
+        <Route
+          path="invoices"
+          element={(
+            <RequireRole roles={NON_RECEPTIONIST_ROLES}>
+              <InvoicesList />
+            </RequireRole>
+          )}
+        />
+        <Route
+          path="invoices/:id"
+          element={(
+            <RequireRole roles={NON_RECEPTIONIST_ROLES}>
+              <InvoiceDetail />
+            </RequireRole>
+          )}
+        />
+        <Route
+          path="pharmacy"
+          element={(
+            <RequireRole roles={NON_RECEPTIONIST_ROLES}>
+              <PharmacyPage />
+            </RequireRole>
+          )}
+        />
         <Route
           path="medicines"
           element={(

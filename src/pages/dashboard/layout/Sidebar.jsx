@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { CalendarClock, CalendarPlus, Clock, CreditCard, LayoutDashboard, Loader2, Pill, PillBottle, Receipt, Syringe, UserCog, Users } from 'lucide-react';
+import { CalendarClock, CalendarPlus, Clock, CreditCard, LayoutDashboard, Loader2, Monitor, Pill, PillBottle, Receipt, Syringe, Tv, UserCog, Users } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
 import styles from './Sidebar.module.scss';
 
@@ -41,6 +41,7 @@ export default function Sidebar() {
   const location = useLocation();
   const canManageUsers = user && ['owner', 'admin'].includes(user.role);
   const canManageMedicines = user && ['owner', 'admin', 'pharmacy'].includes(user.role);
+  const isReceptionist = user?.role === 'receptionist';
 
   const [loadingPath, setLoadingPath] = useState(null);
   const loadingPathRef = useRef(null);
@@ -84,30 +85,48 @@ export default function Sidebar() {
     <aside className={styles.sidebar}>
       <nav className={styles.group}>
         <span className={styles.groupLabel}>{t('sidebar.groupMain')}</span>
-        <SidebarNavLink to="/dashboard" end icon={LayoutDashboard} label={t('sidebar.dashboard')} loadingPath={loadingPath} onNavigate={handleNavigate} />
+        {!isReceptionist && (
+          <SidebarNavLink to="/dashboard" end icon={LayoutDashboard} label={t('sidebar.dashboard')} loadingPath={loadingPath} onNavigate={handleNavigate} />
+        )}
         <SidebarNavLink to="/dashboard/appointments" icon={CalendarPlus} label={t('sidebar.appointment')} loadingPath={loadingPath} onNavigate={handleNavigate} />
         <SidebarNavLink to="/dashboard/queue" icon={Clock} label={t('sidebar.queue')} loadingPath={loadingPath} onNavigate={handleNavigate} />
         <SidebarNavLink to="/dashboard/patients" icon={Users} label={t('sidebar.patients')} loadingPath={loadingPath} onNavigate={handleNavigate} />
         <SidebarNavLink to="/dashboard/doctor-schedules" icon={CalendarClock} label={t('sidebar.doctorSchedules')} loadingPath={loadingPath} onNavigate={handleNavigate} />
       </nav>
 
-      <nav className={styles.group}>
-        <span className={styles.groupLabel}>{t('sidebar.groupOperations')}</span>
-        <SidebarNavLink to="/dashboard/cashier" icon={CreditCard} label={t('sidebar.cashier')} loadingPath={loadingPath} onNavigate={handleNavigate} />
-        <SidebarNavLink to="/dashboard/invoices" icon={Receipt} label={t('sidebar.invoices')} loadingPath={loadingPath} onNavigate={handleNavigate} />
-        <SidebarNavLink to="/dashboard/pharmacy" icon={Pill} label={t('sidebar.pharmacy')} loadingPath={loadingPath} onNavigate={handleNavigate} />
-        {canManageMedicines && (
-          <SidebarNavLink to="/dashboard/medicines" icon={PillBottle} label={t('sidebar.medicines')} loadingPath={loadingPath} onNavigate={handleNavigate} />
-        )}
-        {canManageUsers && (
-          <SidebarNavLink to="/dashboard/medical-procedures" icon={Syringe} label={t('sidebar.medicalProcedures')} loadingPath={loadingPath} onNavigate={handleNavigate} />
-        )}
-      </nav>
+      {!isReceptionist && (
+        <nav className={styles.group}>
+          <span className={styles.groupLabel}>{t('sidebar.groupOperations')}</span>
+          <SidebarNavLink to="/dashboard/cashier" icon={CreditCard} label={t('sidebar.cashier')} loadingPath={loadingPath} onNavigate={handleNavigate} />
+          <SidebarNavLink to="/dashboard/invoices" icon={Receipt} label={t('sidebar.invoices')} loadingPath={loadingPath} onNavigate={handleNavigate} />
+          <SidebarNavLink to="/dashboard/pharmacy" icon={Pill} label={t('sidebar.pharmacy')} loadingPath={loadingPath} onNavigate={handleNavigate} />
+          {canManageMedicines && (
+            <SidebarNavLink to="/dashboard/medicines" icon={PillBottle} label={t('sidebar.medicines')} loadingPath={loadingPath} onNavigate={handleNavigate} />
+          )}
+          {canManageUsers && (
+            <SidebarNavLink to="/dashboard/medical-procedures" icon={Syringe} label={t('sidebar.medicalProcedures')} loadingPath={loadingPath} onNavigate={handleNavigate} />
+          )}
+        </nav>
+      )}
 
       {canManageUsers && (
         <nav className={styles.group}>
           <span className={styles.groupLabel}>{t('sidebar.groupOther')}</span>
           <SidebarNavLink to="/dashboard/users" icon={UserCog} label={t('sidebar.users')} loadingPath={loadingPath} onNavigate={handleNavigate} />
+        </nav>
+      )}
+
+      {isReceptionist && (
+        <nav className={styles.group}>
+          <span className={styles.groupLabel}>{t('sidebar.groupOther')}</span>
+          <a href="/display" target="_blank" rel="noopener noreferrer" className={styles.navItem}>
+            <Monitor size={16} />
+            {t('sidebar.displayQueue')}
+          </a>
+          <a href="/display-pharmacy" target="_blank" rel="noopener noreferrer" className={styles.navItem}>
+            <Tv size={16} />
+            {t('sidebar.displayPharmacyQueue')}
+          </a>
         </nav>
       )}
     </aside>

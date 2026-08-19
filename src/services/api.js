@@ -16,4 +16,36 @@ api.interceptors.request.use(async (config) => {
   return config;
 });
 
+// Broadcasts whether any request is in flight, so UI elsewhere (e.g. the
+// sidebar nav spinner) can track real fetch duration instead of a guessed
+// timeout. Dispatched only on the 0->1 / 1->0 transitions, not every request.
+let pendingRequests = 0;
+
+function markRequestStart(config) {
+  pendingRequests += 1;
+  if (pendingRequests === 1) {
+    window.dispatchEvent(new CustomEvent('medicalsia:api-loading-start'));
+  }
+  return config;
+}
+
+function markRequestEnd() {
+  pendingRequests = Math.max(0, pendingRequests - 1);
+  if (pendingRequests === 0) {
+    window.dispatchEvent(new CustomEvent('medicalsia:api-loading-end'));
+  }
+}
+
+api.interceptors.request.use(markRequestStart);
+api.interceptors.response.use(
+  (response) => {
+    markRequestEnd();
+    return response;
+  },
+  (error) => {
+    markRequestEnd();
+    return Promise.reject(error);
+  }
+);
+
 export default api;

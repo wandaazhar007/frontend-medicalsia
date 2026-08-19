@@ -42,6 +42,7 @@ export default function Sidebar() {
   const canManageUsers = user && ['owner', 'admin'].includes(user.role);
   const canManageMedicines = user && ['owner', 'admin', 'pharmacy'].includes(user.role);
   const isReceptionist = user?.role === 'receptionist';
+  const isDoctor = user?.role === 'doctor';
 
   const [loadingPath, setLoadingPath] = useState(null);
   const loadingPathRef = useRef(null);
@@ -88,13 +89,15 @@ export default function Sidebar() {
         {!isReceptionist && (
           <SidebarNavLink to="/dashboard" end icon={LayoutDashboard} label={t('sidebar.dashboard')} loadingPath={loadingPath} onNavigate={handleNavigate} />
         )}
-        <SidebarNavLink to="/dashboard/appointments" icon={CalendarPlus} label={t('sidebar.appointment')} loadingPath={loadingPath} onNavigate={handleNavigate} />
+        {!isDoctor && (
+          <SidebarNavLink to="/dashboard/appointments" icon={CalendarPlus} label={t('sidebar.appointment')} loadingPath={loadingPath} onNavigate={handleNavigate} />
+        )}
         <SidebarNavLink to="/dashboard/queue" icon={Clock} label={t('sidebar.queue')} loadingPath={loadingPath} onNavigate={handleNavigate} />
         <SidebarNavLink to="/dashboard/patients" icon={Users} label={t('sidebar.patients')} loadingPath={loadingPath} onNavigate={handleNavigate} />
         <SidebarNavLink to="/dashboard/doctor-schedules" icon={CalendarClock} label={t('sidebar.doctorSchedules')} loadingPath={loadingPath} onNavigate={handleNavigate} />
       </nav>
 
-      {!isReceptionist && (
+      {!isReceptionist && !isDoctor && (
         <nav className={styles.group}>
           <span className={styles.groupLabel}>{t('sidebar.groupOperations')}</span>
           <SidebarNavLink to="/dashboard/cashier" icon={CreditCard} label={t('sidebar.cashier')} loadingPath={loadingPath} onNavigate={handleNavigate} />

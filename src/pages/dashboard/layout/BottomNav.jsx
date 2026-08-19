@@ -19,6 +19,7 @@ export default function BottomNav() {
   const canManageUsers = user && ['owner', 'admin'].includes(user.role);
   const canManageMedicines = user && ['owner', 'admin', 'pharmacy'].includes(user.role);
   const isReceptionist = user?.role === 'receptionist';
+  const isDoctor = user?.role === 'doctor';
   const [isMoreOpen, setIsMoreOpen] = useState(false);
 
   return (
@@ -27,7 +28,7 @@ export default function BottomNav() {
         <>
           <div className={styles.backdrop} onClick={() => setIsMoreOpen(false)} />
           <div className={styles.moreSheet}>
-            {!isReceptionist && (
+            {!isReceptionist && !isDoctor && (
               <NavLink to="/dashboard/appointments" className={styles.moreItem} onClick={() => setIsMoreOpen(false)}>
                 <CalendarPlus size={16} />
                 {t('sidebar.appointment')}
@@ -37,19 +38,19 @@ export default function BottomNav() {
               <CalendarClock size={16} />
               {t('sidebar.doctorSchedules')}
             </NavLink>
-            {!isReceptionist && (
+            {!isReceptionist && !isDoctor && (
               <NavLink to="/dashboard/cashier" className={styles.moreItem} onClick={() => setIsMoreOpen(false)}>
                 <CreditCard size={16} />
                 {t('sidebar.cashier')}
               </NavLink>
             )}
-            {!isReceptionist && (
+            {!isReceptionist && !isDoctor && (
               <NavLink to="/dashboard/invoices" className={styles.moreItem} onClick={() => setIsMoreOpen(false)}>
                 <Receipt size={16} />
                 {t('sidebar.invoices')}
               </NavLink>
             )}
-            {!isReceptionist && (
+            {!isReceptionist && !isDoctor && (
               <NavLink to="/dashboard/pharmacy" className={styles.moreItem} onClick={() => setIsMoreOpen(false)}>
                 <Pill size={16} />
                 {t('sidebar.pharmacy')}

@@ -31,6 +31,12 @@ import AccessDenied from './pages/dashboard/access-denied/AccessDenied';
 // Patients, Doctor Schedules) — everything else uses this list to exclude them.
 const NON_RECEPTIONIST_ROLES = ['owner', 'admin', 'doctor', 'pharmacy', 'cashier'];
 
+// Doctor is scoped to Dashboard/Queue/Patients/Doctor Schedules — manual
+// booking is a front-desk tool, and cashier/invoices/pharmacy are non-clinical
+// operations, so doctor is excluded from both.
+const NON_DOCTOR_ROLES = ['owner', 'admin', 'receptionist', 'pharmacy', 'cashier'];
+const OPERATIONAL_ROLES = ['owner', 'admin', 'pharmacy', 'cashier'];
+
 // /pages/dashboard/* requires an authenticated session; /pages/booking,
 // /pages/display, and /pages/display-pharmacy must never be wrapped in this guard.
 function RequireAuth({ children }) {
@@ -83,7 +89,14 @@ function AppRoutes() {
         <Route path="patients/new" element={<PatientForm />} />
         <Route path="patients/:id" element={<PatientDetail />} />
         <Route path="patients/:id/edit" element={<PatientForm />} />
-        <Route path="appointments" element={<AppointmentsList />} />
+        <Route
+          path="appointments"
+          element={(
+            <RequireRole roles={NON_DOCTOR_ROLES}>
+              <AppointmentsList />
+            </RequireRole>
+          )}
+        />
         <Route path="queue" element={<QueuePage />} />
         <Route
           path="consultation/:id"
@@ -97,7 +110,7 @@ function AppRoutes() {
         <Route
           path="cashier"
           element={(
-            <RequireRole roles={NON_RECEPTIONIST_ROLES}>
+            <RequireRole roles={OPERATIONAL_ROLES}>
               <CashierPage />
             </RequireRole>
           )}
@@ -105,7 +118,7 @@ function AppRoutes() {
         <Route
           path="invoices"
           element={(
-            <RequireRole roles={NON_RECEPTIONIST_ROLES}>
+            <RequireRole roles={OPERATIONAL_ROLES}>
               <InvoicesList />
             </RequireRole>
           )}
@@ -113,7 +126,7 @@ function AppRoutes() {
         <Route
           path="invoices/:id"
           element={(
-            <RequireRole roles={NON_RECEPTIONIST_ROLES}>
+            <RequireRole roles={OPERATIONAL_ROLES}>
               <InvoiceDetail />
             </RequireRole>
           )}
@@ -121,7 +134,7 @@ function AppRoutes() {
         <Route
           path="pharmacy"
           element={(
-            <RequireRole roles={NON_RECEPTIONIST_ROLES}>
+            <RequireRole roles={OPERATIONAL_ROLES}>
               <PharmacyPage />
             </RequireRole>
           )}

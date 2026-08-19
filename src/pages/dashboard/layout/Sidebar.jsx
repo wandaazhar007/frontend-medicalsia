@@ -44,6 +44,7 @@ export default function Sidebar() {
   const isReceptionist = user?.role === 'receptionist';
   const isDoctor = user?.role === 'doctor';
   const isCashier = user?.role === 'cashier';
+  const isPharmacy = user?.role === 'pharmacy';
 
   const [loadingPath, setLoadingPath] = useState(null);
   const loadingPathRef = useRef(null);
@@ -90,14 +91,16 @@ export default function Sidebar() {
         {!isReceptionist && (
           <SidebarNavLink to="/dashboard" end icon={LayoutDashboard} label={t('sidebar.dashboard')} loadingPath={loadingPath} onNavigate={handleNavigate} />
         )}
-        {!isDoctor && !isCashier && (
+        {!isDoctor && !isCashier && !isPharmacy && (
           <SidebarNavLink to="/dashboard/appointments" icon={CalendarPlus} label={t('sidebar.appointment')} loadingPath={loadingPath} onNavigate={handleNavigate} />
         )}
-        {!isCashier && (
+        {!isCashier && !isPharmacy && (
           <SidebarNavLink to="/dashboard/queue" icon={Clock} label={t('sidebar.queue')} loadingPath={loadingPath} onNavigate={handleNavigate} />
         )}
-        <SidebarNavLink to="/dashboard/patients" icon={Users} label={t('sidebar.patients')} loadingPath={loadingPath} onNavigate={handleNavigate} />
-        {!isCashier && (
+        {!isPharmacy && (
+          <SidebarNavLink to="/dashboard/patients" icon={Users} label={t('sidebar.patients')} loadingPath={loadingPath} onNavigate={handleNavigate} />
+        )}
+        {!isCashier && !isPharmacy && (
           <SidebarNavLink to="/dashboard/doctor-schedules" icon={CalendarClock} label={t('sidebar.doctorSchedules')} loadingPath={loadingPath} onNavigate={handleNavigate} />
         )}
       </nav>
@@ -105,15 +108,19 @@ export default function Sidebar() {
       {!isReceptionist && !isDoctor && (
         <nav className={styles.group}>
           <span className={styles.groupLabel}>{t('sidebar.groupOperations')}</span>
-          <SidebarNavLink to="/dashboard/cashier" icon={CreditCard} label={t('sidebar.cashier')} loadingPath={loadingPath} onNavigate={handleNavigate} />
-          <SidebarNavLink to="/dashboard/invoices" icon={Receipt} label={t('sidebar.invoices')} loadingPath={loadingPath} onNavigate={handleNavigate} />
+          {!isPharmacy && (
+            <SidebarNavLink to="/dashboard/cashier" icon={CreditCard} label={t('sidebar.cashier')} loadingPath={loadingPath} onNavigate={handleNavigate} />
+          )}
+          {!isPharmacy && (
+            <SidebarNavLink to="/dashboard/invoices" icon={Receipt} label={t('sidebar.invoices')} loadingPath={loadingPath} onNavigate={handleNavigate} />
+          )}
           {!isCashier && (
             <SidebarNavLink to="/dashboard/pharmacy" icon={Pill} label={t('sidebar.pharmacy')} loadingPath={loadingPath} onNavigate={handleNavigate} />
           )}
           {canManageMedicines && (
             <SidebarNavLink to="/dashboard/medicines" icon={PillBottle} label={t('sidebar.medicines')} loadingPath={loadingPath} onNavigate={handleNavigate} />
           )}
-          {canManageUsers && (
+          {canManageMedicines && (
             <SidebarNavLink to="/dashboard/medical-procedures" icon={Syringe} label={t('sidebar.medicalProcedures')} loadingPath={loadingPath} onNavigate={handleNavigate} />
           )}
         </nav>
@@ -126,7 +133,7 @@ export default function Sidebar() {
         </nav>
       )}
 
-      {isReceptionist && (
+      {(isReceptionist || isPharmacy) && (
         <nav className={styles.group}>
           <span className={styles.groupLabel}>{t('sidebar.groupOther')}</span>
           <a href="/display" target="_blank" rel="noopener noreferrer" className={styles.navItem}>

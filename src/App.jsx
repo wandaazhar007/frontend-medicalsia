@@ -31,12 +31,17 @@ import AccessDenied from './pages/dashboard/access-denied/AccessDenied';
 // receptionist: Appointment/Queue/Patients/Doctor Schedules (front desk).
 // doctor: Dashboard/Queue/Patients/Doctor Schedules (Queue -> consultation).
 // cashier: Dashboard/Patients/Cashier/Invoices (billing only, no clinical or
-// scheduling tools). The lists below capture the resulting per-route overlap.
-const APPOINTMENT_ROLES = ['owner', 'admin', 'receptionist', 'pharmacy']; // excludes doctor, cashier
-const QUEUE_ROLES = ['owner', 'admin', 'doctor', 'receptionist', 'pharmacy']; // excludes cashier
-const CONSULTATION_ROLES = ['owner', 'admin', 'doctor', 'pharmacy']; // excludes receptionist, cashier
-const CASHIER_ROLES = ['owner', 'admin', 'pharmacy', 'cashier']; // excludes receptionist, doctor
+// scheduling tools). pharmacy: Dashboard/Pharmacy/Medicines/Medical
+// Procedures/the two public display screens — dispensing and master-data
+// only, no booking/queue/billing/patient-record tools. The lists below
+// capture the resulting per-route overlap.
+const APPOINTMENT_ROLES = ['owner', 'admin', 'receptionist']; // excludes doctor, cashier, pharmacy
+const QUEUE_ROLES = ['owner', 'admin', 'doctor', 'receptionist']; // excludes cashier, pharmacy
+const CONSULTATION_ROLES = ['owner', 'admin', 'doctor']; // excludes receptionist, cashier, pharmacy
+const CASHIER_ROLES = ['owner', 'admin', 'cashier']; // excludes receptionist, doctor, pharmacy
 const PHARMACY_ROLES = ['owner', 'admin', 'pharmacy']; // excludes receptionist, doctor, cashier
+const PATIENT_ROLES = ['owner', 'admin', 'doctor', 'receptionist', 'cashier']; // excludes pharmacy
+const MEDICINES_AND_PROCEDURES_ROLES = ['owner', 'admin', 'pharmacy']; // Master Obat + Master Tindakan share the same audience
 
 // /pages/dashboard/* requires an authenticated session; /pages/booking,
 // /pages/display, and /pages/display-pharmacy must never be wrapped in this guard.
@@ -86,10 +91,38 @@ function AppRoutes() {
         )}
       >
         <Route index element={<DashboardHome />} />
-        <Route path="patients" element={<PatientsList />} />
-        <Route path="patients/new" element={<PatientForm />} />
-        <Route path="patients/:id" element={<PatientDetail />} />
-        <Route path="patients/:id/edit" element={<PatientForm />} />
+        <Route
+          path="patients"
+          element={(
+            <RequireRole roles={PATIENT_ROLES}>
+              <PatientsList />
+            </RequireRole>
+          )}
+        />
+        <Route
+          path="patients/new"
+          element={(
+            <RequireRole roles={PATIENT_ROLES}>
+              <PatientForm />
+            </RequireRole>
+          )}
+        />
+        <Route
+          path="patients/:id"
+          element={(
+            <RequireRole roles={PATIENT_ROLES}>
+              <PatientDetail />
+            </RequireRole>
+          )}
+        />
+        <Route
+          path="patients/:id/edit"
+          element={(
+            <RequireRole roles={PATIENT_ROLES}>
+              <PatientForm />
+            </RequireRole>
+          )}
+        />
         <Route
           path="appointments"
           element={(
@@ -157,7 +190,7 @@ function AppRoutes() {
         <Route
           path="medicines"
           element={(
-            <RequireRole roles={['owner', 'admin', 'pharmacy']}>
+            <RequireRole roles={MEDICINES_AND_PROCEDURES_ROLES}>
               <MedicinesList />
             </RequireRole>
           )}
@@ -165,7 +198,7 @@ function AppRoutes() {
         <Route
           path="medicines/:id/edit"
           element={(
-            <RequireRole roles={['owner', 'admin', 'pharmacy']}>
+            <RequireRole roles={MEDICINES_AND_PROCEDURES_ROLES}>
               <MedicineForm />
             </RequireRole>
           )}
@@ -173,7 +206,7 @@ function AppRoutes() {
         <Route
           path="medical-procedures"
           element={(
-            <RequireRole roles={['owner', 'admin']}>
+            <RequireRole roles={MEDICINES_AND_PROCEDURES_ROLES}>
               <MedicalProceduresPage />
             </RequireRole>
           )}

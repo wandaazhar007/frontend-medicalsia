@@ -55,6 +55,12 @@
   color: var(--color-text-muted);
 }
 
+.skeletonNames {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+}
+
 .actions {
   display: flex;
   gap: $space-2;

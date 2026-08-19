@@ -8,9 +8,18 @@ import Input from '../../../components/Input/Input';
 import Badge from '../../../components/Badge/Badge';
 import Pagination from '../../../components/Pagination/Pagination';
 import EmptyState from '../../../components/EmptyState/EmptyState';
+import TableSkeleton from '../../../components/TableSkeleton/TableSkeleton';
 import styles from './InvoicesList.module.scss';
 
 const LIMIT = 20;
+
+const SKELETON_COLUMNS = [
+  { width: '70%' },
+  { width: '50%' },
+  { width: '45%' },
+  { width: '35%', variant: 'badge' },
+  { width: '60%' },
+];
 
 const STATUS_VARIANTS = { unpaid: 'warning', paid: 'success', cancelled: 'danger' };
 
@@ -30,6 +39,7 @@ export default function InvoicesList() {
   const [result, setResult] = useState({ data: [], pagination: { page: 1, limit: LIMIT, total_items: 0, total_pages: 0 } });
   const [isLoading, setIsLoading] = useState(false);
   const debouncedSearch = useDebounce(search, 400);
+  const isSearching = search !== debouncedSearch;
 
   const statusLabels = {
     unpaid: t('invoicesPage.list.statusUnpaid'),
@@ -64,10 +74,9 @@ export default function InvoicesList() {
 
       <div className={styles.searchRow}>
         <Input placeholder={t('invoicesPage.list.searchPlaceholder')} value={search} onChange={(e) => setSearch(e.target.value)} />
-        {isLoading && <span className={styles.loadingHint}>{t('invoicesPage.list.loading')}</span>}
       </div>
 
-      {result.data.length === 0 && !isLoading ? (
+      {!isLoading && !isSearching && result.data.length === 0 ? (
         <EmptyState icon={Receipt} message={t('invoicesPage.list.noResults')} />
       ) : (
         <>
@@ -83,25 +92,31 @@ export default function InvoicesList() {
                 </tr>
               </thead>
               <tbody>
-                {result.data.map((invoice) => (
-                  <tr key={invoice.id} onClick={() => navigate(`/dashboard/invoices/${invoice.id}`)}>
-                    <td>{invoice.patient_name}</td>
-                    <td>{formatCurrency(invoice.total_amount)}</td>
-                    <td>{invoice.payment_method || '-'}</td>
-                    <td><Badge variant={STATUS_VARIANTS[invoice.status]}>{statusLabels[invoice.status]}</Badge></td>
-                    <td>{formatDateTime(invoice.created_at)}</td>
-                  </tr>
-                ))}
+                {isLoading || isSearching ? (
+                  <TableSkeleton rows={8} columns={SKELETON_COLUMNS} />
+                ) : (
+                  result.data.map((invoice) => (
+                    <tr key={invoice.id} onClick={() => navigate(`/dashboard/invoices/${invoice.id}`)}>
+                      <td>{invoice.patient_name}</td>
+                      <td>{formatCurrency(invoice.total_amount)}</td>
+                      <td>{invoice.payment_method || '-'}</td>
+                      <td><Badge variant={STATUS_VARIANTS[invoice.status]}>{statusLabels[invoice.status]}</Badge></td>
+                      <td>{formatDateTime(invoice.created_at)}</td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
-          <Pagination
-            page={result.pagination.page}
-            limit={result.pagination.limit}
-            totalItems={result.pagination.total_items}
-            totalPages={result.pagination.total_pages}
-            onPageChange={setPage}
-          />
+          {!isLoading && !isSearching && (
+            <Pagination
+              page={result.pagination.page}
+              limit={result.pagination.limit}
+              totalItems={result.pagination.total_items}
+              totalPages={result.pagination.total_pages}
+              onPageChange={setPage}
+            />
+          )}
         </>
       )}
     </div>

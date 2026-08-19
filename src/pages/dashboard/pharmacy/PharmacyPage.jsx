@@ -9,7 +9,38 @@ import Input from '../../../components/Input/Input';
 import Button from '../../../components/Button/Button';
 import Badge from '../../../components/Badge/Badge';
 import EmptyState from '../../../components/EmptyState/EmptyState';
+import Skeleton from '../../../components/Skeleton/Skeleton';
 import styles from './PharmacyPage.module.scss';
+
+// Mirrors a real prescription Card so nothing shifts once data arrives.
+function PrescriptionCardSkeleton() {
+  return (
+    <Card>
+      <div className={styles.prescriptionHeader}>
+        <Skeleton width="10rem" height="1.6rem" />
+        <Skeleton width="4rem" height="1.6rem" />
+      </div>
+      <div className={styles.itemRow}>
+        <Skeleton width="60%" height="1.4rem" />
+        <Skeleton width="8rem" height="3.4rem" />
+      </div>
+      <div className={styles.itemRow}>
+        <Skeleton width="45%" height="1.4rem" />
+        <Skeleton width="8rem" height="3.4rem" />
+      </div>
+      <Skeleton width="100%" height="3.6rem" style={{ marginTop: '0.8rem' }} />
+    </Card>
+  );
+}
+
+function CallRowSkeleton() {
+  return (
+    <div className={styles.callRow}>
+      <Skeleton width="4rem" height="1.6rem" />
+      <Skeleton width="8rem" height="3.4rem" />
+    </div>
+  );
+}
 
 // The dispensing queue only ever shows prescriptions with status = 'paid' —
 // enforced server-side in PharmacyController.getQueue, this filter is just
@@ -19,26 +50,38 @@ export default function PharmacyPage() {
   const [queue, setQueue] = useState([]);
   const [readyForPickup, setReadyForPickup] = useState([]);
   const [dispensedQtyByItem, setDispensedQtyByItem] = useState({});
+  const [isLoadingQueue, setIsLoadingQueue] = useState(false);
+  const [isLoadingReady, setIsLoadingReady] = useState(false);
 
   async function fetchQueue() {
-    const { data } = await getPharmacyQueue();
-    setQueue(data);
+    setIsLoadingQueue(true);
+    try {
+      const { data } = await getPharmacyQueue();
+      setQueue(data);
 
-    const defaults = {};
-    for (const prescription of data) {
-      for (const item of prescription.items) {
-        defaults[item.id] = Math.min(item.quantity, item.stock_qty);
+      const defaults = {};
+      for (const prescription of data) {
+        for (const item of prescription.items) {
+          defaults[item.id] = Math.min(item.quantity, item.stock_qty);
+        }
       }
+      setDispensedQtyByItem((prev) => ({ ...defaults, ...prev }));
+    } finally {
+      setIsLoadingQueue(false);
     }
-    setDispensedQtyByItem((prev) => ({ ...defaults, ...prev }));
   }
 
   // Prescriptions already marked 'completed' aren't dispensable anymore —
   // this list is purely for the "Panggil" call button, sourced from the
   // same public queue the waiting-room display polls.
   async function fetchReadyForPickup() {
-    const { data } = await getPublicPharmacyQueue();
-    setReadyForPickup(data.filter((entry) => entry.status === 'siap_diambil'));
+    setIsLoadingReady(true);
+    try {
+      const { data } = await getPublicPharmacyQueue();
+      setReadyForPickup(data.filter((entry) => entry.status === 'siap_diambil'));
+    } finally {
+      setIsLoadingReady(false);
+    }
   }
 
   useEffect(() => {
@@ -73,7 +116,12 @@ export default function PharmacyPage() {
 
       <div>
         <div className={styles.sectionTitle}>{t('pharmacyPage.beingPrepared')}</div>
-        {queue.length === 0 ? (
+        {isLoadingQueue ? (
+          <div className={styles.list}>
+            <PrescriptionCardSkeleton />
+            <PrescriptionCardSkeleton />
+          </div>
+        ) : queue.length === 0 ? (
           <EmptyState message={t('pharmacyPage.noQueue')} />
         ) : (
           <div className={styles.list}>
@@ -112,7 +160,12 @@ export default function PharmacyPage() {
 
       <div>
         <div className={styles.sectionTitle}>{t('pharmacyPage.readyForPickup')}</div>
-        {readyForPickup.length === 0 ? (
+        {isLoadingReady ? (
+          <Card>
+            <CallRowSkeleton />
+            <CallRowSkeleton />
+          </Card>
+        ) : readyForPickup.length === 0 ? (
           <EmptyState message={t('pharmacyPage.noReadyForPickup')} />
         ) : (
           <Card>

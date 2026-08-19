@@ -17,7 +17,16 @@ import EmptyState from '../../../components/EmptyState/EmptyState';
 import SearchableSelect from '../../../components/SearchableSelect/SearchableSelect';
 import ReceiptPrint from '../../../components/ReceiptPrint/ReceiptPrint';
 import Modal from '../../../components/Modal/Modal';
+import TableSkeleton from '../../../components/TableSkeleton/TableSkeleton';
+import Skeleton from '../../../components/Skeleton/Skeleton';
 import styles from './CashierPage.module.scss';
+
+const COMPLETED_SKELETON_COLUMNS = [
+  { width: '70%' },
+  { width: '55%' },
+  { width: '35%' },
+  { width: '85%' },
+];
 
 function formatCurrency(value) {
   return `Rp${Number(value).toLocaleString('id-ID')}`;
@@ -85,14 +94,20 @@ export default function CashierPage() {
   const [changeGiven, setChangeGiven] = useState(null);
 
   const [shortfalls, setShortfalls] = useState([]);
+  const [isLoadingShortfalls, setIsLoadingShortfalls] = useState(false);
 
   const [completedDate, setCompletedDate] = useState(getTodayDateInputValue);
   const [completedAppointments, setCompletedAppointments] = useState([]);
   const [isLoadingCompleted, setIsLoadingCompleted] = useState(false);
 
   async function fetchShortfalls() {
-    const { data } = await listShortfalls({ status: 'pending' });
-    setShortfalls(data);
+    setIsLoadingShortfalls(true);
+    try {
+      const { data } = await listShortfalls({ status: 'pending' });
+      setShortfalls(data);
+    } finally {
+      setIsLoadingShortfalls(false);
+    }
   }
 
   async function fetchCompletedAppointments(date) {
@@ -323,9 +338,7 @@ export default function CashierPage() {
               onChange={(e) => setCompletedDate(e.target.value)}
             />
           </div>
-          {isLoadingCompleted ? (
-            <EmptyState message={t('cashierPage.saving')} />
-          ) : completedAppointments.length === 0 ? (
+          {!isLoadingCompleted && completedAppointments.length === 0 ? (
             <EmptyState message={t('cashierPage.completedEmpty')} />
           ) : (
             <table className={styles.completedTable}>
@@ -338,28 +351,32 @@ export default function CashierPage() {
                 </tr>
               </thead>
               <tbody>
-                {completedAppointments.map((appointment) => (
-                  <tr key={appointment.id}>
-                    <td>{appointment.patient_name} ({appointment.patient_number})</td>
-                    <td>{appointment.doctor_name || '-'}</td>
-                    <td>{formatTime(appointment.completed_at)}</td>
-                    <td>
-                      <Button
-                        variant="secondary"
-                        onClick={() =>
-                          handleSelectPatient({
-                            id: appointment.patient_id,
-                            full_name: appointment.patient_name,
-                            patient_number: appointment.patient_number,
-                          })
-                        }
-                      >
-                        <UserCheck size={14} />
-                        {t('cashierPage.selectPatient')}
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
+                {isLoadingCompleted ? (
+                  <TableSkeleton rows={3} columns={COMPLETED_SKELETON_COLUMNS} />
+                ) : (
+                  completedAppointments.map((appointment) => (
+                    <tr key={appointment.id}>
+                      <td>{appointment.patient_name} ({appointment.patient_number})</td>
+                      <td>{appointment.doctor_name || '-'}</td>
+                      <td>{formatTime(appointment.completed_at)}</td>
+                      <td>
+                        <Button
+                          variant="secondary"
+                          onClick={() =>
+                            handleSelectPatient({
+                              id: appointment.patient_id,
+                              full_name: appointment.patient_name,
+                              patient_number: appointment.patient_number,
+                            })
+                          }
+                        >
+                          <UserCheck size={14} />
+                          {t('cashierPage.selectPatient')}
+                        </Button>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           )}
@@ -526,7 +543,14 @@ export default function CashierPage() {
 
       <Card>
         <div className={styles.sectionTitle}>{t('cashierPage.pendingRefundTitle')}</div>
-        {shortfalls.length === 0 ? (
+        {isLoadingShortfalls ? (
+          [0, 1].map((i) => (
+            <div key={i} className={styles.shortfallItem}>
+              <Skeleton width="60%" height="1.4rem" />
+              <Skeleton width="8rem" height="3.4rem" />
+            </div>
+          ))
+        ) : shortfalls.length === 0 ? (
           <EmptyState message={t('cashierPage.noPendingRefund')} />
         ) : (
           shortfalls.map((shortfall) => (

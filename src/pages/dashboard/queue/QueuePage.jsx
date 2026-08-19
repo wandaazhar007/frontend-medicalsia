@@ -8,10 +8,31 @@ import Card from '../../../components/Card/Card';
 import Button from '../../../components/Button/Button';
 import Badge from '../../../components/Badge/Badge';
 import EmptyState from '../../../components/EmptyState/EmptyState';
+import Skeleton from '../../../components/Skeleton/Skeleton';
 import styles from './QueuePage.module.scss';
 
 function todayIsoDate() {
   return new Date().toISOString().slice(0, 10);
+}
+
+// Mirrors the .row layout below so nothing shifts once real data arrives.
+function QueueRowSkeleton() {
+  return (
+    <Card className={styles.row}>
+      <div className={styles.info}>
+        <Skeleton width="4rem" height="2rem" />
+        <div className={styles.skeletonNames}>
+          <Skeleton width="12rem" height="1.6rem" />
+          <Skeleton width="8rem" height="1.2rem" />
+        </div>
+        <Skeleton width="7rem" height="2.2rem" style={{ borderRadius: '999px' }} />
+      </div>
+      <div className={styles.actions}>
+        <Skeleton width="8rem" height="3.4rem" />
+        <Skeleton width="8rem" height="3.4rem" />
+      </div>
+    </Card>
+  );
 }
 
 // Live queue for today — checked-in patients waiting, and whoever is
@@ -21,14 +42,20 @@ export default function QueuePage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [appointments, setAppointments] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   async function fetchQueue() {
-    const { data } = await listAppointments({ date: todayIsoDate(), limit: 100 });
-    setAppointments(
-      data
-        .filter((a) => a.status === 'checked_in' || a.status === 'in_consultation')
-        .sort((a, b) => (a.queue_number || '').localeCompare(b.queue_number || ''))
-    );
+    setIsLoading(true);
+    try {
+      const { data } = await listAppointments({ date: todayIsoDate(), limit: 100 });
+      setAppointments(
+        data
+          .filter((a) => a.status === 'checked_in' || a.status === 'in_consultation')
+          .sort((a, b) => (a.queue_number || '').localeCompare(b.queue_number || ''))
+      );
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   useEffect(() => {
@@ -56,7 +83,13 @@ export default function QueuePage() {
     <div className={styles.wrapper}>
       <h1 className={styles.title}>{t('queuePage.title')}</h1>
 
-      {appointments.length === 0 ? (
+      {isLoading ? (
+        <div className={styles.list}>
+          <QueueRowSkeleton />
+          <QueueRowSkeleton />
+          <QueueRowSkeleton />
+        </div>
+      ) : appointments.length === 0 ? (
         <EmptyState message={t('queuePage.empty')} />
       ) : (
         <div className={styles.list}>

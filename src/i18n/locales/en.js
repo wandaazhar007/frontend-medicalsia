@@ -549,6 +549,7 @@ export default {
     timeLabel: 'Time',
     noSlotsAvailable: 'No slots available',
     selectTimePlaceholder: 'Select a time',
+    dateNoScheduleError: 'The doctor has no schedule on this date.',
     fullNameLabel: 'Full Name',
     phoneLabel: 'Phone Number',
     processing: 'Processing...',

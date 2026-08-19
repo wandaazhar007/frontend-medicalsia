@@ -56,6 +56,7 @@ export default function Booking() {
   const [scheduledAt, setScheduledAt] = useState('');
   const [phone, setPhone] = useState('');
   const [fullName, setFullName] = useState('');
+  const [dateError, setDateError] = useState('');
   const [fieldErrors, setFieldErrors] = useState({});
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -68,6 +69,14 @@ export default function Booking() {
 
   const selectedDoctor = doctors.find((d) => d.id === doctorId);
   const availableSlots = useMemo(() => buildAvailableSlots(selectedDoctor, date), [selectedDoctor, date]);
+
+  // day_of_week uses JS Date#getDay() convention (0 = Sunday), matching
+  // Postgres EXTRACT(DOW) used when the schedule rows were created.
+  function doctorHasScheduleOn(doctor, dateStr) {
+    if (!doctor || !dateStr) return true;
+    const dayOfWeek = new Date(`${dateStr}T00:00:00`).getDay();
+    return doctor.schedules.some((s) => s.day_of_week === dayOfWeek);
+  }
 
   const loadDoctorOptions = useCallback(
     async (query) => {
@@ -108,9 +117,16 @@ export default function Booking() {
   }, [debouncedPhone]);
 
   function handleSelectDoctor(option) {
+    const doctor = option ? doctors.find((d) => d.id === option.id) : null;
     setDoctorId(option ? option.id : '');
     setScheduledAt('');
     setFieldErrors((prev) => ({ ...prev, doctor_id: undefined }));
+    if (doctor && date && !doctorHasScheduleOn(doctor, date)) {
+      setDate('');
+      setDateError(t('bookingPage.dateNoScheduleError'));
+    } else {
+      setDateError('');
+    }
   }
 
   function handlePhoneChange(e) {
@@ -213,10 +229,19 @@ export default function Booking() {
               min={new Date().toISOString().slice(0, 10)}
               value={date}
               onChange={(e) => {
-                setDate(e.target.value);
+                const newDate = e.target.value;
+                if (selectedDoctor && newDate && !doctorHasScheduleOn(selectedDoctor, newDate)) {
+                  setDate('');
+                  setScheduledAt('');
+                  setDateError(t('bookingPage.dateNoScheduleError'));
+                  return;
+                }
+                setDate(newDate);
                 setScheduledAt('');
+                setDateError('');
               }}
               disabled={!doctorId}
+              error={dateError}
             />
             <Select
               id="scheduled_at"

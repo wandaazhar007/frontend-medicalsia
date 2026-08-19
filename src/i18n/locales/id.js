@@ -550,6 +550,7 @@ export default {
     timeLabel: 'Jam',
     noSlotsAvailable: 'Tidak ada slot tersedia',
     selectTimePlaceholder: 'Pilih jam',
+    dateNoScheduleError: 'Dokter tidak memiliki jadwal praktik pada tanggal ini.',
     fullNameLabel: 'Nama Lengkap',
     phoneLabel: 'No. HP',
     processing: 'Memproses...',

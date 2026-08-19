@@ -73,6 +73,15 @@ export default function AppointmentForm({ onSuccess, onCancel }) {
     return timeStr >= schedule.start_time.slice(0, 5) && timeStr < schedule.end_time.slice(0, 5);
   }
 
+  // The <input>'s native min/max attributes only steer the picker — they no
+  // longer block submission now that the form has noValidate (needed so our
+  // own styled/translated errors show instead of the browser's untranslated
+  // "Value must be X or later" tooltip). This is the JS-side equivalent of
+  // the min={nowLocalTime()} constraint for today's date.
+  function isTimeInPast(dateStr, timeStr) {
+    return dateStr === todayLocalDate() && timeStr < nowLocalTime();
+  }
+
   const loadPatientOptions = useCallback(async (query) => {
     if (!query) return [];
     const { data } = await listPatients({ search: query, limit: 10 });
@@ -104,14 +113,24 @@ export default function AppointmentForm({ onSuccess, onCancel }) {
     if (selectedDoctor && time && !isTimeWithinSchedule(selectedDoctor.id, newDate, time)) {
       setTime('');
       setTimeError(t('appointments.form.timeOutsideScheduleError'));
+    } else if (time && isTimeInPast(newDate, time)) {
+      setTime('');
+      setTimeError(t('appointments.form.timePastError'));
     }
   }
 
   function handleTimeChange(e) {
     const newTime = e.target.value;
-    if (selectedDoctor && date && newTime && !isTimeWithinSchedule(selectedDoctor.id, date, newTime)) {
+    const invalidReason =
+      selectedDoctor && date && newTime && !isTimeWithinSchedule(selectedDoctor.id, date, newTime)
+        ? 'timeOutsideScheduleError'
+        : newTime && isTimeInPast(date, newTime)
+          ? 'timePastError'
+          : null;
+
+    if (invalidReason) {
       setTime('');
-      setTimeError(t('appointments.form.timeOutsideScheduleError'));
+      setTimeError(t(`appointments.form.${invalidReason}`));
       // Clearing the value doesn't move the browser's active segment back to
       // the hour field, so retyping right away would land in whatever segment
       // (e.g. AM/PM) was focused when the invalid time was rejected. Re-focus
@@ -150,6 +169,9 @@ export default function AppointmentForm({ onSuccess, onCancel }) {
     } else if (selectedDoctor && date && !isTimeWithinSchedule(selectedDoctor.id, date, time)) {
       setTimeError(t('appointments.form.timeOutsideScheduleError'));
       isValid = false;
+    } else if (isTimeInPast(date, time)) {
+      setTimeError(t('appointments.form.timePastError'));
+      isValid = false;
     }
     return isValid;
   }
@@ -186,7 +208,7 @@ export default function AppointmentForm({ onSuccess, onCancel }) {
   const effectiveMinTime = [todayMinTime, scheduleMinTime].filter(Boolean).sort().pop();
 
   return (
-    <form className={styles.form} onSubmit={handleSubmit}>
+    <form className={styles.form} onSubmit={handleSubmit} noValidate>
       {submitError && <div className={styles.error}>{submitError}</div>}
 
       <SearchableSelect

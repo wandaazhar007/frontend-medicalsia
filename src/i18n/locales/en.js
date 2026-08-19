@@ -229,6 +229,7 @@ export default {
       dateRequired: 'Date is required.',
       dateNoScheduleError: 'The doctor has no schedule on this date.',
       timeOutsideScheduleError: "This time is outside the doctor's working hours on that date.",
+      timePastError: 'This time has already passed. Pick another time or change the date.',
       timeRequired: 'Time is required.',
       createError: 'Failed to create appointment.',
       searchPatientLabel: 'Search Patient',

@@ -230,6 +230,7 @@ export default {
       dateRequired: 'Tanggal wajib diisi.',
       dateNoScheduleError: 'Dokter tidak memiliki jadwal praktik pada tanggal ini.',
       timeOutsideScheduleError: 'Jam ini di luar jam praktik dokter pada tanggal tersebut.',
+      timePastError: 'Jam ini sudah lewat. Pilih jam lain atau ubah tanggal.',
       timeRequired: 'Jam wajib diisi.',
       createError: 'Gagal membuat appointment.',
       searchPatientLabel: 'Cari Pasien',

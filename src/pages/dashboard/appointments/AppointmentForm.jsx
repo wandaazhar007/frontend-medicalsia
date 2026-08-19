@@ -5,6 +5,7 @@ import { Save, X } from 'lucide-react';
 import { createAppointment } from '../../../services/appointments';
 import { listPatients } from '../../../services/patients';
 import { getBookingDoctors } from '../../../services/publicBooking';
+import { listDoctorSchedules } from '../../../services/doctorSchedules';
 import Input from '../../../components/Input/Input';
 import SearchableSelect from '../../../components/SearchableSelect/SearchableSelect';
 import Button from '../../../components/Button/Button';
@@ -31,6 +32,7 @@ export default function AppointmentForm({ onSuccess, onCancel }) {
 
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [doctors, setDoctors] = useState([]);
+  const [schedules, setSchedules] = useState([]);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
@@ -46,7 +48,18 @@ export default function AppointmentForm({ onSuccess, onCancel }) {
     // that one is restricted to owner/admin (03-api-spec.md), but any staff
     // booking an appointment needs to see the doctor list.
     getBookingDoctors().then(({ data }) => setDoctors(data));
+    // Needed to keep the date field in sync with the selected doctor's
+    // working days — open to every role (unlike GET /users).
+    listDoctorSchedules().then(({ data }) => setSchedules(data));
   }, []);
+
+  // day_of_week uses JS Date#getDay() convention (0 = Sunday), matching
+  // Postgres EXTRACT(DOW) used when the schedule rows were created.
+  function doctorHasScheduleOn(doctorId, dateStr) {
+    if (!doctorId || !dateStr) return true;
+    const dayOfWeek = new Date(`${dateStr}T00:00:00`).getDay();
+    return schedules.some((s) => s.doctor_id === doctorId && s.is_active && s.day_of_week === dayOfWeek);
+  }
 
   const loadPatientOptions = useCallback(async (query) => {
     if (!query) return [];
@@ -68,7 +81,13 @@ export default function AppointmentForm({ onSuccess, onCancel }) {
   }
 
   function handleDateChange(e) {
-    setDate(e.target.value);
+    const newDate = e.target.value;
+    if (selectedDoctor && newDate && !doctorHasScheduleOn(selectedDoctor.id, newDate)) {
+      setDate('');
+      setDateError(t('appointments.form.dateNoScheduleError'));
+      return;
+    }
+    setDate(newDate);
     setDateError('');
   }
 
@@ -89,6 +108,9 @@ export default function AppointmentForm({ onSuccess, onCancel }) {
     }
     if (!date) {
       setDateError(t('appointments.form.dateRequired'));
+      isValid = false;
+    } else if (selectedDoctor && !doctorHasScheduleOn(selectedDoctor.id, date)) {
+      setDateError(t('appointments.form.dateNoScheduleError'));
       isValid = false;
     }
     if (!time) {
@@ -152,8 +174,13 @@ export default function AppointmentForm({ onSuccess, onCancel }) {
         placeholder={t('appointments.form.doctorPlaceholder')}
         value={selectedDoctor ? { label: selectedDoctor.full_name } : null}
         onSelect={(option) => {
-          setSelectedDoctor(option ? { id: option.id, full_name: option.label } : null);
+          const doctor = option ? { id: option.id, full_name: option.label } : null;
+          setSelectedDoctor(doctor);
           setDoctorError('');
+          if (doctor && date && !doctorHasScheduleOn(doctor.id, date)) {
+            setDate('');
+            setDateError(t('appointments.form.dateNoScheduleError'));
+          }
         }}
         loadOptions={loadDoctorOptions}
         emptyMessage={t('appointments.form.doctorEmpty')}
